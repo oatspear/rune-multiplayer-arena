@@ -7,15 +7,28 @@
     <link rel="stylesheet" type="text/css" href="styles.css" />
   </head>
   <body>
+    <header></header>
+
     <main>
-      <header></header>
-      <section id="board-container">
-        <div id="board">
-          
-        </div>
+
+      <section class="slider-wrapper">
+        <button class="slide-arrow" id="slide-arrow-prev">
+          &#8249;
+        </button>
+        <button class="slide-arrow" id="slide-arrow-next">
+          &#8250;
+        </button>
+        <ul class="slides-container" id="slides-container">
+          <li class="slide"></li>
+          <li class="slide"></li>
+          <li class="slide"></li>
+          <li class="slide"></li>
+        </ul>
       </section>
-      <footer></footer>
     </main>
+
+    <footer></footer>
+
     <!--<script src="https://cdn.jsdelivr.net/npm/rune-games-sdk@3/multiplayer.js"></script>-->
     <script src="logic.js"></script>
     <script src="client.js"></script>
