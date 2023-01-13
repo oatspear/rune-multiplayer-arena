@@ -12,3 +12,11 @@ prevButton.addEventListener("click", () => {
   const slideWidth = slide.clientWidth;
   slidesContainer.scrollLeft -= slideWidth;
 });
+
+function onTileClick(e) {
+  alert(`You clicked ${e.target.id}!`);
+}
+
+document.querySelectorAll(".tile").forEach(tile => {
+  tile.addEventListener("click", onTileClick);
+});
