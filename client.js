@@ -1,3 +1,17 @@
+const { createApp } = Vue
+
+const app = createApp({
+  data() {
+    return {
+      message: "Hello Vue!"
+    };
+  }
+});
+
+app.component("battle-header", BattleHeader);
+
+app.mount("#app");
+
 const slidesContainer = document.getElementById("slides-container");
 const slide = document.querySelector(".slide");
 const prevButton = document.getElementById("slide-arrow-prev");

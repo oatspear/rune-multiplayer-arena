@@ -1,179 +1,185 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
     />
     <link rel="stylesheet" type="text/css" href="styles.css" />
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+    <script src="components/battle-header.js"></script>
   </head>
   <body>
-    <header></header>
+    <main id="app">
+      <battle-header></battle-header>
 
-    <main>
+      <div id="board">
 
-      <section class="slider-wrapper">
+        <section class="slider-wrapper">
 
-        <div class="slides-container" id="slides-container">
+          <div class="slides-container" id="slides-container">
 
-          <!-- REGION 1 -->
-          <div id="region-1" class="slide">
-            <div class="column">
-              <div id="tile-1-1" class="tile">
-                1
+            <!-- REGION 1 -->
+            <div id="region-1" class="slide">
+              <div class="column">
+                <div id="tile-1-1" class="tile">
+                  1
+                </div>
+                <div id="tile-1-4" class="tile">
+                  4
+                </div>
+                <div id="tile-1-7" class="tile">
+                  7
+                </div>
               </div>
-              <div id="tile-1-4" class="tile">
-                4
+              <div class="column">
+                <div id="tile-1-2" class="tile">
+                  2
+                </div>
+                <div id="tile-1-5" class="tile">
+                  5
+                </div>
+                <div id="tile-1-8" class="tile">
+                  8
+                </div>
               </div>
-              <div id="tile-1-7" class="tile">
-                7
+              <div class="column">
+                <div id="tile-1-3" class="tile">
+                  3
+                </div>
+                <div id="tile-1-6" class="tile">
+                  6
+                </div>
+                <div id="tile-1-9" class="tile">
+                  9
+                </div>
               </div>
             </div>
-            <div class="column">
-              <div id="tile-1-2" class="tile">
-                2
+
+            <!-- REGION 2 -->
+            <div id="region-2" class="slide">
+              <div class="column">
+                <div id="tile-2-1" class="tile">
+                  1
+                </div>
+                <div id="tile-2-4" class="tile">
+                  4
+                </div>
+                <div id="tile-2-7" class="tile">
+                  7
+                </div>
               </div>
-              <div id="tile-1-5" class="tile">
-                5
+              <div class="column">
+                <div id="tile-2-2" class="tile">
+                  2
+                </div>
+                <div id="tile-2-5" class="tile">
+                  5
+                </div>
+                <div id="tile-2-8" class="tile">
+                  8
+                </div>
               </div>
-              <div id="tile-1-8" class="tile">
-                8
+              <div class="column">
+                <div id="tile-2-3" class="tile">
+                  3
+                </div>
+                <div id="tile-2-6" class="tile">
+                  6
+                </div>
+                <div id="tile-2-9" class="tile">
+                  9
+                </div>
               </div>
             </div>
-            <div class="column">
-              <div id="tile-1-3" class="tile">
-                3
+
+            <!-- REGION 3 -->
+            <div id="region-3" class="slide">
+              <div class="column">
+                <div id="tile-3-1" class="tile">
+                  1
+                </div>
+                <div id="tile-3-4" class="tile">
+                  4
+                </div>
+                <div id="tile-3-7" class="tile">
+                  7
+                </div>
               </div>
-              <div id="tile-1-6" class="tile">
-                6
+              <div class="column">
+                <div id="tile-3-2" class="tile">
+                  2
+                </div>
+                <div id="tile-3-5" class="tile">
+                  5
+                </div>
+                <div id="tile-3-8" class="tile">
+                  8
+                </div>
               </div>
-              <div id="tile-1-9" class="tile">
-                9
+              <div class="column">
+                <div id="tile-3-3" class="tile">
+                  3
+                </div>
+                <div id="tile-3-6" class="tile">
+                  6
+                </div>
+                <div id="tile-3-9" class="tile">
+                  9
+                </div>
+              </div>
+            </div>
+
+            <!-- REGION 4 -->
+            <div id="region-4" class="slide">
+              <div class="column">
+                <div id="tile-4-1" class="tile">
+                  1
+                </div>
+                <div id="tile-4-4" class="tile">
+                  4
+                </div>
+                <div id="tile-4-7" class="tile">
+                  7
+                </div>
+              </div>
+              <div class="column">
+                <div id="tile-4-2" class="tile">
+                  2
+                </div>
+                <div id="tile-4-5" class="tile">
+                  5
+                </div>
+                <div id="tile-4-8" class="tile">
+                  8
+                </div>
+              </div>
+              <div class="column">
+                <div id="tile-4-3" class="tile">
+                  3
+                </div>
+                <div id="tile-4-6" class="tile">
+                  6
+                </div>
+                <div id="tile-4-9" class="tile">
+                  9
+                </div>
               </div>
             </div>
           </div>
+        </section>
+      </div>
 
-          <!-- REGION 2 -->
-          <div id="region-2" class="slide">
-            <div class="column">
-              <div id="tile-2-1" class="tile">
-                1
-              </div>
-              <div id="tile-2-4" class="tile">
-                4
-              </div>
-              <div id="tile-2-7" class="tile">
-                7
-              </div>
-            </div>
-            <div class="column">
-              <div id="tile-2-2" class="tile">
-                2
-              </div>
-              <div id="tile-2-5" class="tile">
-                5
-              </div>
-              <div id="tile-2-8" class="tile">
-                8
-              </div>
-            </div>
-            <div class="column">
-              <div id="tile-2-3" class="tile">
-                3
-              </div>
-              <div id="tile-2-6" class="tile">
-                6
-              </div>
-              <div id="tile-2-9" class="tile">
-                9
-              </div>
-            </div>
-          </div>
-
-          <!-- REGION 3 -->
-          <div id="region-3" class="slide">
-            <div class="column">
-              <div id="tile-3-1" class="tile">
-                1
-              </div>
-              <div id="tile-3-4" class="tile">
-                4
-              </div>
-              <div id="tile-3-7" class="tile">
-                7
-              </div>
-            </div>
-            <div class="column">
-              <div id="tile-3-2" class="tile">
-                2
-              </div>
-              <div id="tile-3-5" class="tile">
-                5
-              </div>
-              <div id="tile-3-8" class="tile">
-                8
-              </div>
-            </div>
-            <div class="column">
-              <div id="tile-3-3" class="tile">
-                3
-              </div>
-              <div id="tile-3-6" class="tile">
-                6
-              </div>
-              <div id="tile-3-9" class="tile">
-                9
-              </div>
-            </div>
-          </div>
-
-          <!-- REGION 4 -->
-          <div id="region-4" class="slide">
-            <div class="column">
-              <div id="tile-4-1" class="tile">
-                1
-              </div>
-              <div id="tile-4-4" class="tile">
-                4
-              </div>
-              <div id="tile-4-7" class="tile">
-                7
-              </div>
-            </div>
-            <div class="column">
-              <div id="tile-4-2" class="tile">
-                2
-              </div>
-              <div id="tile-4-5" class="tile">
-                5
-              </div>
-              <div id="tile-4-8" class="tile">
-                8
-              </div>
-            </div>
-            <div class="column">
-              <div id="tile-4-3" class="tile">
-                3
-              </div>
-              <div id="tile-4-6" class="tile">
-                6
-              </div>
-              <div id="tile-4-9" class="tile">
-                9
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <footer>
+        <button class="slide-arrow" id="slide-arrow-prev">
+          &#8249;
+        </button>
+        <button class="slide-arrow" id="slide-arrow-next">
+          &#8250;
+        </button>
+      </footer>
     </main>
-
-    <footer>
-      <button class="slide-arrow" id="slide-arrow-prev">
-        &#8249;
-      </button>
-      <button class="slide-arrow" id="slide-arrow-next">
-        &#8250;
-      </button>
-    </footer>
 
     <!--<script src="https://cdn.jsdelivr.net/npm/rune-games-sdk@3/multiplayer.js"></script>-->
     <script src="logic.js"></script>
