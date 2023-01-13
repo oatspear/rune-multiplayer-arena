@@ -18,38 +18,41 @@
 
         <section class="slider-wrapper">
           <div class="slides-container" id="slides-container">
-            <battle-region :region-index="1"></battle-region>
-            <battle-region :region-index="2"></battle-region>
-            <battle-region :region-index="3"></battle-region>
-            <battle-region :region-index="4"></battle-region>
+            <battle-region :region-index="0" :tiles="tiles[0]"></battle-region>
+            <battle-region :region-index="1" :tiles="tiles[1]"></battle-region>
+            <battle-region :region-index="2" :tiles="tiles[2]"></battle-region>
+            <battle-region :region-index="3" :tiles="tiles[3]"></battle-region>
           </div>
         </section>
 
       </div>
 
-      <battle-footer></battle-footer>
+      <battle-footer @spawn-ghouls="onSpawnGhouls">
+      </battle-footer>
     </main>
 
     <template id="vue-battle-header">
-      <header @click="battleUpdate">{{ message }}</header>
+      <header @click="battleUpdate">
+        {{ message }}
+      </header>
     </template>
 
     <template id="vue-battle-region">
       <div :id="`region-${regionIndex}`" class="slide">
         <div class="column">
-          <battle-tile :region-index="regionIndex" :tile-index="1"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="4"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="7"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="0" :tile-data="tiles[0]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="3" :tile-data="tiles[3]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="6" :tile-data="tiles[6]"></battle-tile>
         </div>
         <div class="column">
-          <battle-tile :region-index="regionIndex" :tile-index="2"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="5"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="8"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="1" :is-boss :tile-data="tiles[1]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="4" :tile-data="tiles[4]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="7" :is-stronghold :tile-data="tiles[7]"></battle-tile>
         </div>
         <div class="column">
-          <battle-tile :region-index="regionIndex" :tile-index="3"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="6"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="9"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="2" :tile-data="tiles[2]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="5" :tile-data="tiles[5]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="8" :tile-data="tiles[8]"></battle-tile>
         </div>
       </div>
     </template>
@@ -58,12 +61,12 @@
       <div
         :id="`tile-${regionIndex}-${tileIndex}`"
         class="tile"
-        :class="{active: isActive}"
+        :class="{active: isActive, boss: isBoss, stronghold: isStronghold}"
         @click="onTileClick"
       >
-        <battle-minion-counter :count="minions"></battle-minion-counter>
+        <battle-minion-counter :count="tileData.ghouls"></battle-minion-counter>
         <div>
-          {{ tileIndex }}
+          {{ tileIndex + 1 }}
         </div>
       </div>
     </template>
@@ -84,6 +87,10 @@
         <button class="slide-arrow" id="slide-arrow-next">
           &#8250;
         </button>
+        <button @click="spawnGhouls">Move</button>
+        <button @click="spawnGhouls">Fight</button>
+        <button @click="spawnGhouls">Ability</button>
+        <button @click="spawnGhouls">Build</button>
       </footer>
     </template>
 

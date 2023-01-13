@@ -26,13 +26,16 @@ main {
 }
 
 header {
-  background-color: green;
   width: 100%;
   min-height: 10vh;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   font-size: 2rem;
   font-weight: bold;
-  color: white;
+  background-color: green;
+  overflow: visible;
 }
 
 footer {
@@ -110,6 +113,8 @@ footer {
   align-items: center;
   background-color: whitesmoke;
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 
@@ -117,9 +122,23 @@ footer {
   background-color: lime;
 }
 
+.tile.boss {
+  background-color: violet;
+  border: 2px solid black;
+}
+
+.tile.stronghold {
+  background-color: goldenrod;
+  border: 2px solid black;
+}
+
 
 footer {
   position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .slide-arrow {

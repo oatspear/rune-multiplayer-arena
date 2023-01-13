@@ -19,23 +19,30 @@ const BattleHeader = {
 
 
 const BattleFooter = {
-  template: "#vue-battle-footer"
+  template: "#vue-battle-footer",
+  methods: {
+    spawnGhouls() {
+      this.$emit("spawnGhouls");
+    }
+  }
 };
 
 
 const BattleRegion = {
+  template: "#vue-battle-region",
   props: {
     regionIndex:  {
       type: Number,
       required: true
+    },
+    tiles: {
+      type: Array,
+      required: true
     }
   },
   data() {
-    return {
-      message: "Imported header"
-    }
+    return {};
   },
-  template: "#vue-battle-region",
   methods: {
     battleUpdate() {
       this.message = "Updated header";
@@ -59,17 +66,24 @@ const BattleTile = {
     tileIndex: {
       type: Number,
       required: true
-    }
+    },
+    tileData: {
+      type: Object,
+      required: true
+    },
+    isBoss: Boolean,
+    isStronghold: Boolean
   },
   data() {
     return {
       isActive: false,
-      minions: 0
+      minions: 0,
+      monsters: 0
     }
   },
   methods: {
     onTileClick() {
-      this.isActive = !this.isActive;
+      // this.isActive = !this.isActive;
       if (this.minions >= 3) {
         this.minions = 0;
       } else {
