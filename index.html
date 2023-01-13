@@ -61,7 +61,18 @@
         :class="{active: isActive}"
         @click="onTileClick"
       >
-        {{ tileIndex }}
+        <battle-minion-counter :count="minions"></battle-minion-counter>
+        <div>
+          {{ tileIndex }}
+        </div>
+      </div>
+    </template>
+
+    <template id="vue-battle-minion-counter">
+      <div class="minion-counter">
+        <span v-if="count > 0">G</span>
+        <span v-if="count > 1">G</span>
+        <span v-if="count > 2">G</span>
       </div>
     </template>
 

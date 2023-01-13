@@ -11,6 +11,7 @@ const app = createApp({
 app.component("BattleHeader", BattleHeader);
 app.component("BattleRegion", BattleRegion);
 app.component("BattleTile", BattleTile);
+app.component("BattleMinionCounter", BattleMinionCounter);
 app.component("BattleFooter", BattleFooter);
 
 app.mount("#app");

@@ -63,17 +63,34 @@ const BattleTile = {
   },
   data() {
     return {
-      isActive: false
+      isActive: false,
+      minions: 0
     }
   },
   methods: {
     onTileClick() {
       this.isActive = !this.isActive;
+      if (this.minions >= 3) {
+        this.minions = 0;
+      } else {
+        this.minions++;
+      }
     }
   },
   mounted() {
     // methods can be called in lifecycle hooks, or other methods!
     // this.increment()
     console.log("battle tile is mounted:", this.regionIndex, this.tileIndex);
+  }
+};
+
+
+const BattleMinionCounter = {
+  template: "#vue-battle-minion-counter",
+  props: {
+    count: {
+      type: Number,
+      required: true
+    }
   }
 };
