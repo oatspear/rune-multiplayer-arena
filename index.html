@@ -8,7 +8,7 @@
     />
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-    <script src="components/battle-header.js"></script>
+    <script src="components/battle.js"></script>
   </head>
   <body>
     <main id="app">
@@ -17,160 +17,55 @@
       <div id="board">
 
         <section class="slider-wrapper">
-
           <div class="slides-container" id="slides-container">
-
-            <!-- REGION 1 -->
-            <div id="region-1" class="slide">
-              <div class="column">
-                <div id="tile-1-1" class="tile">
-                  1
-                </div>
-                <div id="tile-1-4" class="tile">
-                  4
-                </div>
-                <div id="tile-1-7" class="tile">
-                  7
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-1-2" class="tile">
-                  2
-                </div>
-                <div id="tile-1-5" class="tile">
-                  5
-                </div>
-                <div id="tile-1-8" class="tile">
-                  8
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-1-3" class="tile">
-                  3
-                </div>
-                <div id="tile-1-6" class="tile">
-                  6
-                </div>
-                <div id="tile-1-9" class="tile">
-                  9
-                </div>
-              </div>
-            </div>
-
-            <!-- REGION 2 -->
-            <div id="region-2" class="slide">
-              <div class="column">
-                <div id="tile-2-1" class="tile">
-                  1
-                </div>
-                <div id="tile-2-4" class="tile">
-                  4
-                </div>
-                <div id="tile-2-7" class="tile">
-                  7
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-2-2" class="tile">
-                  2
-                </div>
-                <div id="tile-2-5" class="tile">
-                  5
-                </div>
-                <div id="tile-2-8" class="tile">
-                  8
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-2-3" class="tile">
-                  3
-                </div>
-                <div id="tile-2-6" class="tile">
-                  6
-                </div>
-                <div id="tile-2-9" class="tile">
-                  9
-                </div>
-              </div>
-            </div>
-
-            <!-- REGION 3 -->
-            <div id="region-3" class="slide">
-              <div class="column">
-                <div id="tile-3-1" class="tile">
-                  1
-                </div>
-                <div id="tile-3-4" class="tile">
-                  4
-                </div>
-                <div id="tile-3-7" class="tile">
-                  7
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-3-2" class="tile">
-                  2
-                </div>
-                <div id="tile-3-5" class="tile">
-                  5
-                </div>
-                <div id="tile-3-8" class="tile">
-                  8
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-3-3" class="tile">
-                  3
-                </div>
-                <div id="tile-3-6" class="tile">
-                  6
-                </div>
-                <div id="tile-3-9" class="tile">
-                  9
-                </div>
-              </div>
-            </div>
-
-            <!-- REGION 4 -->
-            <div id="region-4" class="slide">
-              <div class="column">
-                <div id="tile-4-1" class="tile">
-                  1
-                </div>
-                <div id="tile-4-4" class="tile">
-                  4
-                </div>
-                <div id="tile-4-7" class="tile">
-                  7
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-4-2" class="tile">
-                  2
-                </div>
-                <div id="tile-4-5" class="tile">
-                  5
-                </div>
-                <div id="tile-4-8" class="tile">
-                  8
-                </div>
-              </div>
-              <div class="column">
-                <div id="tile-4-3" class="tile">
-                  3
-                </div>
-                <div id="tile-4-6" class="tile">
-                  6
-                </div>
-                <div id="tile-4-9" class="tile">
-                  9
-                </div>
-              </div>
-            </div>
+            <battle-region :region-index="1"></battle-region>
+            <battle-region :region-index="2"></battle-region>
+            <battle-region :region-index="3"></battle-region>
+            <battle-region :region-index="4"></battle-region>
           </div>
         </section>
+
       </div>
 
+      <battle-footer></battle-footer>
+    </main>
+
+    <template id="vue-battle-header">
+      <header @click="battleUpdate">{{ message }}</header>
+    </template>
+
+    <template id="vue-battle-region">
+      <div :id="`region-${regionIndex}`" class="slide">
+        <div class="column">
+          <battle-tile :region-index="regionIndex" :tile-index="1"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="4"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="7"></battle-tile>
+        </div>
+        <div class="column">
+          <battle-tile :region-index="regionIndex" :tile-index="2"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="5"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="8"></battle-tile>
+        </div>
+        <div class="column">
+          <battle-tile :region-index="regionIndex" :tile-index="3"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="6"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="9"></battle-tile>
+        </div>
+      </div>
+    </template>
+
+    <template id="vue-battle-tile">
+      <div
+        :id="`tile-${regionIndex}-${tileIndex}`"
+        class="tile"
+        :class="{active: isActive}"
+        @click="onTileClick"
+      >
+        {{ tileIndex }}
+      </div>
+    </template>
+
+    <template id="vue-battle-footer">
       <footer>
         <button class="slide-arrow" id="slide-arrow-prev">
           &#8249;
@@ -179,7 +74,7 @@
           &#8250;
         </button>
       </footer>
-    </main>
+    </template>
 
     <!--<script src="https://cdn.jsdelivr.net/npm/rune-games-sdk@3/multiplayer.js"></script>-->
     <script src="logic.js"></script>

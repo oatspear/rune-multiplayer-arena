@@ -112,6 +112,11 @@ footer {
 }
 
 
+.tile.active {
+  background-color: lime;
+}
+
+
 footer {
   position: relative;
 }

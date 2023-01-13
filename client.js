@@ -8,7 +8,10 @@ const app = createApp({
   }
 });
 
-app.component("battle-header", BattleHeader);
+app.component("BattleHeader", BattleHeader);
+app.component("BattleRegion", BattleRegion);
+app.component("BattleTile", BattleTile);
+app.component("BattleFooter", BattleFooter);
 
 app.mount("#app");
 
@@ -25,12 +28,4 @@ nextButton.addEventListener("click", () => {
 prevButton.addEventListener("click", () => {
   const slideWidth = slide.clientWidth;
   slidesContainer.scrollLeft -= slideWidth;
-});
-
-function onTileClick(e) {
-  alert(`You clicked ${e.target.id}!`);
-}
-
-document.querySelectorAll(".tile").forEach(tile => {
-  tile.addEventListener("click", onTileClick);
 });
