@@ -27,7 +27,7 @@
 
       </div>
 
-      <battle-footer @spawn-ghouls="onSpawnGhouls">
+      <battle-footer @spawn-ghouls="onSpawnGhouls" @spawn-abomination="onSpawnAbomination">
       </battle-footer>
     </main>
 
@@ -65,6 +65,9 @@
         @click="onTileClick"
       >
         <battle-minion-counter :count="tileData.ghouls"></battle-minion-counter>
+        <div class="monster-counter">
+          <span v-for="n in tileData.abominations">A</span>
+        </div>
         <div>
           {{ tileIndex + 1 }}
         </div>
@@ -88,7 +91,7 @@
           &#8250;
         </button>
         <button @click="spawnGhouls">Move</button>
-        <button @click="spawnGhouls">Fight</button>
+        <button @click="spawnAbomination">Fight</button>
         <button @click="spawnGhouls">Ability</button>
         <button @click="spawnGhouls">Build</button>
       </footer>

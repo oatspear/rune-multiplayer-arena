@@ -34,13 +34,21 @@ const app = createApp({
   },
   methods: {
     onSpawnGhouls() {
-      const i = ((Math.random() * 9) | 0) + 1;
-      const tile = this.tiles[0][0];
+      const region = this.tiles[0];
+      const i = (Math.random() * region.length) | 0;
+      const tile = region[i];
       if (tile.ghouls >= 3) {
         tile.ghouls = 0;
       } else {
         tile.ghouls++;
       }
+    },
+
+    onSpawnAbomination() {
+      const region = this.tiles[0];
+      const i = (Math.random() * region.length) | 0;
+      const tile = region[i];
+      tile.abominations++;
     }
   }
 });

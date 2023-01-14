@@ -23,6 +23,9 @@ const BattleFooter = {
   methods: {
     spawnGhouls() {
       this.$emit("spawnGhouls");
+    },
+    spawnAbomination() {
+      this.$emit("spawnAbomination");
     }
   }
 };
