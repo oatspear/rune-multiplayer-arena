@@ -6,24 +6,24 @@
       name="viewport"
       content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Secular+One&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="styles.css" />
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
     <script src="components/battle.js"></script>
   </head>
   <body>
     <main id="app">
-      <battle-header></battle-header>
+      <battle-header :current-turn="currentTurn" :num-players="numPlayers"></battle-header>
 
       <div id="board">
-
-        <section class="slider-wrapper">
           <div class="slides-container" id="slides-container">
             <battle-region :region-index="0" :tiles="tiles[0]"></battle-region>
             <battle-region :region-index="1" :tiles="tiles[1]"></battle-region>
             <battle-region :region-index="2" :tiles="tiles[2]"></battle-region>
             <battle-region :region-index="3" :tiles="tiles[3]"></battle-region>
           </div>
-        </section>
 
       </div>
 
@@ -34,14 +34,26 @@
     <template id="vue-battle-header">
       <header>
         <div class="boss">
-          <img src="assets/skull-grey.png" alt="Boss Power" width="48" height="48">
+          <img src="assets/skull-grey.png" alt="Boss Power" width="32" height="32">
           <span class="label">0</span>
         </div>
         <div class="turn">
-
+          <div class="slot">
+            <span>O</span>
+          </div>
+          <div class="slot" v-if="numPlayers > 1">
+            <span>O</span>
+          </div>
+          <div class="slot" v-if="numPlayers > 2">
+            <span>O</span>
+          </div>
+          <div class="slot" v-if="numPlayers > 3">
+            <span>O</span>
+          </div>
+          <div class="marker"></div>
         </div>
         <div class="willpower">
-          <img src="assets/willpower.png" alt="Boss Power" width="48" height="48">
+          <img src="assets/willpower.png" alt="Willpower" width="32" height="32">
           <span class="label">20</span>
         </div>
       </header>
@@ -119,6 +131,7 @@
     <!--
     <div>Icons made by <a href="https://www.flaticon.com/authors/juicy-fish" title="juicy_fish">juicy_fish</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
     <a href="https://www.flaticon.com/free-icons/strong" title="strong icons">Willpower icons created by Prosymbols Premium - Flaticon</a>
+    <a href="https://www.flaticon.com/free-icons/joystick" title="joystick icons">Joystick icons created by Good Ware - Flaticon</a>
     -->
   </body>
 </html>

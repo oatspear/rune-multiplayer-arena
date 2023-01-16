@@ -24,6 +24,8 @@ function newRegion() {
 const app = createApp({
   data() {
     return {
+      currentTurn: 0,
+      numPlayers: 4,
       tiles: [
         newRegion(),
         newRegion(),

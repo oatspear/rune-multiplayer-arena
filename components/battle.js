@@ -1,10 +1,20 @@
 const BattleHeader = {
+  template: "#vue-battle-header",
+  props: {
+    currentTurn:  {
+      type: Number,
+      required: true
+    },
+    numPlayers:  {
+      type: Number,
+      required: true
+    }
+  },
   data() {
     return {
       message: "Imported header"
     }
   },
-  template: "#vue-battle-header",
   methods: {
     battleUpdate() {
       this.message = "Updated header";

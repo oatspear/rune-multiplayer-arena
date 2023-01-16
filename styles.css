@@ -3,6 +3,7 @@
 }
 
 html, body, main {
+  font-family: 'Secular One', sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -31,15 +32,10 @@ main {
 }
 
 #board {
-  background-color: blue;
+  background-color: #202124;
   flex-grow: 1;
-}
-
-.slider-wrapper {
-  margin: 0 1rem;
   position: relative;
   overflow: hidden;
-  height: 100%;
 }
 
 .slides-container {
@@ -60,6 +56,7 @@ main {
   flex: 1 0 100%;
   scroll-snap-align: start;
   display: flex;
+  padding: 0 .5rem;
 }
 
 .slide:nth-child(1) {
@@ -175,23 +172,74 @@ main {
 
 header {
   width: 100%;
-  min-height: 10vh;
+  padding: .5rem;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  font-size: 2rem;
-  font-weight: bold;
-  color: white;
-  background-color: green;
+  font-size: 1.5rem;
+  /* color: #202124; */
+  color: ivory;
+  /* background-color: #202124; */
+  /* background-color: ivory; */
+  background: linear-gradient(#4e4e4e, #202124);
 }
 
-header > div {
+header .label {
+  /* border-radius: 0.25rem; */
+  /* background-color: ivory; */
+  padding: 0 .25rem;
+  /* line-height: 1; */
+}
+
+header > .boss {
   flex: 1 1 0;
   display: flex;
   flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+header > .willpower {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+header > .turn {
+  flex: 2 1 0;
+  display: flex;
+  flex-direction: row;
+  border: 2px dashed ivory;
+  border-radius: .25rem;
+  height: 100%;
+}
+
+header > .turn > .slot {
+  flex: 1 1 0;
+  height: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
+  background-color: #202124;
+}
+
+header > .turn > .slot:nth-child(1) {
+  background-color: firebrick;
+}
+
+header > .turn > .slot:nth-child(2) {
+  background-color: royalblue;
+}
+
+header > .turn > .slot:nth-child(3) {
+  background-color: forestgreen;
+}
+
+header > .turn > .slot:nth-child(4) {
+  background-color: rebeccapurple;
 }
 
 /*******************************************************************************
@@ -199,9 +247,10 @@ header > div {
 *******************************************************************************/
 
 footer {
-  background-color: red;
   width: 100%;
   min-height: 30vh;
+  /* background-color: #4e4e4e; */
+  background: linear-gradient(#4e4e4e, #202124);
 }
 
 
