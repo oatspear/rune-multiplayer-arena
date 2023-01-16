@@ -108,16 +108,24 @@
 
     <template id="vue-battle-footer">
       <footer>
-        <button class="slide-arrow" id="slide-arrow-prev">
-          &#8249;
-        </button>
-        <button class="slide-arrow" id="slide-arrow-next">
-          &#8250;
-        </button>
-        <button @click.prevent="spawnGhouls">Move</button>
-        <button @click.prevent="spawnAbomination">Fight</button>
-        <button @click.prevent="spawnGhouls">Ability</button>
-        <button @click.prevent="spawnGhouls">Build</button>
+        <div class="player-info">
+          <span>ICON</span>
+          <span>Player Name</span>
+          <span style="color: red">Hearts</span>
+          <span style="color: gold">Resources</span>
+        </div>
+        <div class="action-bar">
+          <button class="button-28" @click.prevent="spawnGhouls">Move</button>
+          <button class="button-28" @click.prevent="spawnAbomination">Fight</button>
+          <button class="button-28" @click.prevent="spawnGhouls">Ability</button>
+          <button class="button-28" @click.prevent="spawnGhouls">Build</button>
+          <button class="slide-arrow" id="slide-arrow-prev">
+            &#8249;
+          </button>
+          <button class="slide-arrow" id="slide-arrow-next">
+            &#8250;
+          </button>
+        </div>
       </footer>
     </template>
 
