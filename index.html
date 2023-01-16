@@ -39,16 +39,16 @@
         </div>
         <div class="turn">
           <div class="slot">
-            <span>O</span>
+            <span v-if="currentTurn == 0">O</span>
           </div>
           <div class="slot" v-if="numPlayers > 1">
-            <span>O</span>
+            <span v-if="currentTurn == 1">O</span>
           </div>
           <div class="slot" v-if="numPlayers > 2">
-            <span>O</span>
+            <span v-if="currentTurn == 2">O</span>
           </div>
           <div class="slot" v-if="numPlayers > 3">
-            <span>O</span>
+            <span v-if="currentTurn == 3">O</span>
           </div>
           <div class="marker"></div>
         </div>
