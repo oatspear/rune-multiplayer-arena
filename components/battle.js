@@ -111,3 +111,13 @@ const BattleMinionCounter = {
     }
   }
 };
+
+const BattleMonsterCounter = {
+  template: "#vue-battle-monster-counter",
+  props: {
+    count: {
+      type: Number,
+      required: true
+    }
+  }
+};

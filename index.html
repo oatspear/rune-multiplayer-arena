@@ -32,8 +32,18 @@
     </main>
 
     <template id="vue-battle-header">
-      <header @click="battleUpdate">
-        {{ message }}
+      <header>
+        <div class="boss">
+          <img src="assets/skull-grey.png" alt="Boss Power" width="48" height="48">
+          <span class="label">0</span>
+        </div>
+        <div class="turn">
+
+        </div>
+        <div class="willpower">
+          <img src="assets/willpower.png" alt="Boss Power" width="48" height="48">
+          <span class="label">20</span>
+        </div>
       </header>
     </template>
 
@@ -65,9 +75,7 @@
         @click="onTileClick"
       >
         <battle-minion-counter :count="tileData.ghouls"></battle-minion-counter>
-        <div class="monster-counter">
-          <span v-for="n in tileData.abominations">A</span>
-        </div>
+        <battle-monster-counter :count="tileData.abominations"></battle-monster-counter>
         <div>
           {{ tileIndex + 1 }}
         </div>
@@ -76,9 +84,16 @@
 
     <template id="vue-battle-minion-counter">
       <div class="minion-counter">
-        <span v-if="count > 0">G</span>
-        <span v-if="count > 1">G</span>
-        <span v-if="count > 2">G</span>
+        <div class="token" v-if="count > 0"></div>
+        <div class="token" v-if="count > 1"></div>
+        <div class="token" v-if="count > 2"></div>
+      </div>
+    </template>
+
+    <template id="vue-battle-monster-counter">
+      <div class="monster-counter">
+        <div class="token" v-if="count == 1"></div>
+        <div class="token elite" v-else-if="count > 1"></div>
       </div>
     </template>
 
@@ -90,10 +105,10 @@
         <button class="slide-arrow" id="slide-arrow-next">
           &#8250;
         </button>
-        <button @click="spawnGhouls">Move</button>
-        <button @click="spawnAbomination">Fight</button>
-        <button @click="spawnGhouls">Ability</button>
-        <button @click="spawnGhouls">Build</button>
+        <button @click.prevent="spawnGhouls">Move</button>
+        <button @click.prevent="spawnAbomination">Fight</button>
+        <button @click.prevent="spawnGhouls">Ability</button>
+        <button @click.prevent="spawnGhouls">Build</button>
       </footer>
     </template>
 
@@ -103,6 +118,7 @@
 
     <!--
     <div>Icons made by <a href="https://www.flaticon.com/authors/juicy-fish" title="juicy_fish">juicy_fish</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div>
+    <a href="https://www.flaticon.com/free-icons/strong" title="strong icons">Willpower icons created by Prosymbols Premium - Flaticon</a>
     -->
   </body>
 </html>

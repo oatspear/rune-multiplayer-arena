@@ -57,6 +57,7 @@ app.component("BattleHeader", BattleHeader);
 app.component("BattleRegion", BattleRegion);
 app.component("BattleTile", BattleTile);
 app.component("BattleMinionCounter", BattleMinionCounter);
+app.component("BattleMonsterCounter", BattleMonsterCounter);
 app.component("BattleFooter", BattleFooter);
 
 app.mount("#app");
