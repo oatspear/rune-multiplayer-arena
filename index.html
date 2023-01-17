@@ -129,7 +129,21 @@
         <battle-player-info :player-data="playerData"></battle-player-info>
         <div class="action-bar">
           <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/mount.png" alt="Move" width="32" height="32">
+            <img src="assets/mount.png" alt="Move" width="16" height="16">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/power.png" alt="Attack" width="16" height="16">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/shield.png" alt="Defend" width="16" height="16">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/map.png" alt="Travel" width="16" height="16">
+          </button>
+        </div>
+        <div class="action-bar">
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/tower.png" alt="Build" width="32" height="32">
           </button>
           <button class="button-28" @click.prevent="spawnAbomination">
             <img src="assets/battle.png" alt="Fight" width="32" height="32">
@@ -141,26 +155,12 @@
             <img src="assets/rest.png" alt="Rest" width="32" height="32">
           </button>
         </div>
-        <div class="action-bar">
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/tower.png" alt="Build" width="32" height="32">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/map.png" alt="Travel" width="32" height="32">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/power.png" alt="Attack" width="32" height="32">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/shield.png" alt="Defend" width="32" height="32">
-          </button>
-          <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
-            &#8249;
-          </button>
-          <button class="slide-arrow" id="slide-arrow-next" @click.prevent="showNextPlayer">
-            &#8250;
-          </button> -->
-        </div>
+        <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
+          &#8249;
+        </button>
+        <button class="slide-arrow" id="slide-arrow-next" @click.prevent="showNextPlayer">
+        &#8250;
+        </button> -->
       </footer>
     </template>
 
