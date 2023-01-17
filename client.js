@@ -96,13 +96,15 @@ const app = createApp({
   }
 });
 
-app.component("BattleIconLabel", BattleIconLabel);
+app.component("BattleBoard", BattleBoard);
 app.component("BattleHeader", BattleHeader);
 app.component("BattleRegion", BattleRegion);
 app.component("BattleTile", BattleTile);
 app.component("BattleMinionCounter", BattleMinionCounter);
 app.component("BattleMonsterCounter", BattleMonsterCounter);
 app.component("BattleFooter", BattleFooter);
+app.component("BattlePlayerInfo", BattlePlayerInfo);
+app.component("BattleIconLabel", BattleIconLabel);
 
 app.mount("#app");
 

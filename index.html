@@ -17,15 +17,7 @@
     <main id="app">
       <battle-header :current-turn="currentTurn" :num-players="players.length"></battle-header>
 
-      <div id="board">
-          <div class="slides-container" id="slides-container">
-            <battle-region :region-index="0" :tiles="tiles[0]"></battle-region>
-            <battle-region :region-index="1" :tiles="tiles[1]"></battle-region>
-            <battle-region :region-index="2" :tiles="tiles[2]"></battle-region>
-            <battle-region :region-index="3" :tiles="tiles[3]"></battle-region>
-          </div>
-
-      </div>
+      <battle-board :tiles="tiles"></battle-board>
 
       <battle-footer
         :player-data="players[currentTurn]"
@@ -56,6 +48,17 @@
         </div>
         <battle-icon-label name="willpower" :value="24"></battle-icon-label>
       </header>
+    </template>
+
+    <template id="vue-battle-board">
+      <div id="board">
+          <div class="slides-container" id="slides-container">
+            <battle-region :region-index="0" :tiles="tiles[0]"></battle-region>
+            <battle-region :region-index="1" :tiles="tiles[1]"></battle-region>
+            <battle-region :region-index="2" :tiles="tiles[2]"></battle-region>
+            <battle-region :region-index="3" :tiles="tiles[3]"></battle-region>
+          </div>
+      </div>
     </template>
 
     <template id="vue-battle-region">
@@ -105,21 +108,25 @@
       </div>
     </template>
 
+    <template id="vue-battle-player-info">
+      <div class="player-info">
+        <div class="icon" :class="playerData.playerClass"></div>
+        <div class="nameplate">
+          <span class="name">{{ playerData.name }}</span>
+          <div class="heart-container">
+            <span v-for="n in playerData.health">
+              <img src="assets/heart-full.png" alt="Heart" width="16" height="16" v-if="playerData.currentHealth >= n">
+              <img src="assets/heart-empty.png" alt="Empty Heart" width="16" height="16" v-else>
+            </span>
+          </div>
+        </div>
+        <battle-icon-label name="gold" :value="playerData.gold"></battle-icon-label>
+      </div>
+    </template>
+
     <template id="vue-battle-footer">
       <footer>
-        <div class="player-info">
-          <div class="icon" :class="playerData.playerClass"></div>
-          <div class="nameplate">
-            <span class="name">{{ playerData.name }}</span>
-            <div class="heart-container">
-              <span v-for="n in playerData.health">
-                <img src="assets/heart-full.png" alt="Heart" width="16" height="16" v-if="playerData.currentHealth >= n">
-                <img src="assets/heart-empty.png" alt="Empty Heart" width="16" height="16" v-else>
-              </span>
-            </div>
-          </div>
-          <battle-icon-label name="gold" :value="playerData.gold"></battle-icon-label>
-        </div>
+        <battle-player-info :player-data="playerData"></battle-player-info>
         <div class="action-bar">
           <button class="button-28" @click.prevent="spawnGhouls">Move</button>
           <button class="button-28" @click.prevent="spawnAbomination">Fight</button>

@@ -1,11 +1,25 @@
+const BattleBoard = {
+  template: "#vue-battle-board",
+  props: {
+    tiles: {
+      type: Array,
+      required: true
+    }
+  },
+  data() {},
+  methods: {},
+  mounted() {}
+};
+
+
 const BattleHeader = {
   template: "#vue-battle-header",
   props: {
-    currentTurn:  {
+    currentTurn: {
       type: Number,
       required: true
     },
-    numPlayers:  {
+    numPlayers: {
       type: Number,
       required: true
     }
@@ -120,6 +134,17 @@ const BattleTile = {
     // methods can be called in lifecycle hooks, or other methods!
     // this.increment()
     console.log("battle tile is mounted:", this.regionIndex, this.tileIndex);
+  }
+};
+
+
+const BattlePlayerInfo = {
+  template: "#vue-battle-player-info",
+  props: {
+    playerData:  {
+      type: Object,
+      required: true
+    }
   }
 };
 
