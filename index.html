@@ -15,7 +15,7 @@
   </head>
   <body>
     <main id="app">
-      <battle-header :current-turn="currentTurn" :num-players="numPlayers"></battle-header>
+      <battle-header :current-turn="currentTurn" :num-players="players.length"></battle-header>
 
       <div id="board">
           <div class="slides-container" id="slides-container">
@@ -27,7 +27,13 @@
 
       </div>
 
-      <battle-footer @spawn-ghouls="onSpawnGhouls" @spawn-abomination="onSpawnAbomination">
+      <battle-footer
+        :player-data="players[currentTurn]"
+        @spawn-ghouls="onSpawnGhouls"
+        @spawn-abomination="onSpawnAbomination"
+        @show-previous-player="decrementTurn"
+        @show-next-player="incrementTurn"
+      >
       </battle-footer>
     </main>
 
@@ -47,7 +53,6 @@
           <div class="slot" v-if="numPlayers > 3">
             <span v-if="currentTurn == 3">▼</span>
           </div>
-          <div class="marker"></div>
         </div>
         <battle-icon-label name="willpower" :value="24"></battle-icon-label>
       </header>
@@ -103,27 +108,27 @@
     <template id="vue-battle-footer">
       <footer>
         <div class="player-info">
-          <div class="icon"></div>
+          <div class="icon" :class="playerData.playerClass"></div>
           <div class="nameplate">
-            <span class="name">Player Name</span>
+            <span class="name">{{ playerData.name }}</span>
             <div class="heart-container">
-              <span v-for="n in 8">
-                <img src="assets/heart-full.png" alt="Heart" width="16" height="16" v-if="n < 6">
+              <span v-for="n in playerData.health">
+                <img src="assets/heart-full.png" alt="Heart" width="16" height="16" v-if="playerData.currentHealth >= n">
                 <img src="assets/heart-empty.png" alt="Empty Heart" width="16" height="16" v-else>
               </span>
             </div>
           </div>
-          <battle-icon-label name="gold" :value="10"></battle-icon-label>
+          <battle-icon-label name="gold" :value="playerData.gold"></battle-icon-label>
         </div>
         <div class="action-bar">
           <button class="button-28" @click.prevent="spawnGhouls">Move</button>
           <button class="button-28" @click.prevent="spawnAbomination">Fight</button>
           <button class="button-28" @click.prevent="spawnGhouls">Ability</button>
           <button class="button-28" @click.prevent="spawnGhouls">Build</button>
-          <button class="slide-arrow" id="slide-arrow-prev">
+          <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
             &#8249;
           </button>
-          <button class="slide-arrow" id="slide-arrow-next">
+          <button class="slide-arrow" id="slide-arrow-next" @click.prevent="showNextPlayer">
             &#8250;
           </button>
         </div>

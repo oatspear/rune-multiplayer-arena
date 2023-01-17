@@ -21,11 +21,27 @@ function newRegion() {
   ];
 }
 
+function newPlayer(i, cls) {
+  return {
+    index: i,
+    name: `Player ${i+1}`,
+    health: 8,
+    currentHealth: (i+1)*2,
+    gold: (i+1)*2,
+    playerClass: cls
+  };
+}
+
 const app = createApp({
   data() {
     return {
       currentTurn: 0,
-      numPlayers: 4,
+      players: [
+        newPlayer(0, 'archer'),
+        newPlayer(1, 'warrior'),
+        newPlayer(2, 'rogue'),
+        newPlayer(3, 'mage')
+      ],
       tiles: [
         newRegion(),
         newRegion(),
@@ -51,7 +67,32 @@ const app = createApp({
       const i = (Math.random() * region.length) | 0;
       const tile = region[i];
       tile.abominations++;
+    },
+
+    incrementTurn() {
+      if (this.currentTurn < (this.players.length - 1)) {
+        this.currentTurn++;
+        this.refreshSlides();
+      }
+    },
+
+    decrementTurn() {
+      if (this.currentTurn > 0) {
+        this.currentTurn--;
+        this.refreshSlides();
+      }
+    },
+
+    refreshSlides() {
+      const slidesContainer = document.getElementById("slides-container");
+      const slide = document.querySelector(".slide");
+      const slideWidth = slide.clientWidth;
+      slidesContainer.scrollLeft = this.currentTurn * slideWidth;
     }
+  },
+
+  mounted() {
+    this.refreshSlides();
   }
 });
 
@@ -70,12 +111,12 @@ const slide = document.querySelector(".slide");
 const prevButton = document.getElementById("slide-arrow-prev");
 const nextButton = document.getElementById("slide-arrow-next");
 
-nextButton.addEventListener("click", () => {
-  const slideWidth = slide.clientWidth;
-  slidesContainer.scrollLeft += slideWidth;
-});
-
-prevButton.addEventListener("click", () => {
-  const slideWidth = slide.clientWidth;
-  slidesContainer.scrollLeft -= slideWidth;
-});
+// nextButton.addEventListener("click", () => {
+//   const slideWidth = slide.clientWidth;
+//   slidesContainer.scrollLeft += slideWidth;
+// });
+//
+// prevButton.addEventListener("click", () => {
+//   const slideWidth = slide.clientWidth;
+//   slidesContainer.scrollLeft -= slideWidth;
+// });

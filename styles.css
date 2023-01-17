@@ -280,11 +280,34 @@ footer > .player-info {
 .player-info > .icon {
   width: 32px;
   height: 32px;
-  background: no-repeat center/contain url("assets/archery.png");;
+}
+
+.player-info > .icon.archer {
+  background: no-repeat center/contain url("assets/archer.png");
+}
+
+.player-info > .icon.warrior {
+  background: no-repeat center/contain url("assets/warrior.png");
+}
+
+.player-info > .icon.rogue {
+  background: no-repeat center/contain url("assets/rogue.png");
+}
+
+.player-info > .icon.mage {
+  background: no-repeat center/contain url("assets/mage.png");
+}
+
+.player-info > .icon.berserker {
+  background: no-repeat center/contain url("assets/berserker.png");
+}
+
+.player-info > .icon.paladin {
+  background: no-repeat center/contain url("assets/paladin.png");
 }
 
 .player-info > .nameplate {
-  flex: 1 1 0;
+  flex: 2 1 0;
   padding: .2rem .5rem;
   display: flex;
   flex-direction: column;
@@ -292,7 +315,7 @@ footer > .player-info {
 }
 
 .player-info > .icon-label.gold {
-  flex: 0 0 auto;
+  flex: 1 1 0;
   font-size: 1.5rem;
 }
 

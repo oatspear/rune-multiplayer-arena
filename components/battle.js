@@ -30,12 +30,24 @@ const BattleHeader = {
 
 const BattleFooter = {
   template: "#vue-battle-footer",
+  props: {
+    playerData:  {
+      type: Object,
+      required: true
+    }
+  },
   methods: {
     spawnGhouls() {
       this.$emit("spawnGhouls");
     },
     spawnAbomination() {
       this.$emit("spawnAbomination");
+    },
+    showNextPlayer() {
+      this.$emit("showNextPlayer");
+    },
+    showPreviousPlayer() {
+      this.$emit("showPreviousPlayer");
     }
   }
 };
