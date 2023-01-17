@@ -131,3 +131,18 @@ const BattleMonsterCounter = {
     }
   }
 };
+
+
+const BattleIconLabel = {
+  template: "#vue-battle-icon-label",
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: Number,
+      required: true
+    }
+  }
+};

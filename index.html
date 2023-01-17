@@ -33,10 +33,7 @@
 
     <template id="vue-battle-header">
       <header>
-        <div class="boss">
-          <img src="assets/skull-boss.png" alt="Boss Power" width="32" height="32">
-          <span class="label">0</span>
-        </div>
+        <battle-icon-label name="boss" :value="0"></battle-icon-label>
         <div class="turn">
           <div class="slot">
             <span v-if="currentTurn == 0">▼</span>
@@ -52,10 +49,7 @@
           </div>
           <div class="marker"></div>
         </div>
-        <div class="willpower">
-          <img src="assets/willpower.png" alt="Willpower" width="32" height="32">
-          <span class="label">20</span>
-        </div>
+        <battle-icon-label name="willpower" :value="24"></battle-icon-label>
       </header>
     </template>
 
@@ -109,10 +103,17 @@
     <template id="vue-battle-footer">
       <footer>
         <div class="player-info">
-          <span>ICON</span>
-          <span>Player Name</span>
-          <span style="color: red">Hearts</span>
-          <span style="color: gold">Resources</span>
+          <div class="icon"></div>
+          <div class="nameplate">
+            <span class="name">Player Name</span>
+            <div class="heart-container">
+              <span v-for="n in 8">
+                <img src="assets/heart-full.png" alt="Heart" width="16" height="16" v-if="n < 6">
+                <img src="assets/heart-empty.png" alt="Empty Heart" width="16" height="16" v-else>
+              </span>
+            </div>
+          </div>
+          <battle-icon-label name="gold" :value="10"></battle-icon-label>
         </div>
         <div class="action-bar">
           <button class="button-28" @click.prevent="spawnGhouls">Move</button>
@@ -127,6 +128,13 @@
           </button>
         </div>
       </footer>
+    </template>
+
+    <template id="vue-battle-icon-label">
+      <div class="icon-label" :class="name">
+        <img :src="`assets/${name}.png`" alt="Icon" width="32" height="32">
+        <span class="label">{{ value }}</span>
+      </div>
     </template>
 
     <!--<script src="https://cdn.jsdelivr.net/npm/rune-games-sdk@3/multiplayer.js"></script>-->

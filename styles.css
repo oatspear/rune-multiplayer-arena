@@ -22,6 +22,26 @@ body {
 
 
 /*******************************************************************************
+  Miscellaneous
+*******************************************************************************/
+
+
+.icon-label {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.icon-label > .label {
+  /* border-radius: 0.25rem; */
+  /* background-color: ivory; */
+  padding: 0 .25rem;
+  /* line-height: 1; */
+}
+
+
+/*******************************************************************************
   Game Board
 *******************************************************************************/
 
@@ -184,29 +204,17 @@ header {
   /* background-color: #202124; */
   /* background-color: ivory; */
   background: linear-gradient(#4e4e4e, #202124);
+  border-bottom: 2px solid whitesmoke;
 }
 
-header .label {
-  /* border-radius: 0.25rem; */
-  /* background-color: ivory; */
-  padding: 0 .25rem;
-  /* line-height: 1; */
-}
-
-header > .boss {
+header > .icon-label.boss {
   flex: 1 1 0;
-  display: flex;
-  flex-direction: row;
   justify-content: flex-start;
-  align-items: center;
 }
 
-header > .willpower {
+header > .icon-label.willpower {
   flex: 1 1 0;
-  display: flex;
-  flex-direction: row;
   justify-content: flex-end;
-  align-items: center;
 }
 
 header > .turn {
@@ -262,13 +270,30 @@ footer > .player-info {
   flex-direction: row;
   align-items: center;
   width: 100%;
-  height: 32px;
-  background-color: grey;
+  background: linear-gradient(#4e4e4e, #202124);
+  padding: 0 .5rem;
+  color: ivory;
+  border-top: 2px solid whitesmoke;
+  border-bottom: 2px solid whitesmoke;
 }
 
-footer > .player-info > * {
+.player-info > .icon {
+  width: 32px;
+  height: 32px;
+  background: no-repeat center/contain url("assets/archery.png");;
+}
+
+.player-info > .nameplate {
   flex: 1 1 0;
-  text-align: center;
+  padding: .2rem .5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.player-info > .icon-label.gold {
+  flex: 0 0 auto;
+  font-size: 1.5rem;
 }
 
 

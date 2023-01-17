@@ -55,6 +55,7 @@ const app = createApp({
   }
 });
 
+app.component("BattleIconLabel", BattleIconLabel);
 app.component("BattleHeader", BattleHeader);
 app.component("BattleRegion", BattleRegion);
 app.component("BattleTile", BattleTile);
