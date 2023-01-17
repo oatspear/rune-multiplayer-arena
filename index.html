@@ -128,16 +128,38 @@
       <footer>
         <battle-player-info :player-data="playerData"></battle-player-info>
         <div class="action-bar">
-          <button class="button-28" @click.prevent="spawnGhouls">Move</button>
-          <button class="button-28" @click.prevent="spawnAbomination">Fight</button>
-          <button class="button-28" @click.prevent="spawnGhouls">Ability</button>
-          <button class="button-28" @click.prevent="spawnGhouls">Build</button>
-          <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/mount.png" alt="Move">
+          </button>
+          <button class="button-28" @click.prevent="spawnAbomination">
+            <img src="assets/battle.png" alt="Fight">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/ability.png" alt="Ability">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/rest.png" alt="Rest">
+          </button>
+        </div>
+        <div class="action-bar">
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/tower.png" alt="Build">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/map.png" alt="Travel">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/power.png" alt="Attack">
+          </button>
+          <button class="button-28" @click.prevent="spawnGhouls">
+            <img src="assets/shield.png" alt="Defend">
+          </button>
+          <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
             &#8249;
           </button>
           <button class="slide-arrow" id="slide-arrow-next" @click.prevent="showNextPlayer">
             &#8250;
-          </button>
+          </button> -->
         </div>
       </footer>
     </template>
