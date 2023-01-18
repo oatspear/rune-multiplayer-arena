@@ -63,20 +63,18 @@
 
     <template id="vue-battle-region">
       <div :id="`region-${regionIndex}`" class="slide">
-        <div class="column">
+        <div class="row">
           <battle-tile :region-index="regionIndex" :tile-index="0" :tile-data="tiles[0]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="3" :tile-data="tiles[3]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="6" :tile-data="tiles[6]"></battle-tile>
-        </div>
-        <div class="column">
-          <battle-tile :region-index="regionIndex" :tile-index="1" :is-boss :tile-data="tiles[1]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="4" :tile-data="tiles[4]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="7" :is-stronghold :tile-data="tiles[7]"></battle-tile>
-        </div>
-        <div class="column">
+          <battle-tile :region-index="regionIndex" :tile-index="1" :tile-data="tiles[1]"></battle-tile>
           <battle-tile :region-index="regionIndex" :tile-index="2" :tile-data="tiles[2]"></battle-tile>
+        </div>
+        <div class="row">
+          <battle-tile :region-index="regionIndex" :tile-index="4" :tile-data="tiles[4]"></battle-tile>
           <battle-tile :region-index="regionIndex" :tile-index="5" :tile-data="tiles[5]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="8" :tile-data="tiles[8]"></battle-tile>
+        </div>
+        <div class="row">
+          <battle-tile :region-index="regionIndex" :tile-index="6" :tile-data="tiles[6]"></battle-tile>
+          <battle-tile :region-index="regionIndex" :tile-index="7" :tile-data="tiles[7]"></battle-tile>
         </div>
       </div>
     </template>
