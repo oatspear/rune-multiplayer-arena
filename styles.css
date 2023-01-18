@@ -114,15 +114,14 @@ main {
 
 .tile {
   margin: .5rem;
-  width: 90%;
   flex: 1 0 0;
-  border: 1px solid black;
+  border: 1px solid whitesmoke;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: whitesmoke;
+  background-color: #202124;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -135,11 +134,6 @@ main {
 
 .tile.boss {
   background-color: violet;
-  border: 2px solid black;
-}
-
-.tile.stronghold {
-  background-color: goldenrod;
   border: 2px solid black;
 }
 
@@ -282,33 +276,38 @@ footer > .player-info {
   border-bottom: 2px solid whitesmoke;
 }
 
-.player-info > .icon {
+.player-info > .icon,
+.tile > .icon {
   width: 32px;
   height: 32px;
 }
 
-.player-info > .icon.archer {
+.icon.archer {
   background: no-repeat center/contain url("assets/archer.png");
 }
 
-.player-info > .icon.warrior {
+.icon.warrior {
   background: no-repeat center/contain url("assets/warrior.png");
 }
 
-.player-info > .icon.rogue {
+.icon.rogue {
   background: no-repeat center/contain url("assets/rogue.png");
 }
 
-.player-info > .icon.mage {
+.icon.mage {
   background: no-repeat center/contain url("assets/mage.png");
 }
 
-.player-info > .icon.berserker {
+.icon.berserker {
   background: no-repeat center/contain url("assets/berserker.png");
 }
 
-.player-info > .icon.paladin {
+.icon.paladin {
   background: no-repeat center/contain url("assets/paladin.png");
+}
+
+.icon.enemy {
+  background: no-repeat center/contain url("assets/boss.png");
 }
 
 .player-info > .nameplate {

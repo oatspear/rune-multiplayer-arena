@@ -41,7 +41,8 @@ const app = createApp({
       players: [
         newPlayer(0, 'archer'),
         newPlayer(1, 'warrior'),
-        newPlayer(2, 'rogue')
+        newPlayer(2, 'rogue'),
+        newPlayer(3, 'mage')
       ],
       tiles: [
         newRegion(),

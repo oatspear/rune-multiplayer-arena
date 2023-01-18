@@ -70,10 +70,8 @@
         </div>
         <div class="row">
           <battle-tile :tile-index="4" :tile-data="players[0]"></battle-tile>
-          <battle-tile :tile-index="5" :tile-data="players[1]"></battle-tile>
-        </div>
-        <div class="row">
-          <battle-tile :tile-index="6" :tile-data="players[2]"></battle-tile>
+          <battle-tile :tile-index="5" :tile-data="players[1]" v-if="players.length > 1"></battle-tile>
+          <battle-tile :tile-index="6" :tile-data="players[2]" v-if="players.length > 2"></battle-tile>
           <battle-tile :tile-index="7" :tile-data="players[3]" v-if="players.length > 3"></battle-tile>
         </div>
       </div>
@@ -85,9 +83,6 @@
         :class="{active: isActive, boss: isBoss}"
         @click="onTileClick"
       >
-        <p class="nameplate">
-          {{ tileData.name }}
-        </p>
         <div class="icon" :class="tileData.characterClass"></div>
       </div>
     </template>
