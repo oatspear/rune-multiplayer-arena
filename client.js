@@ -2,6 +2,8 @@ const { createApp } = Vue
 
 function newTile() {
   return {
+    name: "none",
+    characterClass: "enemy",
     ghouls: 0,
     abominations: 0
   };
@@ -28,7 +30,7 @@ function newPlayer(i, cls) {
     health: 8,
     currentHealth: (i+1)*2,
     gold: (i+1)*2,
-    playerClass: cls
+    characterClass: cls
   };
 }
 
@@ -39,8 +41,7 @@ const app = createApp({
       players: [
         newPlayer(0, 'archer'),
         newPlayer(1, 'warrior'),
-        newPlayer(2, 'rogue'),
-        newPlayer(3, 'mage')
+        newPlayer(2, 'rogue')
       ],
       tiles: [
         newRegion(),
@@ -98,7 +99,7 @@ const app = createApp({
 
 app.component("BattleBoard", BattleBoard);
 app.component("BattleHeader", BattleHeader);
-app.component("BattleRegion", BattleRegion);
+app.component("BattleScene", BattleScene);
 app.component("BattleTile", BattleTile);
 app.component("BattleMinionCounter", BattleMinionCounter);
 app.component("BattleMonsterCounter", BattleMonsterCounter);

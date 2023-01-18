@@ -17,7 +17,7 @@
     <main id="app">
       <battle-header :current-turn="currentTurn" :num-players="players.length"></battle-header>
 
-      <battle-board :tiles="tiles"></battle-board>
+      <battle-board :tiles="tiles" :players="players"></battle-board>
 
       <battle-footer
         :player-data="players[currentTurn]"
@@ -53,41 +53,42 @@
     <template id="vue-battle-board">
       <div id="board">
           <div class="slides-container" id="slides-container">
-            <battle-region :region-index="0" :tiles="tiles[0]"></battle-region>
-            <battle-region :region-index="1" :tiles="tiles[1]"></battle-region>
-            <battle-region :region-index="2" :tiles="tiles[2]"></battle-region>
-            <battle-region :region-index="3" :tiles="tiles[3]"></battle-region>
+            <battle-scene :scene-index="0" :tiles="tiles[0]" :players="players"></battle-scene>
+            <battle-scene :scene-index="1" :tiles="tiles[1]" :players="players"></battle-scene>
+            <battle-scene :scene-index="2" :tiles="tiles[2]" :players="players"></battle-scene>
+            <battle-scene :scene-index="3" :tiles="tiles[3]" :players="players"></battle-scene>
           </div>
       </div>
     </template>
 
-    <template id="vue-battle-region">
-      <div :id="`region-${regionIndex}`" class="slide">
+    <template id="vue-battle-scene">
+      <div :id="`battle-scene-${sceneIndex}`" class="slide">
         <div class="row">
-          <battle-tile :region-index="regionIndex" :tile-index="0" :tile-data="tiles[0]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="1" :tile-data="tiles[1]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="2" :tile-data="tiles[2]"></battle-tile>
+          <battle-tile :tile-index="0" :tile-data="tiles[0]"></battle-tile>
+          <battle-tile :tile-index="1" :tile-data="tiles[1]"></battle-tile>
+          <battle-tile :tile-index="2" :tile-data="tiles[2]"></battle-tile>
         </div>
         <div class="row">
-          <battle-tile :region-index="regionIndex" :tile-index="4" :tile-data="tiles[4]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="5" :tile-data="tiles[5]"></battle-tile>
+          <battle-tile :tile-index="4" :tile-data="players[0]"></battle-tile>
+          <battle-tile :tile-index="5" :tile-data="players[1]"></battle-tile>
         </div>
         <div class="row">
-          <battle-tile :region-index="regionIndex" :tile-index="6" :tile-data="tiles[6]"></battle-tile>
-          <battle-tile :region-index="regionIndex" :tile-index="7" :tile-data="tiles[7]"></battle-tile>
+          <battle-tile :tile-index="6" :tile-data="players[2]"></battle-tile>
+          <battle-tile :tile-index="7" :tile-data="players[3]" v-if="players.length > 3"></battle-tile>
         </div>
       </div>
     </template>
 
     <template id="vue-battle-tile">
       <div
-        :id="`tile-${regionIndex}-${tileIndex}`"
         class="tile"
-        :class="{active: isActive, boss: isBoss, stronghold: isStronghold}"
+        :class="{active: isActive, boss: isBoss}"
         @click="onTileClick"
       >
-        <battle-minion-counter :count="tileData.ghouls"></battle-minion-counter>
-        <battle-monster-counter :count="tileData.abominations"></battle-monster-counter>
+        <p class="nameplate">
+          {{ tileData.name }}
+        </p>
+        <div class="icon" :class="tileData.characterClass"></div>
       </div>
     </template>
 
@@ -108,7 +109,7 @@
 
     <template id="vue-battle-player-info">
       <div class="player-info">
-        <div class="icon" :class="playerData.playerClass"></div>
+        <div class="icon" :class="playerData.characterClass"></div>
         <div class="nameplate">
           <span class="name">{{ playerData.name }}</span>
           <div class="heart-container">

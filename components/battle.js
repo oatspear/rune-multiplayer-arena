@@ -4,6 +4,10 @@ const BattleBoard = {
     tiles: {
       type: Array,
       required: true
+    },
+    players: {
+      type: Array,
+      required: true
     }
   },
   data() {},
@@ -67,14 +71,18 @@ const BattleFooter = {
 };
 
 
-const BattleRegion = {
-  template: "#vue-battle-region",
+const BattleScene = {
+  template: "#vue-battle-scene",
   props: {
-    regionIndex:  {
+    sceneIndex:  {
       type: Number,
       required: true
     },
     tiles: {
+      type: Array,
+      required: true
+    },
+    players: {
       type: Array,
       required: true
     }
@@ -82,15 +90,11 @@ const BattleRegion = {
   data() {
     return {};
   },
-  methods: {
-    battleUpdate() {
-      this.message = "Updated header";
-    }
-  },
+  methods: {},
   mounted() {
     // methods can be called in lifecycle hooks, or other methods!
     // this.increment()
-    console.log("battle region is mounted:", this.regionIndex);
+    console.log("battle scene is mounted:", this.sceneIndex);
   }
 };
 
@@ -98,10 +102,6 @@ const BattleRegion = {
 const BattleTile = {
   template: "#vue-battle-tile",
   props: {
-    regionIndex: {
-      type: Number,
-      required: true
-    },
     tileIndex: {
       type: Number,
       required: true
@@ -110,8 +110,7 @@ const BattleTile = {
       type: Object,
       required: true
     },
-    isBoss: Boolean,
-    isStronghold: Boolean
+    isBoss: Boolean
   },
   data() {
     return {
@@ -133,7 +132,7 @@ const BattleTile = {
   mounted() {
     // methods can be called in lifecycle hooks, or other methods!
     // this.increment()
-    console.log("battle tile is mounted:", this.regionIndex, this.tileIndex);
+    console.log("battle tile is mounted:", this.tileIndex);
   }
 };
 
