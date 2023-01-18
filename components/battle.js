@@ -74,7 +74,11 @@ const BattleFooter = {
 const BattleScene = {
   template: "#vue-battle-scene",
   props: {
-    sceneIndex:  {
+    sceneIndex: {
+      type: Number,
+      required: true
+    },
+    playerIndex: {
       type: Number,
       required: true
     },
@@ -110,7 +114,8 @@ const BattleTile = {
       type: Object,
       required: true
     },
-    isBoss: Boolean
+    isBoss: Boolean,
+    isOwned: Boolean
   },
   data() {
     return {

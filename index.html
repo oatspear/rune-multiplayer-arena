@@ -53,10 +53,10 @@
     <template id="vue-battle-board">
       <div id="board">
           <div class="slides-container" id="slides-container">
-            <battle-scene :scene-index="0" :tiles="tiles[0]" :players="players"></battle-scene>
-            <battle-scene :scene-index="1" :tiles="tiles[1]" :players="players"></battle-scene>
-            <battle-scene :scene-index="2" :tiles="tiles[2]" :players="players"></battle-scene>
-            <battle-scene :scene-index="3" :tiles="tiles[3]" :players="players"></battle-scene>
+            <battle-scene :scene-index="0" :tiles="tiles[0]" :players="players" :player-index="0"></battle-scene>
+            <battle-scene :scene-index="1" :tiles="tiles[1]" :players="players" :player-index="0"></battle-scene>
+            <battle-scene :scene-index="2" :tiles="tiles[2]" :players="players" :player-index="0"></battle-scene>
+            <battle-scene :scene-index="3" :tiles="tiles[3]" :players="players" :player-index="0"></battle-scene>
           </div>
       </div>
     </template>
@@ -69,10 +69,13 @@
           <battle-tile :tile-index="2" :tile-data="tiles[2]"></battle-tile>
         </div>
         <div class="row">
-          <battle-tile :tile-index="4" :tile-data="players[0]"></battle-tile>
-          <battle-tile :tile-index="5" :tile-data="players[1]" v-if="players.length > 1"></battle-tile>
-          <battle-tile :tile-index="6" :tile-data="players[2]" v-if="players.length > 2"></battle-tile>
-          <battle-tile :tile-index="7" :tile-data="players[3]" v-if="players.length > 3"></battle-tile>
+          <battle-tile
+            v-for="n in players.length"
+            :tile-index="n"
+            :tile-data="players[n-1]"
+            :is-owned="playerIndex == (n-1)"
+          >
+          </battle-tile>
         </div>
       </div>
     </template>
@@ -81,7 +84,7 @@
       <div class="tile-container">
         <div
         class="tile"
-        :class="{active: isActive, boss: isBoss}"
+        :class="{active: isActive, boss: isBoss, owned: isOwned}"
         @click="onTileClick"
         >
         <div class="icon">

@@ -121,6 +121,9 @@ main {
   -webkit-user-select: none;
 }
 
+.tile.owned {
+  border: 2px solid gold;
+}
 
 .tile.active {
   background-color: lime;
