@@ -78,24 +78,8 @@ main {
   scroll-snap-align: start;
   display: flex;
   flex-direction: column;
-  padding: 0 .5rem;
-}
-
-.slide:nth-child(1) {
-  background-color: firebrick;
-}
-
-.slide:nth-child(2) {
-  background-color: royalblue;
-}
-
-.slide:nth-child(3) {
-  background-color: forestgreen;
-  margin: 0;
-}
-
-.slide:nth-child(4) {
-  background-color: rebeccapurple;
+  padding: .5rem;
+  background: linear-gradient(#4e4e4e, #202124);
 }
 
 
@@ -112,18 +96,28 @@ main {
   flex-direction: row;
 }
 
-.tile {
-  margin: .5rem;
+.tile-container {
   flex: 1 0 0;
-  border: 1px solid whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tile {
+  width: 90%;
+  max-width: 8rem;
+  flex: 0 0 auto;
+  border: 2px solid whitesmoke;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: #202124;
+  color: ivory;
   cursor: pointer;
   user-select: none;
+  padding: .5rem;
   -webkit-user-select: none;
 }
 
@@ -136,6 +130,51 @@ main {
   background-color: violet;
   border: 2px solid black;
 }
+
+.tile > .icon {
+  flex: 1 0 auto;
+}
+
+.tile > .icon > img {
+  width: 32px;
+  height: 32px;
+}
+
+.tile > .effect-anchor {
+  width: 100%;
+  position: relative;
+  height: .5rem;
+}
+
+.tile > .stats {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.stats > .power,
+.stats > .health {
+  flex: 1 1 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* .stats > .power {
+  background: no-repeat center/contain url("assets/power.png");
+}
+
+.stats > .health {
+  background: no-repeat center/contain url("assets/shield.png");
+} */
+
+/* .stats > .power > span,
+.stats > .health > span {
+  border-radius: .5rem;
+  background-color: wheat;
+} */
 
 .minion-counter {
   flex: 1 1 0;
@@ -276,8 +315,7 @@ footer > .player-info {
   border-bottom: 2px solid whitesmoke;
 }
 
-.player-info > .icon,
-.tile > .icon {
+.player-info > .icon {
   width: 32px;
   height: 32px;
 }

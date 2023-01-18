@@ -3,7 +3,7 @@ const { createApp } = Vue
 function newTile() {
   return {
     name: "none",
-    characterClass: "enemy",
+    characterClass: "boss",
     ghouls: 0,
     abominations: 0
   };
