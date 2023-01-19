@@ -108,20 +108,7 @@
     <template id="vue-battle-footer">
       <footer>
         <battle-player-info :player-data="playerData"></battle-player-info>
-        <div class="action-bar">
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/tower.png" alt="Build" width="32" height="32">
-          </button>
-          <button class="button-28" @click.prevent="spawnAbomination">
-            <img src="assets/battle.png" alt="Fight" width="32" height="32">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/ability.png" alt="Ability" width="32" height="32">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/rest.png" alt="Rest" width="32" height="32">
-          </button>
-        </div>
+        <battle-action-bar></battle-action-bar>
         <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
           &#8249;
         </button>
@@ -144,6 +131,31 @@
         </h2>
         <battle-icon-label name="power" :value="playerData.power" :size="16"></battle-icon-label>
         <battle-icon-label name="shield" :value="playerData.currentHealth" :size="16"></battle-icon-label>
+      </div>
+    </template>
+
+    <template id="vue-battle-action-bar">
+      <div class="action-bar">
+        <div class="center-container">
+          <button class="action-button" @click.prevent="spawnAbomination">
+            <img src="assets/battle.png" alt="Fight" width="32" height="32">
+          </button>
+        </div>
+        <div class="center-container">
+          <button class="action-button" @click.prevent="spawnGhouls">
+            <img src="assets/tower.png" alt="Build" width="32" height="32">
+          </button>
+        </div>
+        <div class="center-container">
+          <button class="action-button" @click.prevent="spawnGhouls">
+            <img src="assets/ability.png" alt="Ability" width="32" height="32">
+          </button>
+        </div>
+        <div class="center-container">
+          <button class="action-button" @click.prevent="spawnGhouls">
+            <img src="assets/rest.png" alt="Rest" width="32" height="32">
+          </button>
+        </div>
       </div>
     </template>
 

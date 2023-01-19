@@ -41,6 +41,16 @@ body {
 }
 
 
+.center-container {
+  flex: 1 1 auto;
+  width: 100%;
+  padding: .25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
 /*******************************************************************************
   Game Board
 *******************************************************************************/
@@ -374,11 +384,11 @@ footer > .action-bar {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: .5rem 1rem;
+  padding: .25rem;
 }
 
 
-.button-28 {
+.action-button {
   appearance: none;
   background-color: #202124;
   border: 2px solid #ivory;
@@ -402,20 +412,17 @@ footer > .action-bar {
   will-change: transform;
 }
 
-.button-28:disabled {
+.action-button:disabled {
   pointer-events: none;
 }
 
-.button-28:hover {
+.action-button:hover {
   color: #fff;
   background-color: #1A1A1A;
-  box-shadow: rgba(0, 0, 0, 0.25) 0 8px 15px;
-  transform: translateY(-2px);
 }
 
-.button-28:active {
-  box-shadow: none;
-  transform: translateY(0);
+.action-button:active {
+  background-color: lime;
 }
 
 

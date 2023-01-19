@@ -153,6 +153,12 @@ const BattlePlayerInfo = {
 };
 
 
+const BattleActionBar = {
+  template: "#vue-battle-action-bar",
+  props: {},
+};
+
+
 const BattleIconLabel = {
   template: "#vue-battle-icon-label",
   props: {

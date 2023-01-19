@@ -116,6 +116,7 @@ app.component("BattleScene", BattleScene);
 app.component("BattleTile", BattleTile);
 app.component("BattleFooter", BattleFooter);
 app.component("BattlePlayerInfo", BattlePlayerInfo);
+app.component("BattleActionBar", BattleActionBar);
 app.component("BattleIconLabel", BattleIconLabel);
 
 app.mount("#app");
