@@ -17,21 +17,25 @@
     <main id="app">
       <battle-header :current-turn="currentTurn" :num-players="players.length"></battle-header>
 
-      <battle-board :tiles="tiles" :players="players"></battle-board>
+      <battle-board
+        :tiles="tiles"
+        :players="players"
+        :selected-enemy="ui.selectedEnemy"
+        :selected-player="ui.selectedPlayer"
+        @selected-enemy="onEnemySelected"
+        @selected-player="onPlayerSelected"
+      >
+      </battle-board>
 
       <battle-footer
-        :player-data="players[currentTurn]"
-        @spawn-ghouls="onSpawnGhouls"
-        @spawn-abomination="onSpawnAbomination"
-        @show-previous-player="decrementTurn"
-        @show-next-player="incrementTurn"
+        v-bind="ui.footer"
+        @use-ability="onUseAbility"
       >
       </battle-footer>
     </main>
 
     <template id="vue-battle-header">
       <header>
-        <battle-icon-label name="boss" :value="0"></battle-icon-label>
         <div class="turn">
           <div class="slot">
             <span v-if="currentTurn == 0">▼</span>
@@ -46,17 +50,23 @@
             <span v-if="currentTurn == 3">▼</span>
           </div>
         </div>
-        <battle-icon-label name="willpower" :value="24"></battle-icon-label>
       </header>
     </template>
 
     <template id="vue-battle-board">
       <div id="board">
           <div class="slides-container" id="slides-container">
-            <battle-scene :scene-index="0" :tiles="tiles[0]" :players="players" :player-index="0"></battle-scene>
-            <battle-scene :scene-index="1" :tiles="tiles[1]" :players="players" :player-index="0"></battle-scene>
-            <battle-scene :scene-index="2" :tiles="tiles[2]" :players="players" :player-index="0"></battle-scene>
-            <battle-scene :scene-index="3" :tiles="tiles[3]" :players="players" :player-index="0"></battle-scene>
+            <battle-scene
+              :scene-index="0"
+              :tiles="tiles[0]"
+              :players="players"
+              :player-index="0"
+              :selected-enemy="selectedEnemy"
+              :selected-player="selectedPlayer"
+              @selected-enemy="onEnemySelected"
+              @selected-player="onPlayerSelected"
+            >
+            </battle-scene>
           </div>
       </div>
     </template>
@@ -64,16 +74,23 @@
     <template id="vue-battle-scene">
       <div :id="`battle-scene-${sceneIndex}`" class="slide">
         <div class="row">
-          <battle-tile :tile-index="0" :tile-data="tiles[0]"></battle-tile>
-          <battle-tile :tile-index="1" :tile-data="tiles[1]"></battle-tile>
-          <battle-tile :tile-index="2" :tile-data="tiles[2]"></battle-tile>
+          <battle-tile
+            v-for="n in tiles.length"
+            :tile-index="(n-1)"
+            :tile-data="tiles[n-1]"
+            :is-active="selectedEnemy == (n-1)"
+            @selected="onEnemySelected"
+          >
+          </battle-tile>
         </div>
         <div class="row">
           <battle-tile
             v-for="n in players.length"
-            :tile-index="n"
+            :tile-index="(n-1)"
             :tile-data="players[n-1]"
+            :is-active="selectedPlayer == (n-1)"
             :is-owned="playerIndex == (n-1)"
+            @selected="onPlayerSelected"
           >
           </battle-tile>
         </div>
@@ -107,8 +124,14 @@
 
     <template id="vue-battle-footer">
       <footer>
-        <battle-player-info :player-data="playerData"></battle-player-info>
-        <battle-action-bar></battle-action-bar>
+        <battle-player-info
+          :display-name="characterData.name"
+          :class-id="characterData.characterClass.id"
+          :class-name="characterData.characterClass.name"
+          :power-value="characterData.power"
+          :health-value="characterData.health"
+        ></battle-player-info>
+        <battle-action-bar @use-ability="onUseAbility"></battle-action-bar>
         <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
           &#8249;
         </button>
@@ -116,9 +139,8 @@
         &#8250;
         </button> -->
         <p class="description">
-          <span class="name">Ability Name</span>
-          This is a very long line.<br>
-          This is another very long line.
+          <span class="name">{{ itemName }}</span>
+          {{ itemDescription }}
         </p>
       </footer>
     </template>
@@ -126,33 +148,35 @@
     <template id="vue-battle-player-info">
       <div class="player-info">
         <h2 class="nameplate">
-          <span class="class" :class="playerData.characterClass.id">{{ playerData.characterClass.name }}</span>
-          <span class="name">{{ playerData.name }}</span>
+          <span class="class" :class="classId">{{ className }}</span>
+          <span class="name">{{ displayName || "&nbsp;" }}</span>
         </h2>
-        <battle-icon-label name="power" :value="playerData.power" :size="16"></battle-icon-label>
-        <battle-icon-label name="shield" :value="playerData.currentHealth" :size="16"></battle-icon-label>
+        <div class="stats">
+          <battle-icon-label name="power" :value="powerValue" :size="16" v-if="powerValue > 0"></battle-icon-label>
+          <battle-icon-label name="shield" :value="healthValue" :size="16" v-if="healthValue > 0"></battle-icon-label>
+        </div>
       </div>
     </template>
 
     <template id="vue-battle-action-bar">
       <div class="action-bar">
         <div class="center-container">
-          <button class="action-button" @click.prevent="spawnAbomination">
+          <button class="action-button" @click.prevent.stop="useAbility(0)">
             <img src="assets/battle.png" alt="Fight" width="32" height="32">
           </button>
         </div>
         <div class="center-container">
-          <button class="action-button" @click.prevent="spawnGhouls">
+          <button class="action-button" @click.prevent.stop="useAbility(1)" disabled>
             <img src="assets/tower.png" alt="Build" width="32" height="32">
           </button>
         </div>
         <div class="center-container">
-          <button class="action-button" @click.prevent="spawnGhouls">
+          <button class="action-button" @click.prevent.stop="useAbility(2)">
             <img src="assets/ability.png" alt="Ability" width="32" height="32">
           </button>
         </div>
         <div class="center-container">
-          <button class="action-button" @click.prevent="spawnGhouls">
+          <button class="action-button" @click.prevent.stop="useAbility(3)">
             <img src="assets/rest.png" alt="Rest" width="32" height="32">
           </button>
         </div>

@@ -136,7 +136,7 @@ main {
 }
 
 .tile.active {
-  background-color: lime;
+  background-color: royalblue;
 }
 
 .tile.boss {
@@ -150,6 +150,10 @@ main {
   font-size: .75rem;
   text-align: center;
   white-space: nowrap;
+}
+
+.tile.active > .class {
+  color: #202124;
 }
 
 .tile > .icon {
@@ -336,6 +340,8 @@ footer > .player-info {
   border-top: 2px solid whitesmoke;
   border-bottom: 2px solid whitesmoke;
   /* border-bottom: 2px solid #4e4e4e; */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .player-info > .nameplate {
@@ -357,9 +363,11 @@ footer > .player-info {
   margin-left: .25rem;
 }
 
-.player-info > .icon-label.gold {
-  flex: 1 1 0;
-  font-size: 1.5rem;
+.player-info > .stats {
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 
@@ -389,6 +397,7 @@ footer > .action-bar {
 
 
 .action-button {
+  flex: 1 0 auto;
   appearance: none;
   background-color: #202124;
   border: 2px solid #ivory;
@@ -404,25 +413,27 @@ footer > .action-bar {
   padding: 2px 2px;
   text-align: center;
   text-decoration: none;
-  transition: all 300ms cubic-bezier(.23, 1, 0.32, 1);
+  transition: all 200ms ease-out;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
-  width: 100%;
-  will-change: transform;
+  touch-action: none;
+  /* touch-action: manipulation; */
+  /* width: 100%; */
+  /* will-change: transform; */
 }
 
 .action-button:disabled {
   pointer-events: none;
+  background-color: slategray;
+  border: 2px solid silver;
 }
 
 .action-button:hover {
-  color: #fff;
-  background-color: #1A1A1A;
+  background-color: lightgray;
 }
 
 .action-button:active {
-  background-color: lime;
+  background-color: lightgray;
 }
 
 

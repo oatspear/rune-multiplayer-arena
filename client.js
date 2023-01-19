@@ -1,31 +1,35 @@
 const { createApp } = Vue
 
 
-function newCharacterClass(id, name) {
+function newCharacterClass(id, name, power, health) {
   return {
     id: id,
-    name: name
+    name: name,
+    power: power || 0,
+    health: health || 0
   };
 }
 
 
 const Classes = {
-  "ranger": newCharacterClass("ranger", "Ranger"),
-  "warrior": newCharacterClass("warrior", "Warrior"),
-  "rogue": newCharacterClass("rogue", "Rogue"),
-  "mage": newCharacterClass("mage", "Mage"),
-  "boss": newCharacterClass("boss", "Boss")
+  "": newCharacterClass("", ""),
+  "ranger": newCharacterClass("ranger", "Ranger", 12, 20),
+  "warrior": newCharacterClass("warrior", "Warrior", 10, 22),
+  "rogue": newCharacterClass("rogue", "Rogue", 14, 18),
+  "mage": newCharacterClass("mage", "Mage", 14, 18),
+  "boss": newCharacterClass("boss", "Boss", 5, 30)
 };
 
 
-function newCharacter(i, name, cls) {
+function newCharacter(i, name, classId) {
+  const cls = Classes[classId];
   return {
     index: i,
     name: name,
-    power: 12,
-    health: 20,
-    currentHealth: 20,
-    characterClass: Classes[cls]
+    power: cls.power,
+    health: cls.health,
+    currentHealth: cls.health,
+    characterClass: cls
   };
 }
 
@@ -46,9 +50,12 @@ function newPlayer(i, cls) {
   return c;
 }
 
+const DummyCharacter = newCharacter(0, "", "");
+
 const app = createApp({
   data() {
     return {
+      playerIndex: 0,
       currentTurn: 0,
       players: [
         newPlayer(0, 'ranger'),
@@ -61,39 +68,50 @@ const app = createApp({
         newRegion(),
         newRegion(),
         newRegion()
-      ]
+      ],
+      ui: {
+        selectedEnemy: null,
+        selectedPlayer: null,
+        footer: {
+          characterData: DummyCharacter,
+          itemName: "",
+          itemDescription: ""
+        }
+      }
     };
   },
+  computed: {
+    thisPlayer() {
+      return this.players[this.playerIndex];
+    }
+  },
   methods: {
-    onSpawnGhouls() {
-      const region = this.tiles[0];
-      const i = (Math.random() * region.length) | 0;
-      const tile = region[i];
-      if (tile.ghouls >= 3) {
-        tile.ghouls = 0;
+    onUseAbility(i) {
+      // const ability = this.players[this.playerIndex].abilities[i];
+
+    },
+
+    onEnemySelected(character) {
+      const i = character.index;
+      this.ui.selectedPlayer = null;
+      if (i == this.ui.selectedEnemy) {
+        this.ui.selectedEnemy = null;
+        this.ui.footer.characterData = this.thisPlayer;
       } else {
-        tile.ghouls++;
+        this.ui.selectedEnemy = i;
+        this.ui.footer.characterData = character;
       }
     },
 
-    onSpawnAbomination() {
-      const region = this.tiles[0];
-      const i = (Math.random() * region.length) | 0;
-      const tile = region[i];
-      tile.abominations++;
-    },
-
-    incrementTurn() {
-      if (this.currentTurn < (this.players.length - 1)) {
-        this.currentTurn++;
-        this.refreshSlides();
-      }
-    },
-
-    decrementTurn() {
-      if (this.currentTurn > 0) {
-        this.currentTurn--;
-        this.refreshSlides();
+    onPlayerSelected(character) {
+      const i = character.index;
+      this.ui.selectedEnemy = null;
+      if (i == this.ui.selectedPlayer) {
+        this.ui.selectedPlayer = null;
+        this.ui.footer.characterData = this.thisPlayer;
+      } else {
+        this.ui.selectedPlayer = i;
+        this.ui.footer.characterData = character;
       }
     },
 
@@ -106,7 +124,7 @@ const app = createApp({
   },
 
   mounted() {
-    this.refreshSlides();
+    this.ui.footer.characterData = this.players[this.playerIndex];
   }
 });
 

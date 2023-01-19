@@ -8,11 +8,20 @@ const BattleBoard = {
     players: {
       type: Array,
       required: true
-    }
+    },
+    selectedEnemy: Number,
+    selectedPlayer: Number
   },
   data() {},
-  methods: {},
-  mounted() {}
+  methods: {
+    onEnemySelected(character) {
+      this.$emit("selected-enemy", character);
+    },
+
+    onPlayerSelected(character) {
+      this.$emit("selected-player", character);
+    }
+  }
 };
 
 
@@ -29,44 +38,10 @@ const BattleHeader = {
     }
   },
   data() {
-    return {
-      message: "Imported header"
-    }
+    return {};
   },
   methods: {
-    battleUpdate() {
-      this.message = "Updated header";
-    }
-  },
-  mounted() {
-    // methods can be called in lifecycle hooks, or other methods!
-    // this.increment()
-    console.log("header is mounted");
-  }
-};
-
-
-const BattleFooter = {
-  template: "#vue-battle-footer",
-  props: {
-    playerData:  {
-      type: Object,
-      required: true
-    }
-  },
-  methods: {
-    spawnGhouls() {
-      this.$emit("spawnGhouls");
-    },
-    spawnAbomination() {
-      this.$emit("spawnAbomination");
-    },
-    showNextPlayer() {
-      this.$emit("showNextPlayer");
-    },
-    showPreviousPlayer() {
-      this.$emit("showPreviousPlayer");
-    }
+    battleUpdate() {}
   }
 };
 
@@ -89,16 +64,23 @@ const BattleScene = {
     players: {
       type: Array,
       required: true
-    }
+    },
+    selectedEnemy: Number,
+    selectedPlayer: Number
   },
   data() {
     return {};
   },
-  methods: {},
-  mounted() {
-    // methods can be called in lifecycle hooks, or other methods!
-    // this.increment()
-    console.log("battle scene is mounted:", this.sceneIndex);
+  methods: {
+    onEnemySelected(i) {
+      const character = this.tiles[i];
+      this.$emit("selected-enemy", character);
+    },
+
+    onPlayerSelected(i) {
+      const character = this.players[i];
+      this.$emit("selected-player", character);
+    }
   }
 };
 
@@ -115,29 +97,34 @@ const BattleTile = {
       required: true
     },
     isBoss: Boolean,
+    isActive: Boolean,
     isOwned: Boolean
   },
   data() {
-    return {
-      isActive: false,
-      minions: 0,
-      monsters: 0
-    }
+    return {};
   },
   methods: {
     onTileClick() {
-      // this.isActive = !this.isActive;
-      if (this.minions >= 3) {
-        this.minions = 0;
-      } else {
-        this.minions++;
-      }
+      this.$emit("selected", this.tileIndex);
     }
+  }
+};
+
+
+const BattleFooter = {
+  template: "#vue-battle-footer",
+  props: {
+    characterData: {
+      type: Object,
+      required: true
+    },
+    itemName: String,
+    itemDescription: String
   },
-  mounted() {
-    // methods can be called in lifecycle hooks, or other methods!
-    // this.increment()
-    console.log("battle tile is mounted:", this.tileIndex);
+  methods: {
+    onUseAbility(i) {
+      this.$emit("use-ability", i);
+    }
   }
 };
 
@@ -145,9 +132,25 @@ const BattleTile = {
 const BattlePlayerInfo = {
   template: "#vue-battle-player-info",
   props: {
-    playerData:  {
-      type: Object,
-      required: true
+    displayName: {
+      type: String,
+      default: ""
+    },
+    classId: {
+      type: String,
+      default: ""
+    },
+    className: {
+      type: String,
+      default: ""
+    },
+    powerValue: {
+      type: Number,
+      default: 0
+    },
+    healthValue: {
+      type: Number,
+      default: 0
     }
   }
 };
@@ -156,6 +159,11 @@ const BattlePlayerInfo = {
 const BattleActionBar = {
   template: "#vue-battle-action-bar",
   props: {},
+  methods: {
+    useAbility(i) {
+      this.$emit("use-ability", i);
+    }
+  }
 };
 
 
