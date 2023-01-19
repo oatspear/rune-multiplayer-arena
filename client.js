@@ -1,7 +1,7 @@
 const { createApp } = Vue
 
 
-function newAbility(id, name, cooldown = 0, icon = "ability", description = "") {
+function newSkill(id, name, cooldown = 0, icon = "skill", description = "") {
   return {
     id: id,
     name: name,
@@ -12,12 +12,12 @@ function newAbility(id, name, cooldown = 0, icon = "ability", description = "") 
 }
 
 
-const Abilities = [
-  newAbility(0, "Rest", 0, "rest", "Recover some health.")
+const Skills = [
+  newSkill(0, "Rest", 0, "rest", "Recover some health.")
 ];
 
 
-function newAbilityInstance(data) {
+function newSkillInstance(data) {
   return {
     data: data,
     cooldown: data.cooldown
@@ -31,7 +31,7 @@ function newCharacterClass(id, name, power = 0, health = 0) {
     name: name,
     power: power,
     health: health,
-    abilities: [0, 0, 0, 0],
+    skills: [0, 0, 0, 0],
   };
 }
 
@@ -48,10 +48,10 @@ const Classes = {
 
 function newCharacter(i, name, classId) {
   const cls = Classes[classId];
-  const abilities = [];
-  for (let i = 0; i < cls.abilities.length; ++i) {
-    const data = Abilities[cls.abilities[i]];
-    abilities.push(newAbilityInstance(data));
+  const skills = [];
+  for (let i = 0; i < cls.skills.length; ++i) {
+    const data = Skills[cls.skills[i]];
+    skills.push(newSkillInstance(data));
   }
   return {
     index: i,
@@ -60,7 +60,7 @@ function newCharacter(i, name, classId) {
     health: cls.health,
     currentHealth: cls.health,
     characterClass: cls,
-    abilities: abilities
+    skills: skills
   };
 }
 
@@ -104,6 +104,7 @@ const app = createApp({
         selectedEnemy: null,
         selectedPlayer: null,
         footer: {
+          selectedSkill: null,
           characterData: DummyCharacter,
           itemName: "",
           itemDescription: ""
@@ -117,14 +118,39 @@ const app = createApp({
     }
   },
   methods: {
-    onUseAbility(i) {
-      const me = this.thisPlayer;
+    resetFooterState() {
+      const self = this.thisPlayer;
+      if (this.ui.footer.selectedSkill != null) {
+        const skill = self.skills[this.ui.footer.selectedSkill];
+        this.ui.footer.itemName = skill.data.name;
+        this.ui.footer.itemDescription = this.buildSkillDescription(skill.data);
+      } else {
+        this.ui.footer.itemName = "";
+        this.ui.footer.itemDescription = "Choose a skill."
+      }
+      if (this.ui.selectedEnemy != null) {
+        this.ui.footer.characterData = this.tiles[0][this.ui.selectedEnemy];  // FIXME
+      } else if (this.ui.selectedPlayer != null) {
+        this.ui.footer.characterData = this.players[this.ui.selectedPlayer];
+      } else {
+        this.ui.footer.characterData = self;
+      }
+    },
+
+    buildSkillDescription(data) {
+      if (data.cooldown <= 0) { return data.description; }
+      return `${data.description} [cooldown: ${data.cooldown}]`;
+    },
+
+    onUseSkill(i) {
+      const self = this.thisPlayer;
       // reset selection
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
-      this.ui.footer.characterData = me;
-      // select ability
-      // const ability = this.players[this.playerIndex].abilities[i];
+      this.ui.footer.characterData = self;
+      // select or deselect skill
+      this.ui.footer.selectedSkill = (this.ui.footer.selectedSkill == i) ? null : i;
+      this.resetFooterState();
     },
 
     onEnemySelected(character) {
@@ -160,7 +186,7 @@ const app = createApp({
   },
 
   mounted() {
-    this.ui.footer.characterData = this.players[this.playerIndex];
+    this.resetFooterState();
   }
 });
 

@@ -48,6 +48,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
 }
 
 
@@ -201,55 +202,10 @@ main {
   background-color: wheat;
 } */
 
-.minion-counter {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: row;
-}
 
-.minion-counter > .token {
-  flex: 1 1 0px;
-  width: 16px;
-  height: 100%;
-  background: no-repeat center/100% url("assets/skull-ivory.png");
-}
+/* @media only screen and (min-width: 320px) {}
 
-.monster-counter {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: row;
-}
-
-.monster-counter > .token {
-  flex: 1 1 0px;
-  width: 24px;
-  height: 100%;
-  background: no-repeat center/100% url("assets/skull-wheat.png");
-}
-
-.monster-counter > .token.elite {
-  background: no-repeat center/100% url("assets/skull-green.png");
-}
-
-@media only screen and (min-width: 320px) {
-  .minion-counter > .token {
-    width: 24px;
-  }
-
-  .monster-counter > .token {
-    width: 32px;
-  }
-}
-
-@media only screen and (min-width: 400px) {
-  .minion-counter > .token {
-    width: 32px;
-  }
-
-  .monster-counter > .token {
-    width: 48px;
-  }
-}
+@media only screen and (min-width: 400px) {} */
 
 
 /*******************************************************************************
@@ -396,6 +352,16 @@ footer > .action-bar {
 }
 
 
+.action-bar > .center-container > .cooldown {
+  border-radius: .5rem;
+  border: 1px solid #202124;
+  background-color: ivory;
+  color: #202124;
+  position: absolute;
+  padding: 0 .5rem;
+}
+
+
 .action-button {
   flex: 1 0 auto;
   appearance: none;
@@ -429,11 +395,12 @@ footer > .action-bar {
 }
 
 .action-button:hover {
-  background-color: lightgray;
+  background-color: lightskyblue;
 }
 
-.action-button:active {
-  background-color: lightgray;
+.action-button:active,
+.action-button.active {
+  background-color: lightskyblue;
 }
 
 

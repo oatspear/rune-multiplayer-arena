@@ -118,12 +118,13 @@ const BattleFooter = {
       type: Object,
       required: true
     },
+    selectedSkill: Number,
     itemName: String,
     itemDescription: String
   },
   methods: {
-    onUseAbility(i) {
-      this.$emit("use-ability", i);
+    onUseSkill(i) {
+      this.$emit("use-skill", i);
     }
   }
 };
@@ -159,14 +160,15 @@ const BattlePlayerInfo = {
 const BattleActionBar = {
   template: "#vue-battle-action-bar",
   props: {
-    abilities: {
+    skills: {
       type: Array,
       required: true
-    }
+    },
+    selectedSkill: Number
   },
   methods: {
-    useAbility(i) {
-      this.$emit("use-ability", i);
+    useSkill(i) {
+      this.$emit("use-skill", i);
     }
   }
 };

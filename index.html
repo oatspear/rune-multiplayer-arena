@@ -29,7 +29,7 @@
 
       <battle-footer
         v-bind="ui.footer"
-        @use-ability="onUseAbility"
+        @use-skill="onUseSkill"
       >
       </battle-footer>
     </main>
@@ -131,7 +131,12 @@
           :power-value="characterData.power"
           :health-value="characterData.health"
         ></battle-player-info>
-        <battle-action-bar :abilities="characterData.abilities" @use-ability="onUseAbility"></battle-action-bar>
+        <battle-action-bar
+          :selected-skill="selectedSkill"
+          :skills="characterData.skills"
+          @use-skill="onUseSkill"
+        >
+        </battle-action-bar>
         <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
           &#8249;
         </button>
@@ -160,25 +165,18 @@
 
     <template id="vue-battle-action-bar">
       <div class="action-bar">
-        <div class="center-container">
-          <button class="action-button" @click.prevent.stop="useAbility(0)">
-            <img :src="`assets/${abilities[0].data.icon}.png`" alt="Skill" width="32" height="32">
+        <div class="center-container" v-for="(skill, i) in skills">
+          <button
+            class="action-button"
+            :class="{active: selectedSkill == i}"
+            :disabled="skill.cooldown > 0"
+            @click.prevent.stop="useSkill(i)"
+          >
+            <img :src="`assets/${skill.data.icon}.png`" alt="Skill" width="32" height="32">
           </button>
-        </div>
-        <div class="center-container">
-          <button class="action-button" @click.prevent.stop="useAbility(1)" disabled>
-            <img :src="`assets/${abilities[1].data.icon}.png`" alt="Skill" width="32" height="32">
-          </button>
-        </div>
-        <div class="center-container">
-          <button class="action-button" @click.prevent.stop="useAbility(2)">
-            <img :src="`assets/${abilities[2].data.icon}.png`" alt="Skill" width="32" height="32">
-          </button>
-        </div>
-        <div class="center-container">
-          <button class="action-button" @click.prevent.stop="useAbility(3)">
-            <img :src="`assets/${abilities[3].data.icon}.png`" alt="Skill" width="32" height="32">
-          </button>
+          <div class="cooldown" v-if="skill.cooldown > 0">
+            {{ skill.cooldown }}
+          </div>
         </div>
       </div>
     </template>
