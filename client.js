@@ -1,37 +1,49 @@
 const { createApp } = Vue
 
-function newTile() {
+
+function newCharacterClass(id, name) {
   return {
-    name: "none",
-    characterClass: "boss",
-    ghouls: 0,
-    abominations: 0
+    id: id,
+    name: name
   };
 }
+
+
+const Classes = {
+  "ranger": newCharacterClass("ranger", "Ranger"),
+  "warrior": newCharacterClass("warrior", "Warrior"),
+  "rogue": newCharacterClass("rogue", "Rogue"),
+  "mage": newCharacterClass("mage", "Mage"),
+  "boss": newCharacterClass("boss", "Boss")
+};
+
+
+function newCharacter(i, name, cls) {
+  return {
+    index: i,
+    name: name,
+    power: 12,
+    health: 20,
+    currentHealth: 20,
+    characterClass: Classes[cls]
+  };
+}
+
 
 function newRegion() {
   return [
-    newTile(),
-    newTile(),
-    newTile(),
-    newTile(),
-    newTile(),
-    newTile(),
-    newTile(),
-    newTile(),
-    newTile()
+    newCharacter(0, "Unnamed Boss", "boss"),
+    newCharacter(1, "Unnamed Boss", "boss"),
+    newCharacter(2, "Unnamed Boss", "boss"),
+    newCharacter(3, "Unnamed Boss", "boss"),
   ];
 }
 
+
 function newPlayer(i, cls) {
-  return {
-    index: i,
-    name: `Player ${i+1}`,
-    health: 8,
-    currentHealth: (i+1)*2,
-    gold: (i+1)*2,
-    characterClass: cls
-  };
+  c = newCharacter(i, `Player ${i+1}`, cls)
+  c.gold = (i+1)*2;
+  return c;
 }
 
 const app = createApp({
@@ -39,7 +51,7 @@ const app = createApp({
     return {
       currentTurn: 0,
       players: [
-        newPlayer(0, 'archer'),
+        newPlayer(0, 'ranger'),
         newPlayer(1, 'warrior'),
         newPlayer(2, 'rogue'),
         newPlayer(3, 'mage')
@@ -102,8 +114,6 @@ app.component("BattleBoard", BattleBoard);
 app.component("BattleHeader", BattleHeader);
 app.component("BattleScene", BattleScene);
 app.component("BattleTile", BattleTile);
-app.component("BattleMinionCounter", BattleMinionCounter);
-app.component("BattleMonsterCounter", BattleMonsterCounter);
 app.component("BattleFooter", BattleFooter);
 app.component("BattlePlayerInfo", BattlePlayerInfo);
 app.component("BattleIconLabel", BattleIconLabel);

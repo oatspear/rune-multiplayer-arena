@@ -83,75 +83,31 @@
     <template id="vue-battle-tile">
       <div class="tile-container">
         <div
-        class="tile"
-        :class="{active: isActive, boss: isBoss, owned: isOwned}"
-        @click="onTileClick"
+          class="tile"
+          :class="{active: isActive, boss: isBoss, owned: isOwned}"
+          @click="onTileClick"
         >
-        <div class="icon">
-          <img :src="`assets/${tileData.characterClass}.png`" alt="?">
-        </div>
-        <div class="effect-anchor"></div>
-        <div class="stats">
-          <div class="power">
-            <span>10</span>
+          <span class="class" :class="tileData.characterClass.id">{{ tileData.characterClass.name }}</span>
+          <div class="icon">
+            <img :src="`assets/${tileData.characterClass.id}.png`" alt="?">
           </div>
-          /
-          <div class="health">
-            <span>20</span>
-          </div>
-        </div>
-      </div>
-      </div>
-    </template>
-
-    <template id="vue-battle-minion-counter">
-      <div class="minion-counter">
-        <div class="token" v-if="count > 0"></div>
-        <div class="token" v-if="count > 1"></div>
-        <div class="token" v-if="count > 2"></div>
-      </div>
-    </template>
-
-    <template id="vue-battle-monster-counter">
-      <div class="monster-counter">
-        <div class="token" v-if="count == 1"></div>
-        <div class="token elite" v-else-if="count > 1"></div>
-      </div>
-    </template>
-
-    <template id="vue-battle-player-info">
-      <div class="player-info">
-        <div class="icon" :class="playerData.characterClass"></div>
-        <div class="nameplate">
-          <span class="name">{{ playerData.name }}</span>
-          <div class="heart-container">
-            <span v-for="n in playerData.health">
-              <img src="assets/heart-full.png" alt="Heart" width="16" height="16" v-if="playerData.currentHealth >= n">
-              <img src="assets/heart-empty.png" alt="Empty Heart" width="16" height="16" v-else>
-            </span>
+          <div class="effect-anchor"></div>
+          <div class="stats">
+            <div class="power">
+              <span>{{ tileData.power }}</span>
+            </div>
+            /
+            <div class="health">
+              <span>{{ tileData.currentHealth }}</span>
+            </div>
           </div>
         </div>
-        <battle-icon-label name="gold" :value="playerData.gold"></battle-icon-label>
       </div>
     </template>
 
     <template id="vue-battle-footer">
       <footer>
         <battle-player-info :player-data="playerData"></battle-player-info>
-        <div class="action-bar">
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/mount.png" alt="Move" width="16" height="16">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/power.png" alt="Attack" width="16" height="16">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/shield.png" alt="Defend" width="16" height="16">
-          </button>
-          <button class="button-28" @click.prevent="spawnGhouls">
-            <img src="assets/map.png" alt="Travel" width="16" height="16">
-          </button>
-        </div>
         <div class="action-bar">
           <button class="button-28" @click.prevent="spawnGhouls">
             <img src="assets/tower.png" alt="Build" width="32" height="32">
@@ -172,12 +128,28 @@
         <button class="slide-arrow" id="slide-arrow-next" @click.prevent="showNextPlayer">
         &#8250;
         </button> -->
+        <p class="description">
+          <span class="name">Ability Name</span>
+          This is a very long line.<br>
+          This is another very long line.
+        </p>
       </footer>
+    </template>
+
+    <template id="vue-battle-player-info">
+      <div class="player-info">
+        <h2 class="nameplate">
+          <span class="class" :class="playerData.characterClass.id">{{ playerData.characterClass.name }}</span>
+          <span class="name">{{ playerData.name }}</span>
+        </h2>
+        <battle-icon-label name="power" :value="playerData.power" :size="16"></battle-icon-label>
+        <battle-icon-label name="shield" :value="playerData.currentHealth" :size="16"></battle-icon-label>
+      </div>
     </template>
 
     <template id="vue-battle-icon-label">
       <div class="icon-label" :class="name">
-        <img :src="`assets/${name}.png`" alt="Icon" width="32" height="32">
+        <img :src="`assets/${name}.png`" alt="Icon" :width="size" :height="size">
         <span class="label">{{ value }}</span>
       </div>
     </template>

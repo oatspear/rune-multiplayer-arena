@@ -153,27 +153,6 @@ const BattlePlayerInfo = {
 };
 
 
-const BattleMinionCounter = {
-  template: "#vue-battle-minion-counter",
-  props: {
-    count: {
-      type: Number,
-      required: true
-    }
-  }
-};
-
-const BattleMonsterCounter = {
-  template: "#vue-battle-monster-counter",
-  props: {
-    count: {
-      type: Number,
-      required: true
-    }
-  }
-};
-
-
 const BattleIconLabel = {
   template: "#vue-battle-icon-label",
   props: {
@@ -184,6 +163,10 @@ const BattleIconLabel = {
     value: {
       type: Number,
       required: true
+    },
+    size: {
+      type: Number,
+      default: 32
     }
   }
 };

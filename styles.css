@@ -117,7 +117,7 @@ main {
   color: ivory;
   cursor: pointer;
   user-select: none;
-  padding: .5rem;
+  padding: .125rem .5rem;
   -webkit-user-select: none;
 }
 
@@ -132,6 +132,14 @@ main {
 .tile.boss {
   background-color: violet;
   border: 2px solid black;
+}
+
+.tile > .class {
+  width: 100%;
+  overflow: hidden;
+  font-size: .75rem;
+  text-align: center;
+  white-space: nowrap;
 }
 
 .tile > .icon {
@@ -307,56 +315,36 @@ footer {
 
 
 footer > .player-info {
+  flex: 0 0 auto;
+  width: 100%;
+  background-color: #202124;
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 100%;
-  background: linear-gradient(#4e4e4e, #202124);
-  padding: 0 .5rem;
   color: ivory;
+  padding: .2rem .5rem;
   border-top: 2px solid whitesmoke;
   border-bottom: 2px solid whitesmoke;
-}
-
-.player-info > .icon {
-  width: 32px;
-  height: 32px;
-}
-
-.icon.archer {
-  background: no-repeat center/contain url("assets/archer.png");
-}
-
-.icon.warrior {
-  background: no-repeat center/contain url("assets/warrior.png");
-}
-
-.icon.rogue {
-  background: no-repeat center/contain url("assets/rogue.png");
-}
-
-.icon.mage {
-  background: no-repeat center/contain url("assets/mage.png");
-}
-
-.icon.berserker {
-  background: no-repeat center/contain url("assets/berserker.png");
-}
-
-.icon.paladin {
-  background: no-repeat center/contain url("assets/paladin.png");
-}
-
-.icon.enemy {
-  background: no-repeat center/contain url("assets/boss.png");
+  /* border-bottom: 2px solid #4e4e4e; */
 }
 
 .player-info > .nameplate {
-  flex: 2 1 0;
-  padding: .2rem .5rem;
+  flex: 1 0 auto;
+  margin: 0;
+  font-size: 1rem;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  overflow: hidden;
+  font-weight: normal;
+}
+
+.player-info > .nameplate > .class {
+  font-size: .75rem;
+}
+
+.player-info > .nameplate > .name {
+  margin-left: .25rem;
 }
 
 .player-info > .icon-label.gold {
@@ -365,8 +353,22 @@ footer > .player-info {
 }
 
 
+footer > .description {
+  flex: 1 0 auto;
+  margin: 0;
+  padding: 0 .5rem;
+  color: ivory;
+  font-weight: normal;
+  min-height: 3rem;
+  font-size: .75rem;
+}
+
+.description > .name {
+  color: gold;
+}
+
 footer > .action-bar {
-  flex: 1 1 0;
+  flex: 0 0 auto;
   position: relative;
   display: flex;
   flex-direction: row;
@@ -449,4 +451,54 @@ footer > .action-bar {
   right: 10vw;
   padding-left: 0.75rem;
   border-radius: 2rem 0 0 2rem;
+}
+
+
+/*******************************************************************************
+  Colors and Icons
+*******************************************************************************/
+
+.class.ranger {
+  color: limegreen;
+}
+
+.class.warrior {
+  color: peru;
+}
+
+.class.rogue {
+  color: yellow;
+}
+
+.class.mage {
+  color: violet;
+}
+
+
+.icon.ranger {
+  background: no-repeat center/contain url("assets/ranger.png");
+}
+
+.icon.warrior {
+  background: no-repeat center/contain url("assets/warrior.png");
+}
+
+.icon.rogue {
+  background: no-repeat center/contain url("assets/rogue.png");
+}
+
+.icon.mage {
+  background: no-repeat center/contain url("assets/mage.png");
+}
+
+.icon.berserker {
+  background: no-repeat center/contain url("assets/berserker.png");
+}
+
+.icon.paladin {
+  background: no-repeat center/contain url("assets/paladin.png");
+}
+
+.icon.enemy {
+  background: no-repeat center/contain url("assets/boss.png");
 }
