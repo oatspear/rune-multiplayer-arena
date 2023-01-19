@@ -158,7 +158,12 @@ const BattlePlayerInfo = {
 
 const BattleActionBar = {
   template: "#vue-battle-action-bar",
-  props: {},
+  props: {
+    abilities: {
+      type: Array,
+      required: true
+    }
+  },
   methods: {
     useAbility(i) {
       this.$emit("use-ability", i);

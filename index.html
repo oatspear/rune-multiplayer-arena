@@ -131,7 +131,7 @@
           :power-value="characterData.power"
           :health-value="characterData.health"
         ></battle-player-info>
-        <battle-action-bar @use-ability="onUseAbility"></battle-action-bar>
+        <battle-action-bar :abilities="characterData.abilities" @use-ability="onUseAbility"></battle-action-bar>
         <!-- <button class="slide-arrow" id="slide-arrow-prev" @click.prevent="showPreviousPlayer">
           &#8249;
         </button>
@@ -162,22 +162,22 @@
       <div class="action-bar">
         <div class="center-container">
           <button class="action-button" @click.prevent.stop="useAbility(0)">
-            <img src="assets/battle.png" alt="Fight" width="32" height="32">
+            <img :src="`assets/${abilities[0].data.icon}.png`" alt="Skill" width="32" height="32">
           </button>
         </div>
         <div class="center-container">
           <button class="action-button" @click.prevent.stop="useAbility(1)" disabled>
-            <img src="assets/tower.png" alt="Build" width="32" height="32">
+            <img :src="`assets/${abilities[1].data.icon}.png`" alt="Skill" width="32" height="32">
           </button>
         </div>
         <div class="center-container">
           <button class="action-button" @click.prevent.stop="useAbility(2)">
-            <img src="assets/ability.png" alt="Ability" width="32" height="32">
+            <img :src="`assets/${abilities[2].data.icon}.png`" alt="Skill" width="32" height="32">
           </button>
         </div>
         <div class="center-container">
           <button class="action-button" @click.prevent.stop="useAbility(3)">
-            <img src="assets/rest.png" alt="Rest" width="32" height="32">
+            <img :src="`assets/${abilities[3].data.icon}.png`" alt="Skill" width="32" height="32">
           </button>
         </div>
       </div>

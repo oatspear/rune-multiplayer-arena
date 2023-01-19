@@ -1,12 +1,37 @@
 const { createApp } = Vue
 
 
-function newCharacterClass(id, name, power, health) {
+function newAbility(id, name, cooldown = 0, icon = "ability", description = "") {
   return {
     id: id,
     name: name,
-    power: power || 0,
-    health: health || 0
+    cooldown: cooldown,
+    icon: icon,
+    description: description
+  };
+}
+
+
+const Abilities = [
+  newAbility(0, "Rest", 0, "rest", "Recover some health.")
+];
+
+
+function newAbilityInstance(data) {
+  return {
+    data: data,
+    cooldown: data.cooldown
+  };
+}
+
+
+function newCharacterClass(id, name, power = 0, health = 0) {
+  return {
+    id: id,
+    name: name,
+    power: power,
+    health: health,
+    abilities: [0, 0, 0, 0],
   };
 }
 
@@ -23,13 +48,19 @@ const Classes = {
 
 function newCharacter(i, name, classId) {
   const cls = Classes[classId];
+  const abilities = [];
+  for (let i = 0; i < cls.abilities.length; ++i) {
+    const data = Abilities[cls.abilities[i]];
+    abilities.push(newAbilityInstance(data));
+  }
   return {
     index: i,
     name: name,
     power: cls.power,
     health: cls.health,
     currentHealth: cls.health,
-    characterClass: cls
+    characterClass: cls,
+    abilities: abilities
   };
 }
 
@@ -87,8 +118,13 @@ const app = createApp({
   },
   methods: {
     onUseAbility(i) {
+      const me = this.thisPlayer;
+      // reset selection
+      this.ui.selectedEnemy = null;
+      this.ui.selectedPlayer = null;
+      this.ui.footer.characterData = me;
+      // select ability
       // const ability = this.players[this.playerIndex].abilities[i];
-
     },
 
     onEnemySelected(character) {
