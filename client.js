@@ -18,6 +18,7 @@ const app = createApp({
         newRegion()
       ],
       ui: {
+        targetMode: null,
         selectedEnemy: null,
         selectedPlayer: null,
         footer: {
@@ -65,6 +66,7 @@ const app = createApp({
       const skill = self.skills[i];
       // reset selection
       this.ui.footer.characterData = self;
+      this.ui.targetMode = skill.data.target;
       switch (skill.data.target) {
         case TARGET_SELF:
           this.ui.selectedEnemy = null;
@@ -94,6 +96,7 @@ const app = createApp({
     onCancelSkill() {
       const self = this.thisPlayer;
       // reset selection
+      this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       this.ui.footer.characterData = self;
@@ -105,6 +108,7 @@ const app = createApp({
     onUseSkill() {
       const self = this.thisPlayer;
       // reset selection
+      this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       this.ui.footer.characterData = self;
@@ -116,24 +120,44 @@ const app = createApp({
     onEnemySelected(character) {
       const i = character.index;
       this.ui.selectedPlayer = null;
-      if (i == this.ui.selectedEnemy) {
-        this.ui.selectedEnemy = null;
-        this.ui.footer.characterData = this.thisPlayer;
+      if (this.ui.footer.selectedSkill != null) {
+        if (this.ui.targetMode == TARGET_ENEMY) {
+          this.ui.selectedEnemy = i;
+          this.ui.footer.selectedTarget = i;
+          // this.ui.footer.characterData = character;
+        } else {
+          // do nothing or display error message
+        }
       } else {
-        this.ui.selectedEnemy = i;
-        this.ui.footer.characterData = character;
+        if (i == this.ui.selectedEnemy) {
+          this.ui.selectedEnemy = null;
+          this.ui.footer.characterData = this.thisPlayer;
+        } else {
+          this.ui.selectedEnemy = i;
+          this.ui.footer.characterData = character;
+        }
       }
     },
 
     onPlayerSelected(character) {
       const i = character.index;
       this.ui.selectedEnemy = null;
-      if (i == this.ui.selectedPlayer) {
-        this.ui.selectedPlayer = null;
-        this.ui.footer.characterData = this.thisPlayer;
+      if (this.ui.footer.selectedSkill != null) {
+        if (this.ui.targetMode == TARGET_ALLY) {
+          this.ui.selectedPlayer = i;
+          this.ui.footer.selectedTarget = i;
+          // this.ui.footer.characterData = character;
+        } else {
+          // do nothing or display error message
+        }
       } else {
-        this.ui.selectedPlayer = i;
-        this.ui.footer.characterData = character;
+        if (i == this.ui.selectedPlayer) {
+          this.ui.selectedPlayer = null;
+          this.ui.footer.characterData = this.thisPlayer;
+        } else {
+          this.ui.selectedPlayer = i;
+          this.ui.footer.characterData = character;
+        }
       }
     },
 
