@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: MIT
+// Copyright © 2023 André "Oatspear" Santos
+
 const BattleBoard = {
   template: "#vue-battle-board",
   props: {
