@@ -129,6 +129,7 @@ const app = createApp({
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.resetFooterState();
+      // Rune.actions.myAction({ myId: "button" });
     },
 
     onEnemySelected(character) {
@@ -198,3 +199,28 @@ app.component("BattleActionBar", BattleActionBar);
 app.component("BattleIconLabel", BattleIconLabel);
 
 app.mount("#app");
+
+/*******************************************************************************
+  Rune Setup
+*******************************************************************************/
+
+function render() {
+  // TODO
+}
+
+Rune.initClient({
+  visualUpdate: ({
+    newGame,
+    oldGame,
+    yourPlayerId,
+    players,
+    action,
+    event,
+    rollbacks,
+  }) => {
+    // Update interface based on game state from logic.js.
+    // The `visualUpdate` function must be synchronous.
+    // It may trigger async functions if needed, but cannot `await` them.
+    render(newGame);
+  },
+});
