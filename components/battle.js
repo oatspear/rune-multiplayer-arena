@@ -119,12 +119,21 @@ const BattleFooter = {
       required: true
     },
     selectedSkill: Number,
+    selectedTarget: Number,
     itemName: String,
     itemDescription: String
   },
   methods: {
-    onUseSkill(i) {
-      this.$emit("use-skill", i);
+    onSkillSelected(i) {
+      this.$emit("select-skill", i);
+    },
+
+    onCancelSkill() {
+      this.$emit("cancel-skill");
+    },
+
+    onUseSkill() {
+      this.$emit("use-skill");
     }
   }
 };
@@ -164,11 +173,20 @@ const BattleActionBar = {
       type: Array,
       required: true
     },
-    selectedSkill: Number
+    selectedSkill: Number,
+    selectedTarget: Number
   },
   methods: {
-    useSkill(i) {
-      this.$emit("use-skill", i);
+    selectSkill(i) {
+      this.$emit("select-skill", i);
+    },
+
+    cancelSkill() {
+      this.$emit("cancel-skill");
+    },
+
+    useSkill() {
+      this.$emit("use-skill");
     }
   }
 };

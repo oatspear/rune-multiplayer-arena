@@ -22,6 +22,7 @@ const app = createApp({
         selectedPlayer: null,
         footer: {
           selectedSkill: null,
+          selectedTarget: null,
           characterData: DummyCharacter,
           itemName: "",
           itemDescription: ""
@@ -56,17 +57,59 @@ const app = createApp({
 
     buildSkillDescription(data) {
       if (data.cooldown <= 0) { return data.description; }
-      return `${data.description} [cooldown: ${data.cooldown}]`;
+      return `${data.description} [Cooldown: ${data.cooldown}]`;
     },
 
-    onUseSkill(i) {
+    onSkillSelected(i) {
+      const self = this.thisPlayer;
+      const skill = self.skills[i];
+      // reset selection
+      this.ui.footer.characterData = self;
+      switch (skill.data.target) {
+        case TARGET_SELF:
+          this.ui.selectedEnemy = null;
+          this.ui.selectedPlayer = self.index;
+          this.ui.footer.selectedTarget = self.index;
+          break;
+        case TARGET_ALLY:
+          this.ui.selectedEnemy = null;
+          this.ui.footer.selectedTarget = this.ui.selectedPlayer;
+          break;
+        case TARGET_ENEMY:
+          this.ui.selectedPlayer = null;
+          this.ui.footer.selectedTarget = this.ui.selectedEnemy;
+          break;
+        default:
+          this.ui.selectedEnemy = null;
+          this.ui.selectedPlayer = null;
+          this.ui.footer.selectedTarget = 0;
+      }
+      console.log("Selected target:", this.ui.footer.selectedTarget);
+      // select or deselect skill
+      // this.ui.footer.selectedSkill = (this.ui.footer.selectedSkill == i) ? null : i;
+      this.ui.footer.selectedSkill = i;
+      this.resetFooterState();
+    },
+
+    onCancelSkill() {
       const self = this.thisPlayer;
       // reset selection
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       this.ui.footer.characterData = self;
-      // select or deselect skill
-      this.ui.footer.selectedSkill = (this.ui.footer.selectedSkill == i) ? null : i;
+      this.ui.footer.selectedSkill = null;
+      this.ui.footer.selectedTarget = null;
+      this.resetFooterState();
+    },
+
+    onUseSkill() {
+      const self = this.thisPlayer;
+      // reset selection
+      this.ui.selectedEnemy = null;
+      this.ui.selectedPlayer = null;
+      this.ui.footer.characterData = self;
+      this.ui.footer.selectedSkill = null;
+      this.ui.footer.selectedTarget = null;
       this.resetFooterState();
     },
 

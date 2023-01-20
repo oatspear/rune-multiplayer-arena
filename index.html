@@ -29,6 +29,8 @@
 
       <battle-footer
         v-bind="ui.footer"
+        @select-skill="onSkillSelected"
+        @cancel-skill="onCancelSkill"
         @use-skill="onUseSkill"
       >
       </battle-footer>
@@ -133,7 +135,10 @@
         ></battle-player-info>
         <battle-action-bar
           :selected-skill="selectedSkill"
+          :selected-target="selectedTarget"
           :skills="characterData.skills"
+          @select-skill="onSkillSelected"
+          @cancel-skill="onCancelSkill"
           @use-skill="onUseSkill"
         >
         </battle-action-bar>
@@ -164,13 +169,12 @@
     </template>
 
     <template id="vue-battle-action-bar">
-      <div class="action-bar">
+      <div class="action-bar" v-if="selectedSkill == null">
         <div class="center-container" v-for="(skill, i) in skills">
           <button
             class="action-button"
-            :class="{active: selectedSkill == i}"
             :disabled="skill.cooldown > 0"
-            @click.prevent.stop="useSkill(i)"
+            @click.prevent.stop="selectSkill(i)"
           >
             <img :src="`assets/${skill.data.icon}.png`" alt="Skill" width="32" height="32">
           </button>
@@ -180,6 +184,22 @@
           <div class="cooldown" v-if="skill.cooldown > 0">
             {{ skill.wait || skill.cooldown }}
           </div>
+        </div>
+      </div>
+      <div class="action-bar" v-else>
+        <div class="center-container">
+          <button class="action-button" @click.prevent.stop="cancelSkill()">
+            <img src="assets/cancel.png" alt="Cancel" width="32" height="32">
+          </button>
+        </div>
+        <div class="center-container">
+          <button
+            class="action-button active"
+            :disabled="selectedTarget == null"
+            @click.prevent.stop="useSkill()"
+          >
+            <img :src="`assets/${skills[selectedSkill].data.icon}.png`" alt="Skill" width="32" height="32">
+          </button>
         </div>
       </div>
     </template>

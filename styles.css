@@ -348,7 +348,8 @@ footer > .action-bar {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: .25rem;
+  padding: 0 .25rem;
+  min-height: 64px;
 }
 
 
@@ -405,7 +406,8 @@ footer > .action-bar {
   /* will-change: transform; */
 }
 
-.action-button:disabled {
+.action-button:disabled,
+.action-button.active:disabled {
   pointer-events: none;
   background-color: slategray;
   border: 2px solid silver;

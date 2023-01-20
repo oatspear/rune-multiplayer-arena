@@ -70,28 +70,36 @@ addSkill({
   icon: "rest",
   description: "Recover some health."
 });
+
 addSkill({
   name: "Attack",
   speed: 5,
+  target: TARGET_ENEMY,
   icon: "battle",
   description: "Attack an enemy."
 });
+
 addSkill({
   name: "Ranged Attack",
   speed: 7,
+  target: TARGET_ENEMY,
   icon: "ranger",
   description: "Damage on enemy for [Power]."
 });
+
 addSkill({
   name: "Multi-Attack",
   speed: 6,
+  target: TARGET_ALL_ENEMIES,
   icon: "battle",
   description: "Damage all enemies for [Power]/2."
 });
+
 addSkill({
   name: "Rest",
   speed: 1,
   cooldown: 0,
+  target: TARGET_SELF,
   icon: "rest",
   description: "Recover some health."
 });
