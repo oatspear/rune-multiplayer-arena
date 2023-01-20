@@ -352,13 +352,30 @@ footer > .action-bar {
 }
 
 
+.action-bar > .center-container > .speed {
+  border-radius: .5rem;
+  border: 2px solid ivory;
+  background-color: #202124;
+  color: silver;
+  font-size: .75rem;
+  position: absolute;
+  padding: 0 .5rem;
+  bottom: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+
 .action-bar > .center-container > .cooldown {
   border-radius: .5rem;
-  border: 1px solid #202124;
-  background-color: ivory;
+  border: 2px solid #202124;
+  background-color: wheat;
   color: #202124;
   position: absolute;
   padding: 0 .5rem;
+  top: 0;
+  right: 0;
+  pointer-events: none;
 }
 
 
@@ -395,12 +412,12 @@ footer > .action-bar {
 }
 
 .action-button:hover {
-  background-color: lightskyblue;
+  background-color: olive;
 }
 
 .action-button:active,
 .action-button.active {
-  background-color: lightskyblue;
+  background-color: olive;
 }
 
 
