@@ -137,7 +137,7 @@ const BattlePlayerInfo = {
       type: String,
       default: ""
     },
-    classId: {
+    classIcon: {
       type: String,
       default: ""
     },

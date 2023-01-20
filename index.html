@@ -104,9 +104,9 @@
           :class="{active: isActive, boss: isBoss, owned: isOwned}"
           @click="onTileClick"
         >
-          <span class="class" :class="tileData.characterClass.id">{{ tileData.characterClass.name }}</span>
+          <span class="class" :class="tileData.characterClass.icon">{{ tileData.characterClass.name }}</span>
           <div class="icon">
-            <img :src="`assets/${tileData.characterClass.id}.png`" alt="?">
+            <img :src="`assets/${tileData.characterClass.icon}.png`" alt="?">
           </div>
           <div class="effect-anchor"></div>
           <div class="stats">
@@ -126,7 +126,7 @@
       <footer>
         <battle-player-info
           :display-name="characterData.name"
-          :class-id="characterData.characterClass.id"
+          :class-icon="characterData.characterClass.icon"
           :class-name="characterData.characterClass.name"
           :power-value="characterData.power"
           :health-value="characterData.health"
@@ -153,7 +153,7 @@
     <template id="vue-battle-player-info">
       <div class="player-info">
         <h2 class="nameplate">
-          <span class="class" :class="classId">{{ className }}</span>
+          <span class="class" :class="classIcon">{{ className }}</span>
           <span class="name">{{ displayName || "&nbsp;" }}</span>
         </h2>
         <div class="stats">
@@ -178,7 +178,7 @@
             {{ skill.data.speed }}
           </div>
           <div class="cooldown" v-if="skill.cooldown > 0">
-            {{ skill.cooldown }}
+            {{ skill.wait || skill.cooldown }}
           </div>
         </div>
       </div>

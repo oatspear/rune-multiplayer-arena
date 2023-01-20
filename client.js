@@ -1,18 +1,15 @@
 const { createApp } = Vue
 
-
-
-
 const app = createApp({
   data() {
     return {
       playerIndex: 0,
       currentTurn: 0,
       players: [
-        newPlayer(0, 'ranger'),
-        newPlayer(1, 'warrior'),
-        newPlayer(2, 'rogue'),
-        newPlayer(3, 'mage')
+        newPlayer(0, 1),
+        newPlayer(1, 2),
+        newPlayer(2, 3),
+        newPlayer(3, 4)
       ],
       tiles: [
         newRegion(),

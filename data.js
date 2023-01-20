@@ -1,35 +1,108 @@
 /*******************************************************************************
-  Skills
+  Constants
 *******************************************************************************/
 
-function newSkill(id, name, speed, cooldown = 0, icon = "skill", description = "") {
-  return {
-    id: id,
-    name: name,
-    speed: speed,
-    cooldown: cooldown,
-    icon: icon,
-    description: description
-  };
+const TARGET_SELF = 0;
+const TARGET_ALLY = 1;
+const TARGET_ENEMY = 2;
+const TARGET_ALL_ALLIES = 5;
+const TARGET_ALL_ENEMIES = 6;
+const TARGET_ALL_CHARACTERS = 7;
+
+/*******************************************************************************
+  Utility
+*******************************************************************************/
+
+
+function assert(condition, message) {
+    if (!condition) {
+        throw new Error(message || "Assertion failed");
+    }
 }
 
 
-const Skills = [
-  newSkill(0, "Rest", 1, 0, "rest", "Recover some health."),
-  newSkill(1, "Attack", 5, 0, "battle", "Attack an enemy."),
-  newSkill(2, "Ranged Attack", 7, 0, "ranger", "Damage on enemy for [Power]."),
-  newSkill(3, "Multi-Attack", 6, 0, "battle", "Damage all enemies for [Power]/2."),
-  newSkill(0, "Rest", 1, 0, "rest", "Recover some health."),
-  newSkill(0, "Rest", 1, 0, "rest", "Recover some health."),
-  newSkill(0, "Rest", 1, 0, "rest", "Recover some health."),
-  newSkill(0, "Rest", 1, 0, "rest", "Recover some health.")
-];
+function checkProperty(obj, prop, type) {
+  assert(
+    (obj[prop] != null) && (typeof obj[prop] === type),
+    `expected property "${prop}" of type ${type} in ${obj}`
+  );
+}
+
+
+/*******************************************************************************
+  Skills
+*******************************************************************************/
+
+const Skills = [];
+
+function addSkill(params) {
+  checkProperty(params, "name", "string");
+  checkProperty(params, "speed", "number");
+  const target = params.target;
+  if (target != null) {
+    assert(
+      target === TARGET_SELF
+      || target === TARGET_ALLY
+      || target === TARGET_ENEMY
+      || target === TARGET_ALL_ALLIES
+      || target === TARGET_ALL_ENEMIES
+      || target === TARGET_ALL_CHARACTERS
+    );
+  }
+  const data = {
+    id: Skills.length,
+    name: params.name,
+    speed: params.speed,
+    cooldown: params.cooldown || 0,
+    target: target || TARGET_SELF,
+    icon: params.icon || "skill",
+    description: params.description || "No description."
+  };
+  Skills.push(data);
+}
+
+
+addSkill({
+  name: "Rest",
+  speed: 1,
+  cooldown: 0,
+  target: TARGET_SELF,
+  icon: "rest",
+  description: "Recover some health."
+});
+addSkill({
+  name: "Attack",
+  speed: 5,
+  icon: "battle",
+  description: "Attack an enemy."
+});
+addSkill({
+  name: "Ranged Attack",
+  speed: 7,
+  icon: "ranger",
+  description: "Damage on enemy for [Power]."
+});
+addSkill({
+  name: "Multi-Attack",
+  speed: 6,
+  icon: "battle",
+  description: "Damage all enemies for [Power]/2."
+});
+addSkill({
+  name: "Rest",
+  speed: 1,
+  cooldown: 0,
+  icon: "rest",
+  description: "Recover some health."
+});
 
 
 function newSkillInstance(data) {
   return {
     data: data,
-    cooldown: data.cooldown
+    speed: data.speed,
+    cooldown: data.cooldown,
+    wait: data.cooldown
   };
 }
 
@@ -38,26 +111,73 @@ function newSkillInstance(data) {
   Classes
 *******************************************************************************/
 
+const Classes = [];
 
-function newCharacterClass(id, name, power = 0, health = 0) {
-  return {
-    id: id,
-    name: name,
-    power: power,
-    health: health,
-    skills: [1, 2, 3, 0],
+
+function addCharacterClass(params) {
+  checkProperty(params, "name", "string");
+  checkProperty(params, "power", "number");
+  checkProperty(params, "health", "number");
+  checkProperty(params, "skills", "object");
+  const data = {
+    id: Classes.length,
+    name: params.name,
+    icon: params.icon || "berserker",
+    power: params.power,
+    health: params.health,
+    skills: params.skills,
   };
+  Classes.push(data);
 }
 
 
-const Classes = {
-  "": newCharacterClass("", ""),
-  "ranger": newCharacterClass("ranger", "Ranger", 12, 20),
-  "warrior": newCharacterClass("warrior", "Warrior", 10, 22),
-  "rogue": newCharacterClass("rogue", "Rogue", 14, 18),
-  "mage": newCharacterClass("mage", "Mage", 14, 18),
-  "boss": newCharacterClass("boss", "Boss", 5, 30)
-};
+addCharacterClass({
+  name: "",
+  icon: "",
+  power: 0,
+  health: 0,
+  skills: [0]
+});
+
+addCharacterClass({
+  name: "Ranger",
+  icon: "ranger",
+  power: 12,
+  health: 20,
+  skills: [1, 2, 3, 0]
+});
+
+addCharacterClass({
+  name: "Warrior",
+  icon: "warrior",
+  power: 10,
+  health: 22,
+  skills: [1, 2, 3, 0]
+});
+
+addCharacterClass({
+  name: "Rogue",
+  icon: "rogue",
+  power: 14,
+  health: 18,
+  skills: [1, 2, 3, 0]
+});
+
+addCharacterClass({
+  name: "Mage",
+  icon: "mage",
+  power: 14,
+  health: 18,
+  skills: [1, 2, 3, 0]
+});
+
+addCharacterClass({
+  name: "Boss",
+  icon: "boss",
+  power: 5,
+  health: 30,
+  skills: [1, 2, 3, 0]
+});
 
 
 /*******************************************************************************
@@ -91,10 +211,10 @@ function newCharacter(i, name, classId) {
 
 function newRegion() {
   return [
-    newCharacter(0, "Unnamed Boss", "boss"),
-    newCharacter(1, "Unnamed Boss", "boss"),
-    newCharacter(2, "Unnamed Boss", "boss"),
-    newCharacter(3, "Unnamed Boss", "boss"),
+    newCharacter(0, "Unnamed Boss", 5),
+    newCharacter(1, "Unnamed Boss", 5),
+    newCharacter(2, "Unnamed Boss", 5),
+    newCharacter(3, "Unnamed Boss", 5),
   ];
 }
 
@@ -105,4 +225,4 @@ function newPlayer(i, cls) {
   return c;
 }
 
-const DummyCharacter = newCharacter(0, "", "");
+const DummyCharacter = newCharacter(0, "", 0);
