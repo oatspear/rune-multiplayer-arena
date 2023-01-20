@@ -34,6 +34,18 @@ const app = createApp({
   computed: {
     thisPlayer() {
       return this.players[this.playerIndex];
+    },
+
+    highlightEnemies() {
+      return this.ui.selectedEnemy == null
+        && this.ui.footer.selectedTarget == null
+        && this.ui.targetMode == TARGET_ENEMY;
+    },
+
+    highlightPlayers() {
+      return this.ui.selectedEnemy == null
+        && this.ui.footer.selectedTarget == null
+        && this.ui.targetMode == TARGET_ALLY;
     }
   },
   methods: {
@@ -86,7 +98,6 @@ const app = createApp({
           this.ui.selectedPlayer = null;
           this.ui.footer.selectedTarget = 0;
       }
-      console.log("Selected target:", this.ui.footer.selectedTarget);
       // select or deselect skill
       // this.ui.footer.selectedSkill = (this.ui.footer.selectedSkill == i) ? null : i;
       this.ui.footer.selectedSkill = i;

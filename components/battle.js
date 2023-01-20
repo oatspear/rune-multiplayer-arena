@@ -9,6 +9,8 @@ const BattleBoard = {
       type: Array,
       required: true
     },
+    highlightEnemies: Boolean,
+    highlightPlayers: Boolean,
     selectedEnemy: Number,
     selectedPlayer: Number
   },
@@ -65,6 +67,8 @@ const BattleScene = {
       type: Array,
       required: true
     },
+    highlightEnemies: Boolean,
+    highlightPlayers: Boolean,
     selectedEnemy: Number,
     selectedPlayer: Number
   },
@@ -96,8 +100,9 @@ const BattleTile = {
       type: Object,
       required: true
     },
-    isBoss: Boolean,
+    isEnemy: Boolean,
     isActive: Boolean,
+    isHighlighted: Boolean,
     isOwned: Boolean
   },
   data() {

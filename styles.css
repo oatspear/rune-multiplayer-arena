@@ -140,9 +140,42 @@ main {
   background-color: royalblue;
 }
 
-.tile.boss {
-  background-color: violet;
-  border: 2px solid black;
+.tile.enemy.active {
+  background-color: crimson;
+}
+
+.tile.highlight {
+  animation-name: pulseBackgroundBlue;
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+}
+
+.tile.enemy.highlight {
+  animation-name: pulseBackgroundRed;
+}
+
+@keyframes pulseBackgroundRed {
+  0% {
+    background-color: inherit;
+  }
+  50% {
+    background-color: crimson;
+  }
+  100 {
+    background-color: inherit;
+  }
+}
+
+@keyframes pulseBackgroundBlue {
+  0% {
+    background-color: inherit;
+  }
+  50% {
+    background-color: royalblue;
+  }
+  100 {
+    background-color: inherit;
+  }
 }
 
 .tile > .class {
