@@ -61,16 +61,7 @@ function addSkill(params) {
   checkProperty(params, "name", "string");
   checkProperty(params, "speed", "number");
   const target = params.target;
-  if (target != null) {
-    assert(
-      target === TargetMode.SELF
-      || target === TargetMode.ALLY
-      || target === TargetMode.ENEMY
-      || target === TargetMode.ALL_ALLIES
-      || target === TargetMode.ALL_ENEMIES
-      || target === TargetMode.ALL_CHARACTERS
-    );
-  }
+  assert(target == null || Object.values(TargetMode).includes(target), `unknown target mode: ${target}`);
   const data = {
     id: Skills.length,
     name: params.name,

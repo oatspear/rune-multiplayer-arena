@@ -121,6 +121,8 @@ const app = createApp({
 
     onUseSkill() {
       const self = this.thisPlayer;
+      const i = this.ui.footer.selectedSkill;
+      const t = this.ui.footer.selectedTarget;
       // reset selection
       this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
@@ -129,7 +131,7 @@ const app = createApp({
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.resetFooterState();
-      // Rune.actions.myAction({ myId: "button" });
+      Rune.actions.useSkill({ skill: i, target: t });
     },
 
     onEnemySelected(character) {
