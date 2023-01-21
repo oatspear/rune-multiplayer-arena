@@ -31,15 +31,17 @@ function isVictoryOrDraw(game) {
 Rune.initLogic({
   minPlayers: 1,
   maxPlayers: 4,
-  setup: (players) => {
-    const scores = {}
+
+  setup(players) {
+    const scores = {};
     for (let playerId in players) {
       scores[playerId] = 0
     }
-    return { scores }
+    return { scores };
   },
+
   actions: {
-    useSkill: (payload, { game, playerId }) => {
+    useSkill(payload, { game, playerId }) {
       // Check it's not the other player's turn
       // if (game.lastPlayerTurn !== playerId) {
       //   throw Rune.invalidAction()
@@ -53,7 +55,8 @@ Rune.initLogic({
       // if (isVictoryOrDraw(game)) {
       //   Rune.gameOver()
       // }
-      console.log("Used a skill:", payload.skill, payload.target);
-    },
+      console.log(playerId, "used a skill:", payload.skill, payload.target);
+      console.log("game state:", game);
+    }
   },
 });

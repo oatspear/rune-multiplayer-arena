@@ -188,6 +188,7 @@ const app = createApp({
 
   mounted() {
     this.resetFooterState();
+    initRuneClient();
   }
 });
 
@@ -210,19 +211,21 @@ function render() {
   // TODO
 }
 
-Rune.initClient({
-  visualUpdate: ({
-    newGame,
-    oldGame,
-    yourPlayerId,
-    players,
-    action,
-    event,
-    rollbacks,
-  }) => {
-    // Update interface based on game state from logic.js.
-    // The `visualUpdate` function must be synchronous.
-    // It may trigger async functions if needed, but cannot `await` them.
-    render(newGame);
-  },
-});
+function initRuneClient() {
+  Rune.initClient({
+    visualUpdate: ({
+      newGame,
+      oldGame,
+      yourPlayerId,
+      players,
+      action,
+      event,
+      rollbacks,
+    }) => {
+      // Update interface based on game state from logic.js.
+      // The `visualUpdate` function must be synchronous.
+      // It may trigger async functions if needed, but cannot `await` them.
+      render(newGame);
+    },
+  });
+}
