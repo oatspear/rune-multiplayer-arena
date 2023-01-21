@@ -44,6 +44,13 @@ const TargetMode = newEnum([
 ]);
 
 
+const SkillMechanics = newEnum([
+  "ATTACK_TARGETS",
+  "DAMAGE_TARGETS",
+  "HEAL_TARGETS"
+]);
+
+
 /*******************************************************************************
   Skills
 *******************************************************************************/

@@ -5,9 +5,20 @@
   Battle Logic
 *******************************************************************************/
 
-const SkillMechanics = {
-  
-};
+const MechanicsHandlers = (function () {
+  function attackTargets() {
+
+  }
+
+  const handlers = Array(Object.keys(SkillMechanics).length);
+  handlers[SkillMechanics.ATTACK_TARGETS] = attackTargets;
+
+  for (const k in Object.keys(SkillMechanics)) {
+    assert(handlers[k] != null, `expected handler for SkillMechanics.${k}`);
+  }
+
+  return handlers;
+})();
 
 
 function isVictoryOrDraw(game) {
