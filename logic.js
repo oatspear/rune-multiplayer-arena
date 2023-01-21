@@ -2,6 +2,58 @@
 // Copyright © 2023 André "Oatspear" Santos
 
 /*******************************************************************************
+  Utility
+*******************************************************************************/
+
+
+function assert(condition, message) {
+    if (!condition) {
+        throw new Error(message || "Assertion failed");
+    }
+}
+
+
+function checkProperty(obj, prop, type) {
+  assert(
+    (obj[prop] != null) && (typeof obj[prop] === type),
+    `expected property "${prop}" of type ${type} in ${obj}`
+  );
+}
+
+
+/*******************************************************************************
+  Data
+*******************************************************************************/
+
+
+function targetModeSelf() { return 0; }
+function targetModeAlly() { return 1; }
+function targetModeEnemy() { return 2; }
+function targetModeAllAllies() { return 3; }
+function targetModeAllEnemies() { return 4; }
+function targetModeAllCharacters() { return 5; }
+
+
+function newSkill(params) {
+  checkProperty(params, "name", "string");
+  checkProperty(params, "speed", "number");
+  const target = params.target;
+  assert(target == null || (target >= 0 && target <= targetModeAllCharacters()),
+    `unknown target mode: ${target}`);
+  return {
+    id: Skills.length,
+    name: params.name,
+    speed: params.speed,
+    cooldown: params.cooldown || 0,
+    target: target || targetModeSelf(),
+    mechanics: params.mechanics || [],
+    icon: params.icon || "skill",
+    description: params.description || "No description."
+  };
+}
+
+
+/*******************************************************************************
   Battle Logic
 *******************************************************************************/
 
@@ -37,7 +89,9 @@ Rune.initLogic({
     for (let playerId in players) {
       scores[playerId] = 0
     }
-    return { scores };
+    return {
+      scores
+    };
   },
 
   actions: {
