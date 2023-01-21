@@ -5,6 +5,11 @@
   Battle Logic
 *******************************************************************************/
 
+const SkillMechanics = {
+  
+};
+
+
 function isVictoryOrDraw(game) {
   // Check winner
 }

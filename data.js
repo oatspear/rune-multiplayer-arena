@@ -2,19 +2,17 @@
 // Copyright © 2023 André "Oatspear" Santos
 
 /*******************************************************************************
-  Constants
-*******************************************************************************/
-
-const TARGET_SELF = 0;
-const TARGET_ALLY = 1;
-const TARGET_ENEMY = 2;
-const TARGET_ALL_ALLIES = 5;
-const TARGET_ALL_ENEMIES = 6;
-const TARGET_ALL_CHARACTERS = 7;
-
-/*******************************************************************************
   Utility
 *******************************************************************************/
+
+
+function newEnum(keys) {
+  const enumObject = {};
+  for (let i = 0; i < keys.length; ++i) {
+    enumObject[keys[i]] = i;
+  }
+  return Object.freeze(enumObject);
+}
 
 
 function assert(condition, message) {
@@ -33,6 +31,20 @@ function checkProperty(obj, prop, type) {
 
 
 /*******************************************************************************
+  Constants
+*******************************************************************************/
+
+const TargetMode = newEnum([
+  "SELF",
+  "ALLY",
+  "ENEMY",
+  "ALL_ALLIES",
+  "ALL_ENEMIES",
+  "ALL_CHARACTERS"
+]);
+
+
+/*******************************************************************************
   Skills
 *******************************************************************************/
 
@@ -44,12 +56,12 @@ function addSkill(params) {
   const target = params.target;
   if (target != null) {
     assert(
-      target === TARGET_SELF
-      || target === TARGET_ALLY
-      || target === TARGET_ENEMY
-      || target === TARGET_ALL_ALLIES
-      || target === TARGET_ALL_ENEMIES
-      || target === TARGET_ALL_CHARACTERS
+      target === TargetMode.SELF
+      || target === TargetMode.ALLY
+      || target === TargetMode.ENEMY
+      || target === TargetMode.ALL_ALLIES
+      || target === TargetMode.ALL_ENEMIES
+      || target === TargetMode.ALL_CHARACTERS
     );
   }
   const data = {
@@ -57,7 +69,7 @@ function addSkill(params) {
     name: params.name,
     speed: params.speed,
     cooldown: params.cooldown || 0,
-    target: target || TARGET_SELF,
+    target: target || TargetMode.SELF,
     icon: params.icon || "skill",
     description: params.description || "No description."
   };
@@ -69,7 +81,7 @@ addSkill({
   name: "Rest",
   speed: 1,
   cooldown: 0,
-  target: TARGET_SELF,
+  target: TargetMode.SELF,
   icon: "rest",
   description: "Recover some health."
 });
@@ -77,7 +89,7 @@ addSkill({
 addSkill({
   name: "Attack",
   speed: 5,
-  target: TARGET_ENEMY,
+  target: TargetMode.ENEMY,
   icon: "battle",
   description: "Attack an enemy."
 });
@@ -85,7 +97,7 @@ addSkill({
 addSkill({
   name: "Ranged Attack",
   speed: 7,
-  target: TARGET_ENEMY,
+  target: TargetMode.ENEMY,
   icon: "ranger",
   description: "Damage on enemy for [Power]."
 });
@@ -93,7 +105,7 @@ addSkill({
 addSkill({
   name: "Multi-Attack",
   speed: 6,
-  target: TARGET_ALL_ENEMIES,
+  target: TargetMode.ALL_ENEMIES,
   icon: "battle",
   description: "Damage all enemies for [Power]/2."
 });
@@ -102,7 +114,7 @@ addSkill({
   name: "Rest",
   speed: 1,
   cooldown: 0,
-  target: TARGET_SELF,
+  target: TargetMode.SELF,
   icon: "rest",
   description: "Recover some health."
 });
