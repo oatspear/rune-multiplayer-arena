@@ -53,6 +53,21 @@ function newSkill(params) {
 }
 
 
+function newEnemy() {
+  return {
+
+  };
+}
+
+
+function newPlayer(playerId) {
+  return {
+    id: playerId,
+    speed: 5
+  };
+}
+
+
 /*******************************************************************************
   Battle Logic
 *******************************************************************************/
@@ -72,32 +87,43 @@ const MechanicsHandlers = (function () {
 })();
 
 
-function allSkillsChosen(game) {
-  const choices = game.skillChoice;
-  for (const playerId in choices) {
-    if (choice[playerId] == null) {
+function getSkill(id) {
+  return {
+    speed: 5
+  };
+}
+
+
+function adjustTurnOrder(game, value) {
+  let speed = 1000;
+  for (const id in game.players) {
+    const player = game.players[id];
+    let s = player.speed - value;
+    player.speed = s;
+    if (s < speed) {
+      game.currentTurn = playerId;
+      speed = s;
+    }
+  }
+}
+
+
+function doEnemyReaction(game) {
+  
+}
+
+
+function isGameOver(game) {
+  if (game.enemy.currentHealth <= 0) {
+    return true;
+  }
+  for (const id in game.players) {
+    const player = game.players[id];
+    if (player.currentHealth > 0) {
       return false;
     }
   }
   return true;
-}
-
-
-function chooseEnemySkills(game) {
-  game.enemySkills = [0, 0, 0, 0];
-}
-
-
-function determineTurnOrder(game) {
-  for (let i in game.enemySkills) {
-    const k = game.enemySkills[i];
-    const skill = k;
-  }
-}
-
-
-function isVictoryOrDraw(game) {
-  // Check winner
 }
 
 /*******************************************************************************
@@ -110,43 +136,54 @@ Rune.initLogic({
 
   setup(players) {
     const game = {
-      skillChoice: {},
-      enemySkills: [],
-      turnOrder: []
+      enemy: null,
+      players: {},
+      currentTurn: null
     };
+    let speed = 1000;
     for (let playerId in players) {
-      game.skillChoice[playerId] = null;
+      const player = null;
+      game.players[playerId] = player;
+      if (player.speed < speed) {
+        game.currentTurn = playerId;
+        speed = player.speed;
+      }
     }
     return game;
   },
 
   actions: {
-    chooseSKill(params, { game, playerId }) {
-      // Check it's not the other player's turn
-      if (game.skillChoice[playerId] != null) {
+    useSkill(payload, { game, playerId }) {
+      const player = game.players[playerId];
+
+      // Check if it's the player's turn
+      if (game.currentTurn !== playerId) {
         throw Rune.invalidAction();
       }
 
-      // Register the player's choice
-      game.skillChoice[playerId] = params.skill;
-
-      if (!allSkillsChosen(game)) { return; }
-
-      // Determine turn order
-      chooseEnemySkills(game);
-    },
-
-    useSkill(payload, { game, playerId }) {
-
-      // Increase score and switch turn
-      // game.scores[playerId]++
-      // game.lastPlayerTurn = playerId
+      // Resolve the skill
+      const skill = getSkill(player.skills[payload.skill]);
+      console.log(playerId, "used a skill:", payload.skill, payload.target);
+      resolveSkill(skill, game);
 
       // Determine if game has ended
-      // if (isVictoryOrDraw(game)) {
-      //   Rune.gameOver()
-      // }
-      console.log(playerId, "used a skill:", payload.skill, payload.target);
+      if (isGameOver(game)) {
+        Rune.gameOver();
+      }
+
+      // Adjust turn order for everyone
+      const speed = player.speed;
+      player.speed += skill.speed;
+      adjustTurnOrder(game, speed);
+
+      // Determine enemy reaction
+      doEnemyReaction(game, player, skill);
+
+      // Determine if game has ended
+      if (isGameOver(game)) {
+        Rune.gameOver();
+      }
+
       console.log("game state:", game);
     }
   },
