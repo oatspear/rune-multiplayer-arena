@@ -6,19 +6,19 @@
 *******************************************************************************/
 
 
-function assert(condition, message) {
-    if (!condition) {
-        throw new Error(message || "Assertion failed");
-    }
-}
+// function assert(condition, message) {
+//     if (!condition) {
+//         throw new Error(message || "Assertion failed");
+//     }
+// }
 
 
-function checkProperty(obj, prop, type) {
-  assert(
-    (obj[prop] != null) && (typeof obj[prop] === type),
-    `expected property "${prop}" of type ${type} in ${obj}`
-  );
-}
+// function checkProperty(obj, prop, type) {
+//   assert(
+//     (obj[prop] != null) && (typeof obj[prop] === type),
+//     `expected property "${prop}" of type ${type} in ${obj}`
+//   );
+// }
 
 
 /*******************************************************************************
@@ -72,6 +72,30 @@ const MechanicsHandlers = (function () {
 })();
 
 
+function allSkillsChosen(game) {
+  const choices = game.skillChoice;
+  for (const playerId in choices) {
+    if (choice[playerId] == null) {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+function chooseEnemySkills(game) {
+  game.enemySkills = [0, 0, 0, 0];
+}
+
+
+function determineTurnOrder(game) {
+  for (let i in game.enemySkills) {
+    const k = game.enemySkills[i];
+    const skill = k;
+  }
+}
+
+
 function isVictoryOrDraw(game) {
   // Check winner
 }
@@ -85,21 +109,34 @@ Rune.initLogic({
   maxPlayers: 4,
 
   setup(players) {
-    const scores = {};
-    for (let playerId in players) {
-      scores[playerId] = 0
-    }
-    return {
-      scores
+    const game = {
+      skillChoice: {},
+      enemySkills: [],
+      turnOrder: []
     };
+    for (let playerId in players) {
+      game.skillChoice[playerId] = null;
+    }
+    return game;
   },
 
   actions: {
-    useSkill(payload, { game, playerId }) {
+    chooseSKill(params, { game, playerId }) {
       // Check it's not the other player's turn
-      // if (game.lastPlayerTurn !== playerId) {
-      //   throw Rune.invalidAction()
-      // }
+      if (game.skillChoice[playerId] != null) {
+        throw Rune.invalidAction();
+      }
+
+      // Register the player's choice
+      game.skillChoice[playerId] = params.skill;
+
+      if (!allSkillsChosen(game)) { return; }
+
+      // Determine turn order
+      chooseEnemySkills(game);
+    },
+
+    useSkill(payload, { game, playerId }) {
 
       // Increase score and switch turn
       // game.scores[playerId]++

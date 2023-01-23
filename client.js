@@ -225,7 +225,7 @@ function initRuneClient() {
       // Update interface based on game state from logic.js.
       // The `visualUpdate` function must be synchronous.
       // It may trigger async functions if needed, but cannot `await` them.
-      render(newGame);
+      console.log("Got a new game state:", newGame);
     },
   });
 }

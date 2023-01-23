@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: MIT
 // Copyright © 2023 André "Oatspear" Santos
 
+const RANDOM_PLAYER_ID = "randomPlayerId1";
+
 const Rune = {
   players: {
     "randomPlayerId1": {
       displayName: "Oatspear",
-      playerId: "randomPlayerId1"
+      playerId: RANDOM_PLAYER_ID
     }
   },
   game: {},
   actions: {},
+  visualUpdate: null,
 
   initLogic(params) {
     console.log("Rune.initLogic()");
@@ -20,11 +23,26 @@ const Rune = {
 
     this.game = params.setup(this.players);
 
-    const context = { game: this.game, playerId: "randomPlayerId1" };
+    const self = this;
     for (const key of Object.keys(params.actions)) {
       this.actions[key] = (function (k) {
         return function (payload) {
-          return params.actions[k](payload, context);
+          const players = self.players;
+          const oldGame = self.game;
+          const newGame = JSON.parse(JSON.stringify(oldGame));
+          const context = { game: newGame, playerId: RANDOM_PLAYER_ID };
+          params.actions[k](payload, context);
+          window.setTimeout(function () {
+            self.visualUpdate({
+              newGame: newGame,
+              oldGame: oldGame,
+              yourPlayerId: RANDOM_PLAYER_ID,
+              players: players,
+              action: k,
+              event: null,
+              rollbacks: null
+            });
+          }, 0);
         };
       })(key);
       console.log(`Rune.actions.${key} =`, this.actions[key]);
@@ -34,5 +52,6 @@ const Rune = {
   initClient(params) {
     console.log("Rune.initClient()");
     console.log("visualUpdate:", params.visualUpdate);
+    this.visualUpdate = params.visualUpdate;
   }
 };
