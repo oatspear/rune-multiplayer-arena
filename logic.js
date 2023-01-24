@@ -46,7 +46,6 @@ function newSkill(params) {
     speed: params.speed,
     cooldown: params.cooldown || 0,
     target: target || targetModeSelf(),
-    mechanics: params.mechanics || [],
     icon: params.icon || "skill",
     description: params.description || "No description."
   };
@@ -72,25 +71,44 @@ function newPlayer(playerId) {
   Battle Logic
 *******************************************************************************/
 
-const MechanicsHandlers = (function () {
-  const handlers = Array(Object.keys(SkillMechanics).length);
 
-  handlers[SkillMechanics.ATTACK_TARGETS] = function (params, game) {};
-  handlers[SkillMechanics.DAMAGE_TARGETS] = function (params, game) {};
-  handlers[SkillMechanics.HEAL_TARGETS] = function (params, game) {};
-
-  for (const k in Object.keys(SkillMechanics)) {
-    assert(handlers[k] != null, `expected handler for SkillMechanics.${k}`);
+function getSkill(classId, id) {
+  if (id <= 0) {
+    return newSkill();
   }
+  switch (classId) {
+    case 0:  // Ranger
+      switch (id) {
+        case 0:
+          return;
+        default:
 
-  return handlers;
-})();
+      }
 
+    case 1:  // Warrior
 
-function getSkill(id) {
+    case 2:  // Rogue
+
+    case 3:  // Mage
+
+    case 4:  // Druid
+
+    case 5:  // Priest
+
+    default:
+      return newSkill()
+  }
   return {
     speed: 5
   };
+}
+
+
+function resolveSkill(skill, game) {
+  // Determine if game has ended
+  if (isGameOver(game)) {
+    Rune.gameOver();
+  }
 }
 
 
@@ -108,8 +126,13 @@ function adjustTurnOrder(game, value) {
 }
 
 
-function doEnemyReaction(game) {
-  
+function doEnemyReaction(game, player, skill) {
+  const enemy = game.enemy;
+
+  // Resolve the skill
+  const skill = getSkill(enemy.classId, enemy.skills[0]);
+  console.log("Enemy used a skill:", skill.id, player);
+  resolveSkill(skill, game);
 }
 
 
@@ -162,27 +185,19 @@ Rune.initLogic({
       }
 
       // Resolve the skill
-      const skill = getSkill(player.skills[payload.skill]);
+      const skill = getSkill(player.classId, player.skills[payload.skill]);
       console.log(playerId, "used a skill:", payload.skill, payload.target);
       resolveSkill(skill, game);
 
-      // Determine if game has ended
-      if (isGameOver(game)) {
-        Rune.gameOver();
-      }
-
-      // Adjust turn order for everyone
+      // Move the player down the queue
       const speed = player.speed;
       player.speed += skill.speed;
-      adjustTurnOrder(game, speed);
 
       // Determine enemy reaction
       doEnemyReaction(game, player, skill);
 
-      // Determine if game has ended
-      if (isGameOver(game)) {
-        Rune.gameOver();
-      }
+      // Adjust turn order for everyone
+      adjustTurnOrder(game, speed);
 
       console.log("game state:", game);
     }
