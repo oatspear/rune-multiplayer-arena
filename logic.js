@@ -72,6 +72,55 @@ function newPlayer(playerId) {
 *******************************************************************************/
 
 
+function startGameTurn(game, playerId, skillId) {
+  // Check whether it is the player's turn
+  if (game.currentTurn !== playerId) {
+    throw Rune.invalidAction();
+  }
+  // Clear the event history for this turn
+  game.events = [{
+    type: "skill",
+    user: playerId
+  }];
+}
+
+
+function getTargetEnemy(game, target) {
+  return game.enemy;
+}
+
+
+function dealDamageToTarget(game, target, damage) {
+  target.currentHealth -= damage;
+  game.events.push({
+    type: "damage",
+    target: target.id,
+    value: damage
+  });
+}
+
+
+function updateThreatLevel(game, playerId, value) {
+  const half = (value / 2) | 0;
+  let highest = game.players[game.enemyTarget].threat;
+  for (const id in game.players) {
+    const player = game.players[id];
+    if (id === playerId) {
+      player.threat += value;
+    } else {
+      player.threat -= half;
+      if (player.threat < 0) {
+        player.threat = 0;
+      }
+    }
+    if (player.threat >= highest) {
+      highest = player.threat;
+      game.enemyTarget = id;
+    }
+  }
+}
+
+
 function getSkill(classId, id) {
   if (id <= 0) {
     return newSkill();
@@ -161,7 +210,10 @@ Rune.initLogic({
     const game = {
       enemy: null,
       players: {},
-      currentTurn: null
+      currentTurn: null,
+      events: [],
+      threatLevel: {},
+      enemyTarget: null
     };
     let speed = 1000;
     for (let playerId in players) {
@@ -171,11 +223,22 @@ Rune.initLogic({
         game.currentTurn = playerId;
         speed = player.speed;
       }
+      game.threatLevel[playerId] = 0;
+      game.enemyTarget = playerId;
     }
     return game;
   },
 
   actions: {
+    attack(payload, { game, playerId }) {
+      startGameTurn(game, playerId, payload.skill);
+      const player = game.players[playerId];
+      const enemy = game.enemy;
+      dealDamageToTarget(game, enemy, player.power);
+      dealDamageToTarget(game, player, enemy.power);
+      updateThreatLevel(game, playerId, player.power * 10);
+    },
+
     useSkill(payload, { game, playerId }) {
       const player = game.players[playerId];
 
