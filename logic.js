@@ -33,10 +33,12 @@ function targetModeAllAllies() { return 3; }
 function targetModeAllEnemies() { return 4; }
 function targetModeAllCharacters() { return 5; }
 
-
+function speedValueRest() { return 2; }
 function speedValueAttack() { return 5; }
 function speedValueDirectDamage() { return 7; }
 function speedValueDirectHealing() { return 8; }
+
+function healFactorRest() { return 0.1; }
 
 
 function newSkill(params) {
@@ -112,6 +114,19 @@ function dealDamageToTarget(game, target, damage) {
 }
 
 
+function healTarget(game, target, damage) {
+  target.currentHealth += damage;
+  if (target.currentHealth > target.health) {
+    target.currentHealth = target.health;
+  }
+  game.events.push({
+    type: "heal",
+    target: target.id,
+    value: damage
+  });
+}
+
+
 function updateThreatLevel(game, playerId, value) {
   const half = (value / 2) | 0;
   let highest = game.players[game.enemyTarget].threat;
@@ -133,8 +148,23 @@ function updateThreatLevel(game, playerId, value) {
 }
 
 
+function reactToRest(game, enemy, currentPlayer) {
+  const player = game.players[game.enemyTarget];
+  dealDamageToTarget(game, player, enemy.power);
+}
+
+
 function reactToDirectDamage(game, enemy, currentPlayer) {
   const player = game.players[game.enemyTarget];
+  dealDamageToTarget(game, player, enemy.power);
+}
+
+
+function reactToDirectHealing(game, enemy, currentPlayer) {
+  let player = game.players[currentPlayer];
+  if ((player.currentHealth / player.health) > 0.5) {
+    player = game.players[game.enemyTarget];
+  }
   dealDamageToTarget(game, player, enemy.power);
 }
 
@@ -224,6 +254,17 @@ Rune.initLogic({
   },
 
   actions: {
+    rest(payload, { game, playerId }) {
+      startGameTurn(game, playerId, payload.skill);
+      const player = game.players[playerId];
+      const enemy = game.enemy;
+      const damage = ((healFactorRest() * player.health) | 0) || 1;
+      healTarget(game, player, damage);
+      updateThreatLevel(game, playerId, -player.power);
+      slowTargetDown(game, player, speedValueRest());
+      reactToRest(game, enemy, player);
+    },
+
     attack(payload, { game, playerId }) {
       startGameTurn(game, playerId, payload.skill);
       const player = game.players[playerId];
@@ -241,8 +282,20 @@ Rune.initLogic({
       const damage = (player.power * 1.5) | 0;
       dealDamageToTarget(game, enemy, damage);
       updateThreatLevel(game, playerId, damage * 5);
-      reactToDirectDamage(game, enemy, player);
       slowTargetDown(game, player, speedValueDirectDamage());
+      reactToDirectDamage(game, enemy, player);
+    },
+
+    directHealing(payload, { game, playerId }) {
+      startGameTurn(game, playerId, payload.skill);
+      const player = game.players[playerId];
+      const target = game.players[payload.target];
+      const enemy = game.enemy;
+      const damage = (player.power * 1.25) | 0;
+      healTarget(game, target, damage);
+      updateThreatLevel(game, playerId, damage * 6);
+      slowTargetDown(game, player, speedValueDirectHealing());
+      reactToDirectHealing(game, enemy, player);
     },
 
     useSkill(payload, { game, playerId }) {
