@@ -34,6 +34,11 @@ function targetModeAllEnemies() { return 4; }
 function targetModeAllCharacters() { return 5; }
 
 
+function speedValueAttack() { return 5; }
+function speedValueDirectDamage() { return 7; }
+function speedValueDirectHealing() { return 8; }
+
+
 function newSkill(params) {
   checkProperty(params, "name", "string");
   checkProperty(params, "speed", "number");
@@ -77,9 +82,16 @@ function startGameTurn(game, playerId, skillId) {
   if (game.currentTurn !== playerId) {
     throw Rune.invalidAction();
   }
+
+  // Move the player down the queue
+  const player = game.players[playerId];
+  const speed = player.speed;
+  player.speed += skill.speed;
+
   // Clear the event history for this turn
   game.events = [{
     type: "skill",
+    value: skillId,
     user: playerId
   }];
 }
@@ -109,10 +121,10 @@ function updateThreatLevel(game, playerId, value) {
       player.threat += value;
     } else {
       player.threat -= half;
-      if (player.threat < 0) {
-        player.threat = 0;
-      }
     }
+    // if (player.threat < 0) {
+    //   player.threat = 0;
+    // }
     if (player.threat >= highest) {
       highest = player.threat;
       game.enemyTarget = id;
@@ -121,35 +133,9 @@ function updateThreatLevel(game, playerId, value) {
 }
 
 
-function getSkill(classId, id) {
-  if (id <= 0) {
-    return newSkill();
-  }
-  switch (classId) {
-    case 0:  // Ranger
-      switch (id) {
-        case 0:
-          return;
-        default:
-
-      }
-
-    case 1:  // Warrior
-
-    case 2:  // Rogue
-
-    case 3:  // Mage
-
-    case 4:  // Druid
-
-    case 5:  // Priest
-
-    default:
-      return newSkill()
-  }
-  return {
-    speed: 5
-  };
+function reactToDirectDamage(game, enemy, currentPlayer) {
+  const player = game.players[game.enemyTarget];
+  dealDamageToTarget(game, player, enemy.power);
 }
 
 
@@ -158,6 +144,14 @@ function resolveSkill(skill, game) {
   if (isGameOver(game)) {
     Rune.gameOver();
   }
+}
+
+
+function slowTargetDown(game, target, value) {
+  // Move the target down the queue
+  const speed = target.speed;
+  target.speed += value;
+  adjustTurnOrder(game, speed);
 }
 
 
@@ -237,6 +231,18 @@ Rune.initLogic({
       dealDamageToTarget(game, enemy, player.power);
       dealDamageToTarget(game, player, enemy.power);
       updateThreatLevel(game, playerId, player.power * 10);
+      slowTargetDown(game, player, speedValueAttack());
+    },
+
+    directDamage(payload, { game, playerId }) {
+      startGameTurn(game, playerId, payload.skill);
+      const player = game.players[playerId];
+      const enemy = game.enemy;
+      const damage = (player.power * 1.5) | 0;
+      dealDamageToTarget(game, enemy, damage);
+      updateThreatLevel(game, playerId, damage * 5);
+      reactToDirectDamage(game, enemy, player);
+      slowTargetDown(game, player, speedValueDirectDamage());
     },
 
     useSkill(payload, { game, playerId }) {
