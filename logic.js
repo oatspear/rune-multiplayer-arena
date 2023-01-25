@@ -2,29 +2,8 @@
 // Copyright © 2023 André "Oatspear" Santos
 
 /*******************************************************************************
-  Utility
-*******************************************************************************/
-
-
-// function assert(condition, message) {
-//     if (!condition) {
-//         throw new Error(message || "Assertion failed");
-//     }
-// }
-
-
-// function checkProperty(obj, prop, type) {
-//   assert(
-//     (obj[prop] != null) && (typeof obj[prop] === type),
-//     `expected property "${prop}" of type ${type} in ${obj}`
-//   );
-// }
-
-
-/*******************************************************************************
   Data
 *******************************************************************************/
-
 
 function targetModeSelf() { return 0; }
 function targetModeAlly() { return 1; }
@@ -33,35 +12,41 @@ function targetModeAllAllies() { return 3; }
 function targetModeAllEnemies() { return 4; }
 function targetModeAllCharacters() { return 5; }
 
-function speedValueRest() { return 2; }
-function speedValueAttack() { return 5; }
-function speedValueDirectDamage() { return 7; }
-function speedValueDirectHealing() { return 8; }
+function constHealTargetPercent () { return 0; }
+function constAttackTarget() { return 1; }
+function constDamageTarget() { return 2; }
+
 
 function healFactorRest() { return 0.1; }
 
 
-function newSkill(params) {
-  checkProperty(params, "name", "string");
-  checkProperty(params, "speed", "number");
-  const target = params.target;
-  assert(target == null || (target >= 0 && target <= targetModeAllCharacters()),
-    `unknown target mode: ${target}`);
+function skillDataRest() {
   return {
-    id: Skills.length,
-    name: params.name,
-    speed: params.speed,
-    cooldown: params.cooldown || 0,
-    target: target || targetModeSelf(),
-    icon: params.icon || "skill",
-    description: params.description || "No description."
+    id: "rest",
+    speed: 1,
+    cooldown: 0,
+    target: targetModeSelf(),
+    threat: -2,
+    mechanic: constHealTargetPercent(),
+    healingPercent: 0.1
+  };
+}
+
+function skillDataAttack() {
+  return {
+    id: "attack",
+    speed: 5,
+    cooldown: 0,
+    target: targetModeEnemy(),
+    threat: 5,
+    mechanic: constAttackTarget()
   };
 }
 
 
 function newEnemy() {
   return {
-
+    isPlayerCharacter: false,
   };
 }
 
@@ -69,6 +54,7 @@ function newEnemy() {
 function newPlayer(playerId) {
   return {
     id: playerId,
+    isPlayerCharacter: true,
     speed: 5
   };
 }
@@ -79,28 +65,99 @@ function newPlayer(playerId) {
 *******************************************************************************/
 
 
-function startGameTurn(game, playerId, skillId) {
-  // Check whether it is the player's turn
+function processPlayerSkill(game, playerId, skill, args) {
+  const player = game.players[playerId];
+
+  // Check if it's the player's turn
   if (game.currentTurn !== playerId) {
     throw Rune.invalidAction();
   }
 
   // Move the player down the queue
-  const player = game.players[playerId];
-  const speed = player.speed;
+  adjustTurnOrder(game, player.speed);
   player.speed += skill.speed;
 
-  // Clear the event history for this turn
-  game.events = [{
-    type: "skill",
-    value: skillId,
-    user: playerId
-  }];
+  // Clear the event queue
+  game.events = [];
+
+  // Resolve the skill
+  console.log(playerId, "used a skill:", skill.id, payload.target);
+  resolveSkill(game, player, skill, args);
+  updateThreatLevel(game, playerId, skill.threat);
+
+  // Determine enemy reaction
+  doEnemyReaction(game, player, skill);
+
+  console.log("game state:", game);
 }
 
 
-function getTargetEnemy(game, target) {
-  return game.enemy;
+function resolveSkill(game, user, skill, args) {
+  const target = getTarget(game, user, skill.target, args.target);
+
+  switch (skill.mechanic) {
+    case constHealTargetPercent():
+      const damage = ((target.health * skill.healingPercent) | 0) || 1;
+      healTarget(game, target, damage);
+      break;
+
+    default:
+      throw Rune.invalidAction();
+  }
+
+
+  // Determine if game has ended
+  if (isGameOver(game)) {
+    Rune.gameOver();
+  }
+}
+
+
+function getTarget(game, user, targetMode, targetId) {
+  if (!targetMode) {
+    return user;
+  }
+  if (targetMode === targetModeAlly()) {
+    return user.isPlayerCharacter ? game.players[targetId] : user;
+  }
+  if (targetMode === targetModeEnemy()) {
+    return user.isPlayerCharacter ? game.enemy : game.players[targetId];
+  }
+  const targets = [];
+  if (targetMode !== targetModeAllAllies()) {
+    // all enemies or all characters
+    if (user.isPlayerCharacter) {
+      targets.push(game.enemy);
+    } else {
+      targets.push.apply(targets, Object.values(game.players));
+    }
+  }
+  if (targetMode !== targetModeAllEnemies()) {
+    // all allies or all characters
+    if (user.isPlayerCharacter) {
+      targets.push.apply(targets, Object.values(game.players));
+    } else {
+      targets.push(game.enemy);
+    }
+  }
+  return targets;
+}
+
+
+function handleHealTargetByPercent(game, target, percent) {
+  const damage = ((target.health * percent) | 0) || 1;
+  healTarget(game, target, damage);
+}
+
+
+function handleAttackTarget(game, user, target) {
+
+}
+
+
+function handleDamageTargetByFactor(game, user, target, factor) {
+  const damage = ((user.power * factor) | 0) || 1;
+  dealDamageToTarget(game, target, damage);
 }
 
 
@@ -169,14 +226,6 @@ function reactToDirectHealing(game, enemy, currentPlayer) {
 }
 
 
-function resolveSkill(skill, game) {
-  // Determine if game has ended
-  if (isGameOver(game)) {
-    Rune.gameOver();
-  }
-}
-
-
 function slowTargetDown(game, target, value) {
   // Move the target down the queue
   const speed = target.speed;
@@ -186,14 +235,14 @@ function slowTargetDown(game, target, value) {
 
 
 function adjustTurnOrder(game, value) {
-  let speed = 1000;
+  let threshold = Infinity;
   for (const id in game.players) {
     const player = game.players[id];
-    let s = player.speed - value;
-    player.speed = s;
-    if (s < speed) {
-      game.currentTurn = playerId;
-      speed = s;
+    const speed = player.speed - value;
+    player.speed = speed;
+    if (speed < threshold) {
+      game.currentTurn = id;
+      threshold = speed;
     }
   }
 }
@@ -239,7 +288,7 @@ Rune.initLogic({
       threatLevel: {},
       enemyTarget: null
     };
-    let speed = 1000;
+    let speed = Infinity;
     for (let playerId in players) {
       const player = null;
       game.players[playerId] = player;
@@ -255,6 +304,9 @@ Rune.initLogic({
 
   actions: {
     rest(payload, { game, playerId }) {
+      const skill = skillDataRest();
+      // TODO validate skill
+      processPlayerSkill(game, playerId, skill, payload);
       startGameTurn(game, playerId, payload.skill);
       const player = game.players[playerId];
       const enemy = game.enemy;
@@ -296,32 +348,57 @@ Rune.initLogic({
       updateThreatLevel(game, playerId, damage * 6);
       slowTargetDown(game, player, speedValueDirectHealing());
       reactToDirectHealing(game, enemy, player);
-    },
-
-    useSkill(payload, { game, playerId }) {
-      const player = game.players[playerId];
-
-      // Check if it's the player's turn
-      if (game.currentTurn !== playerId) {
-        throw Rune.invalidAction();
-      }
-
-      // Resolve the skill
-      const skill = getSkill(player.classId, player.skills[payload.skill]);
-      console.log(playerId, "used a skill:", payload.skill, payload.target);
-      resolveSkill(skill, game);
-
-      // Move the player down the queue
-      const speed = player.speed;
-      player.speed += skill.speed;
-
-      // Determine enemy reaction
-      doEnemyReaction(game, player, skill);
-
-      // Adjust turn order for everyone
-      adjustTurnOrder(game, speed);
-
-      console.log("game state:", game);
     }
   },
 });
+
+
+/*******************************************************************************
+  To Be Removed
+*******************************************************************************/
+
+
+// function startGameTurn(game, playerId, skillId) {
+//   // Check whether it is the player's turn
+//   if (game.currentTurn !== playerId) {
+//     throw Rune.invalidAction();
+//   }
+//
+//   // Move the player down the queue
+//   const player = game.players[playerId];
+//   const speed = player.speed;
+//   player.speed += skill.speed;
+//
+//   // Clear the event history for this turn
+//   game.events = [{
+//     type: "skill",
+//     value: skillId,
+//     user: playerId
+//   }];
+// }
+
+
+// function getTargetEnemy(game, target) {
+//   return game.enemy;
+// }
+
+
+// function speedValueRest() { return 2; }
+// function speedValueAttack() { return 5; }
+// function speedValueDirectDamage() { return 7; }
+// function speedValueDirectHealing() { return 8; }
+
+
+// function assert(condition, message) {
+//     if (!condition) {
+//         throw new Error(message || "Assertion failed");
+//     }
+// }
+
+
+// function checkProperty(obj, prop, type) {
+//   assert(
+//     (obj[prop] != null) && (typeof obj[prop] === type),
+//     `expected property "${prop}" of type ${type} in ${obj}`
+//   );
+// }

@@ -55,6 +55,19 @@ const SkillMechanics = newEnum([
   Skills
 *******************************************************************************/
 
+const SkillMetadata = {
+  "rest": {
+    name: "Rest",
+    icon: "rest",
+    description: "Recover some health."
+  },
+  "attack": {
+    name: "Attack",
+    icon: "battle",
+    description: "Attack an enemy."
+  }
+};
+
 const Skills = [];
 
 function addSkill(params) {
