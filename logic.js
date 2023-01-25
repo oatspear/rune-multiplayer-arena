@@ -46,7 +46,19 @@ function skillDataAttack() {
 
 function newEnemy() {
   return {
+    id: 0,
+    classId: "boss",
     isPlayerCharacter: false,
+    power: 10,
+    health: 200,
+    currentHealth: 200,
+    speed: 8,
+    skills: [
+      "attack",
+      "directDamage",
+      "directHealing",
+      "rest"
+    ]
   };
 }
 
@@ -54,8 +66,19 @@ function newEnemy() {
 function newPlayer(playerId) {
   return {
     id: playerId,
+    classId: "ranger",
     isPlayerCharacter: true,
-    speed: 5
+    power: 10,
+    health: 20,
+    currentHealth: 20,
+    speed: 5,
+    threat: 0,
+    skills: [
+      "attack",
+      "directDamage",
+      "directHealing",
+      "rest"
+    ]
   };
 }
 
@@ -97,9 +120,13 @@ function resolveSkill(game, user, skill, args) {
 
   switch (skill.mechanic) {
     case constHealTargetPercent():
-      const damage = ((target.health * skill.healingPercent) | 0) || 1;
-      healTarget(game, target, damage);
-      break;
+      return handleHealTargetByPercent(game, user, target, skill);
+
+    case constAttackTarget():
+      return handleAttackTarget(game, user, target, skill);
+
+    case constDamageTarget():
+      return handleDamageTargetByFactor(game, user, target, skill);
 
     default:
       throw Rune.invalidAction();
@@ -144,19 +171,20 @@ function getTarget(game, user, targetMode, targetId) {
 }
 
 
-function handleHealTargetByPercent(game, target, percent) {
-  const damage = ((target.health * percent) | 0) || 1;
+function handleHealTargetByPercent(game, user, target, skill) {
+  const damage = ((target.health * skill.healingPercent) | 0) || 1;
   healTarget(game, target, damage);
 }
 
 
-function handleAttackTarget(game, user, target) {
-
+function handleAttackTarget(game, user, target, skill) {
+  dealDamageToTarget(game, target, user.power);
+  dealDamageToTarget(game, user, target.power);
 }
 
 
-function handleDamageTargetByFactor(game, user, target, factor) {
-  const damage = ((user.power * factor) | 0) || 1;
+function handleDamageTargetByFactor(game, user, target, skill) {
+  const damage = ((user.power * skill.powerFactor) | 0) || 1;
   dealDamageToTarget(game, target, damage);
 }
 
@@ -248,13 +276,13 @@ function adjustTurnOrder(game, value) {
 }
 
 
-function doEnemyReaction(game, player, skill) {
+function doEnemyReaction(game, player, usedSkill) {
   const enemy = game.enemy;
 
   // Resolve the skill
-  const skill = getSkill(enemy.classId, enemy.skills[0]);
+  const skill = skillDataAttack();
   console.log("Enemy used a skill:", skill.id, player);
-  resolveSkill(skill, game);
+  resolveSkill(game, enemy, skill, { target: player.id });
 }
 
 
@@ -281,7 +309,7 @@ Rune.initLogic({
 
   setup(players) {
     const game = {
-      enemy: null,
+      enemy: newEnemy(),
       players: {},
       currentTurn: null,
       events: [],
@@ -290,7 +318,7 @@ Rune.initLogic({
     };
     let speed = Infinity;
     for (let playerId in players) {
-      const player = null;
+      const player = newPlayer(playerId);
       game.players[playerId] = player;
       if (player.speed < speed) {
         game.currentTurn = playerId;
