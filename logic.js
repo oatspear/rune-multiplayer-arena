@@ -2,7 +2,7 @@
 // Copyright © 2023 André "Oatspear" Santos
 
 /*******************************************************************************
-  Data
+  Data Constants
 *******************************************************************************/
 
 function targetModeSelf() { return 0; }
@@ -15,9 +15,12 @@ function targetModeAllCharacters() { return 5; }
 function constHealTargetPercent () { return 0; }
 function constAttackTarget() { return 1; }
 function constDamageTarget() { return 2; }
+function constHealTarget() { return 3; }
 
 
-function healFactorRest() { return 0.1; }
+/*******************************************************************************
+  Skill Data
+*******************************************************************************/
 
 
 function skillDataRest() {
@@ -32,35 +35,48 @@ function skillDataRest() {
   };
 }
 
+
 function skillDataAttack() {
   return {
     id: "attack",
     speed: 5,
     cooldown: 0,
     target: targetModeEnemy(),
-    threat: 5,
+    threat: 10,
     mechanic: constAttackTarget()
   };
 }
 
 
-function newEnemy() {
+function skillDataRangedAttack() {
   return {
-    id: 0,
-    classId: "boss",
-    isPlayerCharacter: false,
-    power: 10,
-    health: 200,
-    currentHealth: 200,
-    speed: 8,
-    skills: [
-      "attack",
-      "directDamage",
-      "directHealing",
-      "rest"
-    ]
+    id: "rangedAttack",
+    speed: 7,
+    cooldown: 0,
+    target: targetModeEnemy(),
+    threat: 6,
+    mechanic: constDamageTarget(),
+    powerFactor: 1.5
   };
 }
+
+
+function skillDataGreaterHeal() {
+  return {
+    id: "greaterHeal",
+    speed: 8,
+    cooldown: 0,
+    target: targetModeAlly(),
+    threat: 6,
+    mechanic: constHealTarget(),
+    powerFactor: 2
+  };
+}
+
+
+/*******************************************************************************
+  Player Character Data
+*******************************************************************************/
 
 
 function newPlayer(playerId) {
@@ -73,6 +89,30 @@ function newPlayer(playerId) {
     currentHealth: 20,
     speed: 5,
     threat: 0,
+    skills: [
+      "attack",
+      "directDamage",
+      "directHealing",
+      "rest"
+    ]
+  };
+}
+
+
+/*******************************************************************************
+  Enemy Character Data
+*******************************************************************************/
+
+
+function newEnemy() {
+  return {
+    id: 0,
+    classId: "boss",
+    isPlayerCharacter: false,
+    power: 10,
+    health: 200,
+    currentHealth: 200,
+    speed: 8,
     skills: [
       "attack",
       "directDamage",
@@ -335,47 +375,24 @@ Rune.initLogic({
       const skill = skillDataRest();
       // TODO validate skill
       processPlayerSkill(game, playerId, skill, payload);
-      startGameTurn(game, playerId, payload.skill);
-      const player = game.players[playerId];
-      const enemy = game.enemy;
-      const damage = ((healFactorRest() * player.health) | 0) || 1;
-      healTarget(game, player, damage);
-      updateThreatLevel(game, playerId, -player.power);
-      slowTargetDown(game, player, speedValueRest());
-      reactToRest(game, enemy, player);
     },
 
     attack(payload, { game, playerId }) {
-      startGameTurn(game, playerId, payload.skill);
-      const player = game.players[playerId];
-      const enemy = game.enemy;
-      dealDamageToTarget(game, enemy, player.power);
-      dealDamageToTarget(game, player, enemy.power);
-      updateThreatLevel(game, playerId, player.power * 10);
-      slowTargetDown(game, player, speedValueAttack());
+      const skill = skillDataAttack();
+      // TODO validate skill
+      processPlayerSkill(game, playerId, skill, payload);
     },
 
-    directDamage(payload, { game, playerId }) {
-      startGameTurn(game, playerId, payload.skill);
-      const player = game.players[playerId];
-      const enemy = game.enemy;
-      const damage = (player.power * 1.5) | 0;
-      dealDamageToTarget(game, enemy, damage);
-      updateThreatLevel(game, playerId, damage * 5);
-      slowTargetDown(game, player, speedValueDirectDamage());
-      reactToDirectDamage(game, enemy, player);
+    rangedAttack(payload, { game, playerId }) {
+      const skill = skillDataRangedAttack();
+      // TODO validate skill
+      processPlayerSkill(game, playerId, skill, payload);
     },
 
-    directHealing(payload, { game, playerId }) {
-      startGameTurn(game, playerId, payload.skill);
-      const player = game.players[playerId];
-      const target = game.players[payload.target];
-      const enemy = game.enemy;
-      const damage = (player.power * 1.25) | 0;
-      healTarget(game, target, damage);
-      updateThreatLevel(game, playerId, damage * 6);
-      slowTargetDown(game, player, speedValueDirectHealing());
-      reactToDirectHealing(game, enemy, player);
+    greaterHeal(payload, { game, playerId }) {
+      const skill = skillDataGreaterHeal();
+      // TODO validate skill
+      processPlayerSkill(game, playerId, skill, payload);
     }
   },
 });
