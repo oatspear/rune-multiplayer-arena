@@ -47,6 +47,18 @@ const Rune = {
       })(key);
       console.log(`Rune.actions.${key} =`, this.actions[key]);
     }
+
+    window.setTimeout(function () {
+      self.visualUpdate({
+        newGame: self.game,
+        oldGame: self.game,
+        yourPlayerId: RANDOM_PLAYER_ID,
+        players: self.players,
+        action: null,
+        event: "setup",
+        rollbacks: null
+      });
+    }, 0);
   },
 
   initClient(params) {

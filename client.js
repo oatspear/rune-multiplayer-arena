@@ -52,6 +52,10 @@ const app = createApp({
     }
   },
   methods: {
+    setNewGameState(game) {
+
+    },
+
     resetFooterState() {
       const self = this.thisPlayer;
       if (this.ui.footer.selectedSkill != null) {
@@ -188,7 +192,7 @@ const app = createApp({
 
   mounted() {
     this.resetFooterState();
-    initRuneClient();
+    initRuneClient(this);
   }
 });
 
@@ -211,7 +215,7 @@ function render() {
   // TODO
 }
 
-function initRuneClient() {
+function initRuneClient(vueApp) {
   Rune.initClient({
     visualUpdate: ({
       newGame,
@@ -226,6 +230,7 @@ function initRuneClient() {
       // The `visualUpdate` function must be synchronous.
       // It may trigger async functions if needed, but cannot `await` them.
       console.log("Got a new game state:", newGame);
+      vueApp.setNewGameState(newGame);
     },
   });
 }
