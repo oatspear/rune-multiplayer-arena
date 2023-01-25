@@ -53,5 +53,14 @@ const Rune = {
     console.log("Rune.initClient()");
     console.log("visualUpdate:", params.visualUpdate);
     this.visualUpdate = params.visualUpdate;
+  },
+
+  invalidAction() {
+    return new Error();
+  },
+
+  gameOver() {
+    alert("Game Over!");
+    throw new Error();
   }
 };
