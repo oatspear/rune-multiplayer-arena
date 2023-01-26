@@ -187,6 +187,9 @@ function resolveSkill(game, user, skill, args) {
     case constDamageTarget():
       return handleDamageTargetByFactor(game, user, target, skill);
 
+    case constHealTarget():
+      return handleHealTargetByFactor(game, user, target, skill);
+
     default:
       throw Rune.invalidAction();
   }
@@ -248,17 +251,26 @@ function handleDamageTargetByFactor(game, user, target, skill) {
 }
 
 
+function handleHealTargetByFactor(game, user, target, skill) {
+  const damage = ((user.power * skill.powerFactor) | 0) || 1;
+  healTarget(game, target, damage);
+}
+
+
 function dealDamageToTarget(game, target, damage) {
+  const hp = target.currentHealth;
   target.currentHealth -= damage;
   game.events.push({
     type: "damage",
     target: target.id,
-    value: damage
+    value: damage,
+    startingHealth: hp
   });
 }
 
 
 function healTarget(game, target, damage) {
+  const hp = target.currentHealth;
   target.currentHealth += damage;
   if (target.currentHealth > target.health) {
     target.currentHealth = target.health;
@@ -266,7 +278,8 @@ function healTarget(game, target, damage) {
   game.events.push({
     type: "heal",
     target: target.id,
-    value: damage
+    value: damage,
+    startingHealth: hp
   });
 }
 
