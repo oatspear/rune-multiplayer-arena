@@ -3,24 +3,23 @@
 
 const { createApp } = Vue
 
+
+function _sortCharactersById(a, b) {
+  if (a.id < b.id) { return -1; }
+  if (a.id > b.id) { return 1; }
+  return 0;
+}
+
+
 const app = createApp({
   data() {
     return {
       playerIndex: 0,
       currentTurn: 0,
-      players: [
-        newPlayer(0, 1),
-        newPlayer(1, 2),
-        newPlayer(2, 3),
-        newPlayer(3, 4)
-      ],
-      tiles: [
-        newRegion(),
-        newRegion(),
-        newRegion(),
-        newRegion()
-      ],
+      enemies: [],
+      players: [],
       ui: {
+        state: "initial",
         targetMode: null,
         selectedEnemy: null,
         selectedPlayer: null,
@@ -53,7 +52,19 @@ const app = createApp({
   },
   methods: {
     setNewGameState(game) {
-
+      console.log("visualUpdate callback was called");
+      this.ui.state = "battle";
+      {
+        enemy: newEnemy(),
+        players: {},
+        currentTurn: null,
+        events: [],
+        threatLevel: {},
+        enemyTarget: null
+      }
+      this.enemies = [game.enemy];
+      this.players = Object.values(players);
+      this.players.sort(_sortCharactersById);
     },
 
     resetFooterState() {

@@ -4,7 +4,11 @@
 const BattleBoard = {
   template: "#vue-battle-board",
   props: {
-    tiles: {
+    uiState: {
+      type: String,
+      required: true
+    },
+    enemies: {
       type: Array,
       required: true
     },

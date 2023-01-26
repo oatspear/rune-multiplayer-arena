@@ -20,7 +20,8 @@
       <battle-header :current-turn="currentTurn" :num-players="players.length"></battle-header>
 
       <battle-board
-        :tiles="tiles"
+        :ui-state="ui.state"
+        :enemies="enemies"
         :players="players"
         :highlight-enemies="highlightEnemies"
         :highlight-players="highlightPlayers"
@@ -63,8 +64,9 @@
       <div id="board">
           <div class="slides-container" id="slides-container">
             <battle-scene
+              v-if="uiState === 'battle'"
               :scene-index="0"
-              :tiles="tiles[0]"
+              :enemies="enemies"
               :players="players"
               :player-index="0"
               :highlight-enemies="highlightEnemies"
