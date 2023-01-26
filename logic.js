@@ -353,7 +353,6 @@ Rune.initLogic({
       players: {},
       currentTurn: null,
       events: [],
-      threatLevel: {},
       enemyTarget: null
     };
     let speed = Infinity;
@@ -364,7 +363,6 @@ Rune.initLogic({
         game.currentTurn = playerId;
         speed = player.speed;
       }
-      game.threatLevel[playerId] = 0;
       game.enemyTarget = playerId;
     }
     return game;

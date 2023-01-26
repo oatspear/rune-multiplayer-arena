@@ -18,6 +18,7 @@ const app = createApp({
       currentTurn: 0,
       enemies: [],
       players: [],
+      events: [],
       ui: {
         state: "initial",
         targetMode: null,
@@ -54,17 +55,11 @@ const app = createApp({
     setNewGameState(game) {
       console.log("visualUpdate callback was called");
       this.ui.state = "battle";
-      {
-        enemy: newEnemy(),
-        players: {},
-        currentTurn: null,
-        events: [],
-        threatLevel: {},
-        enemyTarget: null
-      }
       this.enemies = [game.enemy];
-      this.players = Object.values(players);
+      this.players = Object.values(game.players);
       this.players.sort(_sortCharactersById);
+      this.currentTurn = game.currentTurn;
+      this.events = game.events;
     },
 
     resetFooterState() {
