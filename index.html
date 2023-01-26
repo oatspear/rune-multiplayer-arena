@@ -17,10 +17,16 @@
   </head>
   <body>
     <main id="app">
-      <battle-header :current-turn="currentTurn" :num-players="players.length"></battle-header>
+      <battle-header
+        v-if="ui.state === 'battle'"
+        :current-turn="currentTurn"
+        :num-players="players.length"
+      >
+      </battle-header>
 
       <battle-board
         :ui-state="ui.state"
+        :player-id="playerId"
         :enemies="enemies"
         :players="players"
         :highlight-enemies="highlightEnemies"
@@ -33,6 +39,7 @@
       </battle-board>
 
       <battle-footer
+        v-if="ui.footer.display"
         v-bind="ui.footer"
         @select-skill="onSkillSelected"
         @cancel-skill="onCancelSkill"
@@ -66,9 +73,9 @@
             <battle-scene
               v-if="uiState === 'battle'"
               :scene-index="0"
+              :player-id="playerId"
               :enemies="enemies"
               :players="players"
-              :player-index="0"
               :highlight-enemies="highlightEnemies"
               :highlight-players="highlightPlayers"
               :selected-enemy="selectedEnemy"
@@ -85,11 +92,11 @@
       <div :id="`battle-scene-${sceneIndex}`" class="slide">
         <div class="row">
           <battle-tile
-            v-for="(enemy, i) in tiles"
+            v-for="(enemy, i) in enemies"
             :tile-index="i"
-            :tile-data="enemy"
+            :character="enemy"
             :is-enemy
-            :is-active="selectedEnemy == i"
+            :is-active="selectedEnemy === i"
             :is-highlighted="highlightEnemies"
             @selected="onEnemySelected"
           >
@@ -99,11 +106,11 @@
           <battle-tile
             v-for="(player, i) in players"
             :tile-index="i"
-            :tile-data="player"
+            :character="player"
             :is-enemy="false"
-            :is-active="selectedPlayer == i"
+            :is-active="selectedPlayer === i"
             :is-highlighted="highlightPlayers"
-            :is-owned="playerIndex == i"
+            :is-owned="playerId === player.id"
             @selected="onPlayerSelected"
           >
           </battle-tile>
@@ -118,18 +125,18 @@
           :class="{active: isActive, enemy: isEnemy, owned: isOwned, highlight: !isActive && isHighlighted}"
           @click="onTileClick"
         >
-          <span class="class" :class="tileData.characterClass.icon">{{ tileData.characterClass.name }}</span>
+          <span class="class" :class="character.characterClass.icon">{{ character.characterClass.name }}</span>
           <div class="icon">
-            <img :src="`assets/${tileData.characterClass.icon}.png`" alt="?">
+            <img :src="`assets/${character.characterClass.icon}.png`" alt="?">
           </div>
           <div class="effect-anchor"></div>
           <div class="stats">
             <div class="power">
-              <span>{{ tileData.power }}</span>
+              <span>{{ character.power }}</span>
             </div>
             /
             <div class="health">
-              <span>{{ tileData.currentHealth }}</span>
+              <span>{{ character.currentHealth }}</span>
             </div>
           </div>
         </div>
@@ -148,7 +155,7 @@
         <battle-action-bar
           :selected-skill="selectedSkill"
           :selected-target="selectedTarget"
-          :skills="characterData.skills"
+          :skills="skills"
           @select-skill="onSkillSelected"
           @cancel-skill="onCancelSkill"
           @use-skill="onUseSkill"
@@ -225,8 +232,8 @@
 
     <!--<script src="https://cdn.jsdelivr.net/npm/rune-games-sdk@3/multiplayer.js"></script>-->
     <script src="rune-mock.js"></script>
-    <script src="data.js"></script>
     <script src="logic.js"></script>
+    <script src="data.js"></script>
     <script src="client.js"></script>
 
     <!--

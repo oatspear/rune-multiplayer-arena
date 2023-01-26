@@ -26,12 +26,13 @@ const Rune = {
     const self = this;
     for (const key of Object.keys(params.actions)) {
       this.actions[key] = (function (k) {
+        const cb = params.actions[k];
         return function (payload) {
           const players = self.players;
           const oldGame = self.game;
           const newGame = JSON.parse(JSON.stringify(oldGame));
           const context = { game: newGame, playerId: RANDOM_PLAYER_ID };
-          params.actions[k](payload, context);
+          cb(payload, context);
           window.setTimeout(function () {
             self.visualUpdate({
               newGame: newGame,

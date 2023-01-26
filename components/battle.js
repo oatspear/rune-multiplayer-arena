@@ -16,6 +16,7 @@ const BattleBoard = {
       type: Array,
       required: true
     },
+    playerId: String,
     highlightEnemies: Boolean,
     highlightPlayers: Boolean,
     selectedEnemy: Number,
@@ -62,11 +63,7 @@ const BattleScene = {
       type: Number,
       required: true
     },
-    playerIndex: {
-      type: Number,
-      required: true
-    },
-    tiles: {
+    enemies: {
       type: Array,
       required: true
     },
@@ -74,6 +71,7 @@ const BattleScene = {
       type: Array,
       required: true
     },
+    playerId: String,
     highlightEnemies: Boolean,
     highlightPlayers: Boolean,
     selectedEnemy: Number,
@@ -84,7 +82,7 @@ const BattleScene = {
   },
   methods: {
     onEnemySelected(i) {
-      const character = this.tiles[i];
+      const character = this.enemies[i];
       this.$emit("selected-enemy", character);
     },
 
@@ -103,7 +101,7 @@ const BattleTile = {
       type: Number,
       required: true
     },
-    tileData: {
+    character: {
       type: Object,
       required: true
     },
@@ -128,6 +126,10 @@ const BattleFooter = {
   props: {
     characterData: {
       type: Object,
+      required: true
+    },
+    skills: {
+      type: Array,
       required: true
     },
     selectedSkill: Number,

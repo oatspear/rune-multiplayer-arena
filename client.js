@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // Copyright © 2023 André "Oatspear" Santos
 
-const { createApp } = Vue
+const { createApp } = Vue;
 
 
 function _sortCharactersById(a, b) {
@@ -11,10 +11,45 @@ function _sortCharactersById(a, b) {
 }
 
 
+function newClientSkill(id) {
+  const data = Skills[id];
+  const skill = newSkillInstance(data);
+  skill.id = id;
+  skill.data = data;
+  return skill;
+}
+
+
+function newClientEnemy(data, index) {
+  return newClientPlayer(data, index);  // FIXME
+}
+
+
+function newClientPlayer(data, index) {
+  if (data == null) { return { id: null }; }
+  const cls = Classes[data.classId];
+  const skills = [];
+  for (const s of data.skills) {
+    skills.push(newClientSkill(s.id));
+  }
+  return {
+    id: data.id,
+    index: index,
+    name: data.name,
+    characterClass: cls,
+    speed: data.speed,
+    power: data.power,
+    health: data.health,
+    currentHealth: data.currentHealth,
+    skills: skills
+  };
+}
+
+
 const app = createApp({
   data() {
     return {
-      playerIndex: 0,
+      playerId: undefined,
       currentTurn: 0,
       enemies: [],
       players: [],
@@ -25,18 +60,26 @@ const app = createApp({
         selectedEnemy: null,
         selectedPlayer: null,
         footer: {
+          display: false,
           selectedSkill: null,
           selectedTarget: null,
-          characterData: DummyCharacter,
+          characterData: null,
+          skills: [],
           itemName: "",
           itemDescription: ""
         }
       }
     };
   },
+
   computed: {
     thisPlayer() {
-      return this.players[this.playerIndex];
+      for (let i = this.players.length - 1; i >= 0; i--) {
+        if (this.players[i].id === this.playerId) {
+          return this.players[i];
+        }
+      }
+      return null;
     },
 
     highlightEnemies() {
@@ -51,19 +94,36 @@ const app = createApp({
         && this.ui.targetMode == TargetMode.ALLY;
     }
   },
+
   methods: {
-    setNewGameState(game) {
+    setGameState(game, playerId) {
+      // Hard reset of the current game state
       console.log("visualUpdate callback was called");
+      this.playerId = playerId;
       this.ui.state = "battle";
-      this.enemies = [game.enemy];
-      this.players = Object.values(game.players);
-      this.players.sort(_sortCharactersById);
+      this.enemies = [newClientEnemy(game.enemy, 0)];
+      this.setPlayerStates(game.players);
       this.currentTurn = game.currentTurn;
       this.events = game.events;
+      this.resetFooterState();
+    },
+
+    setPlayerStates(players) {
+      this.players = [];
+      const data = Object.values(players);
+      let i = 0;
+      for (let i = 0; i < data.length; ++i) {
+        this.players.push(newClientPlayer(data[i], i));
+      }
     },
 
     resetFooterState() {
       const self = this.thisPlayer;
+      if (self == null) {
+        this.ui.footer.display = false;
+        return;
+      }
+      this.ui.footer.display = true;
       if (this.ui.footer.selectedSkill != null) {
         const skill = self.skills[this.ui.footer.selectedSkill];
         this.ui.footer.itemName = skill.data.name;
@@ -73,12 +133,13 @@ const app = createApp({
         this.ui.footer.itemDescription = "Choose a skill."
       }
       if (this.ui.selectedEnemy != null) {
-        this.ui.footer.characterData = this.tiles[0][this.ui.selectedEnemy];  // FIXME
+        this.ui.footer.characterData = this.enemies[this.ui.selectedEnemy];  // FIXME
       } else if (this.ui.selectedPlayer != null) {
         this.ui.footer.characterData = this.players[this.ui.selectedPlayer];
       } else {
         this.ui.footer.characterData = self;
       }
+      this.ui.footer.skills = self.skills;
     },
 
     buildSkillDescription(data) {
@@ -141,7 +202,11 @@ const app = createApp({
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.resetFooterState();
-      Rune.actions.useSkill({ skill: i, target: t });
+      // call logic action
+      console.log(this.playerId, "selected skill", self.skills[i].id);
+      const action = Rune.actions[self.skills[i].id];
+      console.log("action:", action);
+      action({ skill: i, target: t });
     },
 
     onEnemySelected(character) {
@@ -197,7 +262,7 @@ const app = createApp({
   },
 
   mounted() {
-    this.resetFooterState();
+    // this.resetFooterState();
     initRuneClient(this);
   }
 });
@@ -217,10 +282,6 @@ app.mount("#app");
   Rune Setup
 *******************************************************************************/
 
-function render() {
-  // TODO
-}
-
 function initRuneClient(vueApp) {
   Rune.initClient({
     visualUpdate: ({
@@ -236,7 +297,13 @@ function initRuneClient(vueApp) {
       // The `visualUpdate` function must be synchronous.
       // It may trigger async functions if needed, but cannot `await` them.
       console.log("Got a new game state:", newGame);
-      vueApp.setNewGameState(newGame);
+      if (action == null) {
+        // Not a partial update. Might be a post setup call, for example.
+        vueApp.setGameState(newGame, yourPlayerId);
+      } else {
+        // FIXME
+        vueApp.setGameState(newGame, yourPlayerId);
+      }
     },
   });
 }

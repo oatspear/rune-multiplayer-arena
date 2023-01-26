@@ -23,6 +23,16 @@ function constHealTarget() { return 3; }
 *******************************************************************************/
 
 
+function newSkillInstance(data) {
+  return {
+    id: data.id,
+    speed: data.speed,
+    cooldown: data.cooldown,
+    wait: data.cooldown
+  };
+}
+
+
 function skillDataRest() {
   return {
     id: "rest",
@@ -90,10 +100,10 @@ function newPlayer(playerId) {
     speed: 5,
     threat: 0,
     skills: [
-      "attack",
-      "directDamage",
-      "directHealing",
-      "rest"
+      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataRangedAttack()),
+      newSkillInstance(skillDataGreaterHeal()),
+      newSkillInstance(skillDataRest())
     ]
   };
 }
@@ -114,10 +124,7 @@ function newEnemy() {
     currentHealth: 200,
     speed: 8,
     skills: [
-      "attack",
-      "directDamage",
-      "directHealing",
-      "rest"
+      newSkillInstance(skillDataRest())
     ]
   };
 }
@@ -144,7 +151,7 @@ function processPlayerSkill(game, playerId, skill, args) {
   game.events = [];
 
   // Resolve the skill
-  console.log(playerId, "used a skill:", skill.id, payload.target);
+  console.log(playerId, "used a skill:", skill.id, args.target);
   resolveSkill(game, player, skill, args);
   updateThreatLevel(game, playerId, skill.threat);
 
