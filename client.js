@@ -85,13 +85,13 @@ const app = createApp({
     highlightEnemies() {
       return this.ui.selectedEnemy == null
         && this.ui.footer.selectedTarget == null
-        && this.ui.targetMode == TargetMode.ENEMY;
+        && this.ui.targetMode == targetModeEnemy();
     },
 
     highlightPlayers() {
       return this.ui.selectedEnemy == null
         && this.ui.footer.selectedTarget == null
-        && this.ui.targetMode == TargetMode.ALLY;
+        && this.ui.targetMode == targetModeAlly();
     }
   },
 
@@ -154,16 +154,16 @@ const app = createApp({
       this.ui.footer.characterData = self;
       this.ui.targetMode = skill.data.target;
       switch (skill.data.target) {
-        case TargetMode.SELF:
+        case targetModeSelf():
           this.ui.selectedEnemy = null;
           this.ui.selectedPlayer = self.index;
           this.ui.footer.selectedTarget = self.index;
           break;
-        case TargetMode.ALLY:
+        case targetModeAlly():
           this.ui.selectedEnemy = null;
           this.ui.footer.selectedTarget = this.ui.selectedPlayer;
           break;
-        case TargetMode.ENEMY:
+        case targetModeEnemy():
           this.ui.selectedPlayer = null;
           this.ui.footer.selectedTarget = this.ui.selectedEnemy;
           break;
@@ -213,7 +213,7 @@ const app = createApp({
       const i = character.index;
       this.ui.selectedPlayer = null;
       if (this.ui.footer.selectedSkill != null) {
-        if (this.ui.targetMode == TargetMode.ENEMY) {
+        if (this.ui.targetMode == targetModeEnemy()) {
           this.ui.selectedEnemy = i;
           this.ui.footer.selectedTarget = i;
           // this.ui.footer.characterData = character;
@@ -235,7 +235,7 @@ const app = createApp({
       const i = character.index;
       this.ui.selectedEnemy = null;
       if (this.ui.footer.selectedSkill != null) {
-        if (this.ui.targetMode == TargetMode.ALLY) {
+        if (this.ui.targetMode == targetModeAlly()) {
           this.ui.selectedPlayer = i;
           this.ui.footer.selectedTarget = i;
           // this.ui.footer.characterData = character;
