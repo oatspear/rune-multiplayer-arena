@@ -101,14 +101,15 @@ function skillDataGreaterHeal() {
 *******************************************************************************/
 
 
-function newPlayer(playerId) {
+function newPlayer(playerId, index) {
   return {
     id: playerId,
+    index: index,
     classId: "ranger",
     isPlayerCharacter: true,
     power: 10,
-    health: 20,
-    currentHealth: 20,
+    health: 100,
+    currentHealth: 50,
     speed: 5,
     threat: 0,
     skills: [
@@ -129,6 +130,7 @@ function newPlayer(playerId) {
 function newEnemy() {
   return {
     id: 0,
+    index: 0,
     classId: "boss",
     isPlayerCharacter: false,
     power: 10,
@@ -148,10 +150,10 @@ function newEnemy() {
 
 
 function processPlayerSkill(game, playerId, skill, args) {
-  const player = game.players[playerId];
+  const player = getPlayer(game, playerId);
 
   // Check if it's the player's turn
-  if (game.currentTurn !== playerId) {
+  if (game.currentTurn !== playerId || player == null) {
     throw Rune.invalidAction();
   }
 
@@ -165,7 +167,7 @@ function processPlayerSkill(game, playerId, skill, args) {
   // Resolve the skill
   console.log(playerId, "used a skill:", skill.id, args.target);
   resolveSkill(game, player, skill, args);
-  updateThreatLevel(game, playerId, skill.threat);
+  updateThreatLevel(game, player.index, skill.threat);
 
   // Determine enemy reaction
   doEnemyReaction(game, player, skill);
@@ -194,7 +196,6 @@ function resolveSkill(game, user, skill, args) {
       throw Rune.invalidAction();
   }
 
-
   // Determine if game has ended
   if (isGameOver(game)) {
     Rune.gameOver();
@@ -202,15 +203,24 @@ function resolveSkill(game, user, skill, args) {
 }
 
 
-function getTarget(game, user, targetMode, targetId) {
+function getPlayer(game, playerId) {
+  for (const player of game.players) {
+    if (player.id === playerId) {
+      return player;
+    }
+  }
+}
+
+
+function getTarget(game, user, targetMode, targetIndex) {
   if (!targetMode) {
     return user;
   }
   if (targetMode === targetModeAlly()) {
-    return user.isPlayerCharacter ? game.players[targetId] : user;
+    return user.isPlayerCharacter ? game.players[targetIndex] : user;
   }
   if (targetMode === targetModeEnemy()) {
-    return user.isPlayerCharacter ? game.enemy : game.players[targetId];
+    return user.isPlayerCharacter ? game.enemy : game.players[targetIndex];
   }
   const targets = [];
   if (targetMode !== targetModeAllAllies()) {
@@ -218,13 +228,13 @@ function getTarget(game, user, targetMode, targetId) {
     if (user.isPlayerCharacter) {
       targets.push(game.enemy);
     } else {
-      targets.push.apply(targets, Object.values(game.players));
+      targets.push.apply(targets, game.players);
     }
   }
   if (targetMode !== targetModeAllEnemies()) {
     // all allies or all characters
     if (user.isPlayerCharacter) {
-      targets.push.apply(targets, Object.values(game.players));
+      targets.push.apply(targets, game.players);
     } else {
       targets.push(game.enemy);
     }
@@ -284,12 +294,11 @@ function healTarget(game, target, damage) {
 }
 
 
-function updateThreatLevel(game, playerId, value) {
+function updateThreatLevel(game, index, value) {
   const half = (value / 2) | 0;
   let highest = game.players[game.enemyTarget].threat;
-  for (const id in game.players) {
-    const player = game.players[id];
-    if (id === playerId) {
+  for (const player of game.players) {
+    if (player.index === index) {
       player.threat += value;
     } else {
       player.threat -= half;
@@ -299,49 +308,48 @@ function updateThreatLevel(game, playerId, value) {
     // }
     if (player.threat >= highest) {
       highest = player.threat;
-      game.enemyTarget = id;
+      game.enemyTarget = player.index;
     }
   }
 }
 
 
-function reactToRest(game, enemy, currentPlayer) {
-  const player = game.players[game.enemyTarget];
-  dealDamageToTarget(game, player, enemy.power);
-}
+// function reactToRest(game, enemy, currentPlayer) {
+//   const player = game.players[game.enemyTarget];
+//   dealDamageToTarget(game, player, enemy.power);
+// }
+//
+//
+// function reactToDirectDamage(game, enemy, currentPlayer) {
+//   const player = game.players[game.enemyTarget];
+//   dealDamageToTarget(game, player, enemy.power);
+// }
+//
+//
+// function reactToDirectHealing(game, enemy, currentPlayer) {
+//   let player = game.players[currentPlayer];
+//   if ((player.currentHealth / player.health) > 0.5) {
+//     player = game.players[game.enemyTarget];
+//   }
+//   dealDamageToTarget(game, player, enemy.power);
+// }
 
 
-function reactToDirectDamage(game, enemy, currentPlayer) {
-  const player = game.players[game.enemyTarget];
-  dealDamageToTarget(game, player, enemy.power);
-}
-
-
-function reactToDirectHealing(game, enemy, currentPlayer) {
-  let player = game.players[currentPlayer];
-  if ((player.currentHealth / player.health) > 0.5) {
-    player = game.players[game.enemyTarget];
-  }
-  dealDamageToTarget(game, player, enemy.power);
-}
-
-
-function slowTargetDown(game, target, value) {
-  // Move the target down the queue
-  const speed = target.speed;
-  target.speed += value;
-  adjustTurnOrder(game, speed);
-}
+// function slowTargetDown(game, target, value) {
+//   // Move the target down the queue
+//   const speed = target.speed;
+//   target.speed += value;
+//   adjustTurnOrder(game, speed);
+// }
 
 
 function adjustTurnOrder(game, value) {
   let threshold = Infinity;
-  for (const id in game.players) {
-    const player = game.players[id];
+  for (const player of game.players) {
     const speed = player.speed - value;
     player.speed = speed;
     if (speed < threshold) {
-      game.currentTurn = id;
+      game.currentTurn = player.id;
       threshold = speed;
     }
   }
@@ -352,9 +360,10 @@ function doEnemyReaction(game, player, usedSkill) {
   const enemy = game.enemy;
 
   // Resolve the skill
-  const skill = skillDataAttack();
-  console.log("Enemy used a skill:", skill.id, player);
-  resolveSkill(game, enemy, skill, { target: player.id });
+  // const skill = skillDataAttack();
+  // console.log("Enemy used a skill:", skill.id, player);
+  // resolveSkill(game, enemy, skill, { target: player.index });
+  console.log("The enemy skipped this turn.");
 }
 
 
@@ -362,8 +371,7 @@ function isGameOver(game) {
   if (game.enemy.currentHealth <= 0) {
     return true;
   }
-  for (const id in game.players) {
-    const player = game.players[id];
+  for (const player of game.players) {
     if (player.currentHealth > 0) {
       return false;
     }
@@ -382,20 +390,20 @@ Rune.initLogic({
   setup(players) {
     const game = {
       enemy: newEnemy(),
-      players: {},
+      players: [],
       currentTurn: null,
       events: [],
-      enemyTarget: null
+      enemyTarget: 0
     };
     let speed = Infinity;
     for (let playerId in players) {
-      const player = newPlayer(playerId);
-      game.players[playerId] = player;
+      const player = newPlayer(playerId, game.players.length);
+      game.players.push(player);
       if (player.speed < speed) {
         game.currentTurn = playerId;
         speed = player.speed;
       }
-      game.enemyTarget = playerId;
+      game.enemyTarget = player.index;
     }
     return game;
   },

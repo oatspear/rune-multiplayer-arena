@@ -110,10 +110,8 @@ const app = createApp({
 
     setPlayerStates(players) {
       this.players = [];
-      const data = Object.values(players);
-      let i = 0;
-      for (let i = 0; i < data.length; ++i) {
-        this.players.push(newClientPlayer(data[i], i));
+      for (let i = 0; i < players.length; ++i) {
+        this.players.push(newClientPlayer(players[i], i));
       }
     },
 
@@ -157,7 +155,7 @@ const app = createApp({
         case targetModeSelf():
           this.ui.selectedEnemy = null;
           this.ui.selectedPlayer = self.index;
-          this.ui.footer.selectedTarget = self.index;
+          this.ui.footer.selectedTarget = self.id;
           break;
         case targetModeAlly():
           this.ui.selectedEnemy = null;

@@ -33,6 +33,7 @@ const Rune = {
           const newGame = JSON.parse(JSON.stringify(oldGame));
           const context = { game: newGame, playerId: RANDOM_PLAYER_ID };
           cb(payload, context);
+          self.game = newGame;
           window.setTimeout(function () {
             self.visualUpdate({
               newGame: newGame,
