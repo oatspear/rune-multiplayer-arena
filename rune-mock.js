@@ -4,12 +4,10 @@
 const RANDOM_PLAYER_ID = "randomPlayerId1";
 
 const Rune = {
-  players: {
-    "randomPlayerId1": {
-      displayName: "Oatspear",
-      playerId: RANDOM_PLAYER_ID
-    }
-  },
+  players: [{
+    displayName: "Oatspear",
+    playerId: RANDOM_PLAYER_ID
+  }],
   game: {},
   actions: {},
   visualUpdate: null,
