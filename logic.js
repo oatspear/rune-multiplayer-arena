@@ -273,7 +273,7 @@ function dealDamageToTarget(game, target, damage) {
   game.events.push({
     type: "damage",
     isPlayer: target.isPlayerCharacter,
-    target: target.id,
+    target: target.index,
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth
@@ -290,7 +290,7 @@ function healTarget(game, target, damage) {
   game.events.push({
     type: "heal",
     isPlayer: target.isPlayerCharacter,
-    target: target.id,
+    target: target.index,
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth

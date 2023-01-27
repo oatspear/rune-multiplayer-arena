@@ -33,6 +33,7 @@
         :selected-player="ui.selectedPlayer"
         @selected-enemy="onEnemySelected"
         @selected-player="onPlayerSelected"
+        @bind-animations="onBindAnimations"
       >
       </battle-board>
 
@@ -80,6 +81,7 @@
               :selected-player="selectedPlayer"
               @selected-enemy="onEnemySelected"
               @selected-player="onPlayerSelected"
+              @bind-animations="onBindAnimations"
             >
             </battle-scene>
           </div>
@@ -97,6 +99,7 @@
             :is-active="selectedEnemy === i"
             :is-highlighted="highlightEnemies"
             @selected="onEnemySelected"
+            @init-animations="onEnemyTileAnimations"
           >
           </battle-tile>
         </div>
@@ -110,6 +113,7 @@
             :is-highlighted="highlightPlayers"
             :is-owned="playerId === player.id"
             @selected="onPlayerSelected"
+            @init-animations="onPlayerTileAnimations"
           >
           </battle-tile>
         </div>
@@ -126,6 +130,15 @@
           <span class="class" :class="character.characterClass.icon">{{ character.characterClass.name }}</span>
           <div class="icon">
             <img :src="`assets/${character.characterClass.icon}.png`" alt="?">
+            <div
+              v-if="overlayLabel.display"
+              class="overlay"
+              :class="overlayLabel.animation"
+            >
+              <span class="label" :class="overlayLabel.style">
+                {{ overlayLabel.value }}
+              </span>
+            </div>
           </div>
           <div class="effect-anchor"></div>
           <div class="stats">

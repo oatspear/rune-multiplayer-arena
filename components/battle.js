@@ -30,6 +30,10 @@ const BattleBoard = {
 
     onPlayerSelected(character) {
       this.$emit("selected-player", character);
+    },
+
+    onBindAnimations(character, animations) {
+      this.$emit("bind-animations", character, animations);
     }
   }
 };
@@ -77,9 +81,11 @@ const BattleScene = {
     selectedEnemy: Number,
     selectedPlayer: Number
   },
+
   data() {
     return {};
   },
+
   methods: {
     onEnemySelected(i) {
       const character = this.enemies[i];
@@ -89,6 +95,16 @@ const BattleScene = {
     onPlayerSelected(i) {
       const character = this.players[i];
       this.$emit("selected-player", character);
+    },
+
+    onEnemyTileAnimations(i, animations) {
+      const character = this.enemies[i];
+      this.$emit("bind-animations", character, animations);
+    },
+
+    onPlayerTileAnimations(i, animations) {
+      const character = this.players[i];
+      this.$emit("bind-animations", character, animations);
     }
   }
 };
@@ -110,12 +126,41 @@ const BattleTile = {
     isHighlighted: Boolean,
     isOwned: Boolean
   },
+
   data() {
-    return {};
+    return {
+      overlayLabel: {
+        display: false,
+        animation: "",
+        style: "",
+        value: ""
+      }
+    };
   },
+
+  mounted() {
+    this.$emit("init-animations", this.tileIndex, {
+      damage: (params) => { return this.animateDamage(params); }
+    });
+  },
+
   methods: {
     onTileClick() {
       this.$emit("selected", this.tileIndex);
+    },
+
+    animateDamage(params) {
+      const self = this;
+      this.$emit("animation-started");
+      this.overlayLabel.display = true;
+      this.overlayLabel.style = "negative";
+      this.overlayLabel.value = `-${params.value}`;
+      window.setTimeout(function () {
+        self.overlayLabel.animation = "fade";
+        window.setTimeout(function () {
+          self.$emit("animation-finished");
+        }, 300);
+      }, 500);
     }
   }
 };

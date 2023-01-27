@@ -41,7 +41,9 @@ function newClientPlayer(data, index) {
     power: data.power,
     health: data.health,
     currentHealth: data.currentHealth,
-    skills: skills
+    skills: skills,
+    currentAnimation: null,
+    animations: null
   };
 }
 
@@ -116,7 +118,17 @@ const app = createApp({
     },
 
     enqueueEvents(events) {
-      Array.prototype.push.apply(this.events, events);
+      // Array.prototype.push.apply(this.events, events);
+      for (const event of events) {
+        if (event.type === "damage") {
+          const i = event.target;
+          const character = event.isPlayer ? this.players[i] : this.enemies[i];
+          const anim = character.animations.damage;
+          if (anim != null) {
+            anim(event);
+          }
+        }
+      }
     },
 
     resetFooterState() {
@@ -255,6 +267,10 @@ const app = createApp({
       }
     },
 
+    onBindAnimations(character, animations) {
+      character.animations = animations;
+    },
+
     refreshSlides() {
       const slidesContainer = document.getElementById("slides-container");
       const slide = document.querySelector(".slide");
@@ -309,7 +325,8 @@ function initRuneClient(vueApp) {
         vueApp.setGameState(newGame, yourPlayerId);
       } else {
         // FIXME
-        vueApp.setGameState(newGame, yourPlayerId);
+        vueApp.enqueueEvents(newGame.events);
+        // vueApp.setGameState(newGame, yourPlayerId);
       }
     },
   });

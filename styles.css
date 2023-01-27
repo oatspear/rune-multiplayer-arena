@@ -195,6 +195,8 @@ main {
 
 .tile > .icon {
   flex: 1 0 auto;
+  position: relative;
+  background-color: inherit;
 }
 
 .tile > .icon > img {
@@ -205,6 +207,37 @@ main {
 .tile.enemy > .icon > img {
   width: 64px;
   height: 64px;
+}
+
+.tile > .icon > .overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 200ms ease-out;
+  opacity: 1;
+}
+
+.tile > .icon > .overlay.fade {
+  opacity: 0;
+}
+
+.tile > .icon > .overlay > .label {
+  font-size: 2rem;
+  color: ivory;
+}
+
+.tile > .icon > .overlay > .label.positive {
+  color: green;
+}
+
+.tile > .icon > .overlay > .label.negative {
+  color: crimson;
 }
 
 .tile > .effect-anchor {
