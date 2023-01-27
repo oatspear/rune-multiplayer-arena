@@ -294,8 +294,11 @@ function initRuneClient(vueApp) {
       // Update interface based on game state from logic.js.
       // The `visualUpdate` function must be synchronous.
       // It may trigger async functions if needed, but cannot `await` them.
-      console.log(`visualUpdate(yourPlayerId: ${yourPlayerId}, action: ${action}, event: ${event})`);
-      console.log("Got a new game state:", newGame);
+      console.log("visualUpdate()");
+      console.log("yourPlayerId:", yourPlayerId);
+      console.log("action:", action);
+      console.log("event:", event);
+      console.log("new game state:", newGame);
       console.log("rollbacks:", rollbacks);
       if (action == null) {
         // Not a partial update. Might be a post setup call, for example.

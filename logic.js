@@ -395,11 +395,11 @@ Rune.initLogic({
       enemyTarget: 0
     };
     let speed = 1000000;
-    for (let playerId in players) {
-      const player = newPlayer(playerId, game.players.length);
+    for (const info of players) {
+      const player = newPlayer(info.id, game.players.length);
       game.players.push(player);
       if (player.speed < speed) {
-        game.currentTurn = playerId;
+        game.currentTurn = info.id;
         speed = player.speed;
       }
       game.enemyTarget = player.index;
