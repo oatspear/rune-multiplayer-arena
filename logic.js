@@ -165,14 +165,14 @@ function processPlayerSkill(game, playerId, skill, args) {
   game.events = [];
 
   // Resolve the skill
-  console.log(playerId, "used a skill:", skill.id, args.target);
+  // console.log(playerId, "used a skill:", skill.id, args.target);
   resolveSkill(game, player, skill, args);
   updateThreatLevel(game, player.index, skill.threat);
 
   // Determine enemy reaction
   doEnemyReaction(game, player, skill);
 
-  console.log("game state:", game);
+  // console.log("game state:", game);
 }
 
 
@@ -344,7 +344,7 @@ function updateThreatLevel(game, index, value) {
 
 
 function adjustTurnOrder(game, value) {
-  let threshold = Infinity;
+  let threshold = 1000000;
   for (const player of game.players) {
     const speed = player.speed - value;
     player.speed = speed;
@@ -363,7 +363,6 @@ function doEnemyReaction(game, player, usedSkill) {
   // const skill = skillDataAttack();
   // console.log("Enemy used a skill:", skill.id, player);
   // resolveSkill(game, enemy, skill, { target: player.index });
-  console.log("The enemy skipped this turn.");
 }
 
 
@@ -395,7 +394,7 @@ Rune.initLogic({
       events: [],
       enemyTarget: 0
     };
-    let speed = Infinity;
+    let speed = 1000000;
     for (let playerId in players) {
       const player = newPlayer(playerId, game.players.length);
       game.players.push(player);
