@@ -301,7 +301,7 @@ function initRuneClient(vueApp) {
       console.log("new game state:", newGame);
       console.log("rollbacks:", rollbacks);
       if (action == null) {
-        // Not a partial update. Might be a post setup call, for example.
+        // Not a partial update. Might be a post-setup call, for example.
         vueApp.setGameState(newGame, yourPlayerId);
       } else {
         // FIXME
