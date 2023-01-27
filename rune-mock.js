@@ -32,9 +32,12 @@ const Rune = {
           const oldGame = self.game;
           const newGame = JSON.parse(JSON.stringify(oldGame));
           const context = { game: newGame, playerId: RANDOM_PLAYER_ID };
+          console.time("action");
           cb(payload, context);
+          console.timeEnd("action");
           self.game = newGame;
           window.setTimeout(function () {
+            console.time("visualUpdate");
             self.visualUpdate({
               newGame: newGame,
               oldGame: oldGame,
@@ -48,6 +51,7 @@ const Rune = {
               event: undefined,
               rollbacks: []
             });
+            console.timeEnd("visualUpdate");
           }, 0);
         };
       })(key);
