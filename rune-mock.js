@@ -5,7 +5,7 @@ const RANDOM_PLAYER_ID = "randomPlayerId1";
 
 const Rune = {
   players: {
-    RANDOM_PLAYER_ID: {
+    "randomPlayerId1": {
       displayName: "Oatspear",
       playerId: RANDOM_PLAYER_ID
     }
@@ -58,7 +58,8 @@ const Rune = {
       console.log(`Rune.actions.${key} =`, this.actions[key]);
     }
 
-    window.setTimeout(function () {
+    // temporary, until initClient is called
+    this.visualUpdate = function () {
       self.visualUpdate({
         newGame: self.game,
         oldGame: self.game,
@@ -66,15 +67,17 @@ const Rune = {
         players: self.players,
         action: undefined,
         event: {event: "stateSync"},
-        rollbacks: null
+        rollbacks: []
       });
-    }, 0);
+    };
   },
 
   initClient(params) {
     console.log("Rune.initClient()");
     console.log("visualUpdate:", params.visualUpdate);
+    const callback = this.visualUpdate;
     this.visualUpdate = params.visualUpdate;
+    callback();
   },
 
   invalidAction() {
