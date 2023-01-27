@@ -39,8 +39,8 @@ const Rune = {
               yourPlayerId: RANDOM_PLAYER_ID,
               players: players,
               action: k,
-              event: "stateSync",
-              rollbacks: null
+              event: {event: "stateSync"},
+              rollbacks: []
             });
           }, 0);
         };
