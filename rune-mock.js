@@ -40,8 +40,12 @@ const Rune = {
               oldGame: oldGame,
               yourPlayerId: RANDOM_PLAYER_ID,
               players: players,
-              action: k,
-              event: {event: "stateSync"},
+              action: {
+                action: k,
+                params: payload,
+                playerId: RANDOM_PLAYER_ID
+              },
+              event: undefined,
               rollbacks: []
             });
           }, 0);
@@ -57,7 +61,7 @@ const Rune = {
         yourPlayerId: RANDOM_PLAYER_ID,
         players: self.players,
         action: undefined,
-        event: "stateSync",
+        event: {event: "stateSync"},
         rollbacks: null
       });
     }, 0);
