@@ -395,7 +395,8 @@ Rune.initLogic({
       enemyTarget: 0,
       typePlayers: typeof players,
       typeInfo: "?",
-      infoPlayer: null
+      infoPlayer: null,
+      argPlayers: players
     };
     let speed = 1000000;
     for (const key in players) {
