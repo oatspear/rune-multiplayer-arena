@@ -4,10 +4,12 @@
 const RANDOM_PLAYER_ID = "randomPlayerId1";
 
 const Rune = {
-  players: [{
-    displayName: "Oatspear",
-    playerId: RANDOM_PLAYER_ID
-  }],
+  players: {
+    RANDOM_PLAYER_ID: {
+      displayName: "Oatspear",
+      playerId: RANDOM_PLAYER_ID
+    }
+  },
   game: {},
   actions: {},
   visualUpdate: null,
@@ -19,7 +21,7 @@ const Rune = {
     console.log("setup:", params.setup);
     console.log("actions:", params.actions);
 
-    this.game = params.setup(this.players);
+    this.game = params.setup(Object.keys(this.players));
 
     const self = this;
     for (const key of Object.keys(params.actions)) {

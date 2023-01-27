@@ -387,26 +387,20 @@ Rune.initLogic({
   maxPlayers: 4,
 
   setup(players) {
+    // players: array of string IDs
     const game = {
       enemy: newEnemy(),
       players: [],
       currentTurn: null,
       events: [],
-      enemyTarget: 0,
-      typePlayers: typeof players,
-      typeInfo: "?",
-      infoPlayer: null,
-      argPlayers: players
+      enemyTarget: 0
     };
     let speed = 1000000;
-    for (const key in players) {
-      const info = players[key];
-      game.typeInfo = typeof info;
-      game.infoPlayer = info;
-      const player = newPlayer(info.id, game.players.length);
+    for (const playerId in players) {
+      const player = newPlayer(playerId, game.players.length);
       game.players.push(player);
       if (player.speed < speed) {
-        game.currentTurn = info.id;
+        game.currentTurn = playerId;
         speed = player.speed;
       }
       game.enemyTarget = player.index;
