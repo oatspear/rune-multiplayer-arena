@@ -115,6 +115,10 @@ const app = createApp({
       }
     },
 
+    enqueueEvents(events) {
+      Array.prototype.push.apply(this.events, events);
+    },
+
     resetFooterState() {
       const self = this.thisPlayer;
       if (self == null) {
