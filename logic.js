@@ -396,7 +396,7 @@ Rune.initLogic({
       enemyTarget: 0
     };
     let speed = 1000000;
-    for (const playerId in players) {
+    for (const playerId of players) {
       const player = newPlayer(playerId, game.players.length);
       game.players.push(player);
       if (player.speed < speed) {
