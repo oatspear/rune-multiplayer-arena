@@ -288,7 +288,7 @@ const app = createApp({
 app.component("BattleBoard", BattleBoard);
 app.component("BattleHeader", BattleHeader);
 app.component("BattleScene", BattleScene);
-app.component("BattleTile", BattleTile);
+app.component("BattleCharacter", BattleCharacter);
 app.component("BattleFooter", BattleFooter);
 app.component("BattlePlayerInfo", BattlePlayerInfo);
 app.component("BattleActionBar", BattleActionBar);

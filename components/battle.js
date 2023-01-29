@@ -110,8 +110,8 @@ const BattleScene = {
 };
 
 
-const BattleTile = {
-  template: "#vue-battle-tile",
+const BattleCharacter = {
+  template: "#vue-battle-character",
   props: {
     tileIndex: {
       type: Number,

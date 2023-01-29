@@ -91,7 +91,7 @@
     <template id="vue-battle-scene">
       <div :id="`battle-scene-${sceneIndex}`" class="slide">
         <div class="row">
-          <battle-tile
+          <battle-character
             v-for="(enemy, i) in enemies"
             :tile-index="i"
             :character="enemy"
@@ -101,10 +101,10 @@
             @selected="onEnemySelected"
             @init-animations="onEnemyTileAnimations"
           >
-          </battle-tile>
+          </battle-character>
         </div>
         <div class="row">
-          <battle-tile
+          <battle-character
             v-for="(player, i) in players"
             :tile-index="i"
             :character="player"
@@ -115,12 +115,12 @@
             @selected="onPlayerSelected"
             @init-animations="onPlayerTileAnimations"
           >
-          </battle-tile>
+          </battle-character>
         </div>
       </div>
     </template>
 
-    <template id="vue-battle-tile">
+    <template id="vue-battle-character">
       <div class="tile-container">
         <div
           class="tile"
