@@ -26,7 +26,9 @@ function newClientEnemy(data, index) {
 
 
 function newClientPlayer(data, index) {
-  if (data == null) { return { id: null }; }
+  if (data == null) {
+    return { id: null, index: index };
+  }
   const cls = Classes[data.classId];
   const skills = [];
   for (const s of data.skills) {
@@ -36,14 +38,13 @@ function newClientPlayer(data, index) {
     id: data.id,
     index: index,
     name: data.name,
-    characterClass: cls,
+    classData: cls,
     speed: data.speed,
     power: data.power,
     health: data.health,
     currentHealth: data.currentHealth,
     skills: skills,
-    currentAnimation: null,
-    animations: null
+    animation: null
   };
 }
 
@@ -54,7 +55,12 @@ const app = createApp({
       playerId: undefined,
       currentTurn: 0,
       enemies: [],
-      players: [],
+      players: [
+        newClientPlayer(null, 0),
+        newClientPlayer(null, 1),
+        newClientPlayer(null, 2),
+        newClientPlayer(null, 3)
+      ],
       events: [],
       ui: {
         state: "initial",
@@ -111,9 +117,11 @@ const app = createApp({
     },
 
     setPlayerStates(players) {
-      this.players = [];
       for (let i = 0; i < players.length; ++i) {
-        this.players.push(newClientPlayer(players[i], i));
+        this.players[i] = newClientPlayer(players[i], i);
+      }
+      for (let i = players.length; i < this.players.length; ++i) {
+        this.players[i] = newClientPlayer(null, i);
       }
     },
 

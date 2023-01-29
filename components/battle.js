@@ -129,6 +129,9 @@ const BattleCharacter = {
 
   data() {
     return {
+      power: this.character.power,
+      health: this.character.health,
+      currentHealth: this.character.currentHealth,
       overlayLabel: {
         display: false,
         animation: "",
@@ -136,6 +139,12 @@ const BattleCharacter = {
         value: ""
       }
     };
+  },
+
+  watch: {
+    'character.animation'(newValue, oldValue) {
+
+    }
   },
 
   mounted() {

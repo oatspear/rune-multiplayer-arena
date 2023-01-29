@@ -127,9 +127,9 @@
           :class="{active: isActive, enemy: isEnemy, owned: isOwned, highlight: !isActive && isHighlighted}"
           @click="onTileClick"
         >
-          <span class="class" :class="character.characterClass.icon">{{ character.characterClass.name }}</span>
+          <span class="class" :class="character.classData.icon">{{ character.classData.name }}</span>
           <div class="icon">
-            <img :src="`assets/${character.characterClass.icon}.png`" alt="?">
+            <img :src="`assets/${character.classData.icon}.png`" alt="?">
             <div
               v-if="overlayLabel.display"
               class="overlay"
@@ -158,8 +158,8 @@
       <footer>
         <battle-player-info
           :display-name="characterData.name"
-          :class-icon="characterData.characterClass.icon"
-          :class-name="characterData.characterClass.name"
+          :class-icon="characterData.classData.icon"
+          :class-name="characterData.classData.name"
           :power-value="characterData.power"
           :health-value="characterData.health"
         ></battle-player-info>
