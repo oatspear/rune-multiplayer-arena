@@ -130,9 +130,13 @@ main {
   background-color: #202124;
   color: ivory;
   cursor: pointer;
-  user-select: none;
   padding: .125rem .5rem;
+  user-select: none;
   -webkit-user-select: none;
+}
+
+.tile.animating {
+  transition: background-color 100ms ease-out;
 }
 
 .tile.owned {
@@ -144,6 +148,20 @@ main {
 }
 
 .tile.enemy.active {
+  background-color: crimson;
+}
+
+.tile.positive,
+.tile.active.positive,
+.tile.enemy.positive,
+.tile.enemy.active.positive {
+  background-color: forestgreen;
+}
+
+.tile.negative,
+.tile.active.negative,
+.tile.enemy.negative,
+.tile.enemy.active.negative {
   background-color: crimson;
 }
 
@@ -164,7 +182,7 @@ main {
   50% {
     background-color: crimson;
   }
-  100 {
+  100% {
     background-color: inherit;
   }
 }
@@ -176,7 +194,7 @@ main {
   50% {
     background-color: royalblue;
   }
-  100 {
+  100% {
     background-color: inherit;
   }
 }
@@ -202,6 +220,8 @@ main {
 .tile > .icon > img {
   width: 32px;
   height: 32px;
+  transition: opacity 200ms ease-out;
+  opacity: 1;
 }
 
 .tile.enemy > .icon > img {
@@ -223,6 +243,7 @@ main {
   opacity: 1;
 }
 
+.tile > .icon > img.fade,
 .tile > .icon > .overlay.fade {
   opacity: 0;
 }
@@ -294,56 +315,34 @@ header {
   justify-content: center;
   align-items: center;
   font-size: 1.5rem;
-  /* color: #202124; */
   color: ivory;
-  /* background-color: #202124; */
-  /* background-color: ivory; */
   background: linear-gradient(#4e4e4e, #202124);
   border-bottom: 2px solid whitesmoke;
 }
 
-header > .icon-label.boss {
+header > .history {
   flex: 1 1 0;
-  justify-content: flex-start;
-}
-
-header > .icon-label.willpower {
-  flex: 1 1 0;
-  justify-content: flex-end;
-}
-
-header > .turn {
-  flex: 2 1 0;
   display: flex;
   flex-direction: row;
-  border: 2px dashed ivory;
-  border-radius: .25rem;
-  height: 100%;
 }
 
-header > .turn > .slot {
+header > .history > .slot {
   flex: 1 1 0;
-  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 32px;
+}
+
+header > .history > .slot > .event {
+  flex: 0 1 auto;
+  min-width: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #202124;
-}
-
-header > .turn > .slot:nth-child(1) {
-  background-color: firebrick;
-}
-
-header > .turn > .slot:nth-child(2) {
-  background-color: royalblue;
-}
-
-header > .turn > .slot:nth-child(3) {
-  background-color: forestgreen;
-}
-
-header > .turn > .slot:nth-child(4) {
-  background-color: rebeccapurple;
+  border: 2px solid ivory;
+  border-radius: .25rem;
 }
 
 /*******************************************************************************

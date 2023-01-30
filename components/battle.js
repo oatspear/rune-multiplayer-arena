@@ -39,27 +39,6 @@ const BattleBoard = {
 };
 
 
-const BattleHeader = {
-  template: "#vue-battle-header",
-  props: {
-    currentTurn: {
-      type: Number,
-      required: true
-    },
-    numPlayers: {
-      type: Number,
-      required: true
-    }
-  },
-  data() {
-    return {};
-  },
-  methods: {
-    battleUpdate() {}
-  }
-};
-
-
 const BattleScene = {
   template: "#vue-battle-scene",
   props: {
@@ -126,21 +105,29 @@ const BattleCharacter = {
       power: this.character.power,
       health: this.character.health,
       currentHealth: this.character.currentHealth,
-      overlayLabel: {
+      animation: "",
+      overlay: {
         display: false,
-        animation: "",
-        style: "",
-        value: ""
+        label: {
+          animation: "",
+          style: "",
+          value: ""
+        }
       }
     };
   },
 
   watch: {
     'character.animation'(newValue, oldValue) {
-      if (newValue == null) { return; }
+      if (newValue == null) {
+        this.animation = "";
+        return;
+      }
       switch (newValue.type) {
         case "damage":
           return this.animateDamage(newValue);
+        case "heal":
+          return this.animateHealing(newValue);
       }
     }
   },
@@ -151,26 +138,38 @@ const BattleCharacter = {
     },
 
     animateDamage: async function (params) {
-      this.$emit("animation-started");
-      this.currentHealth = params.startingHealth;
-      await this.showTimedOverlayNumber(-params.value);
-      await this.fadeOverlay();
-      this.currentHealth = params.finalHealth;
-      this.$emit("animation-finished", this.character);
+      this.animation = "damage";
+      // this.$emit("animation-started");
+      // await this.showTimedOverlayNumber(-params.value);
+      // await this.fadeOverlay();
+      // this.currentHealth -= params.value;
+      // this.$emit("animation-finished", this.character);
+    },
+
+    animateHealing: async function (params) {
+      this.animation = "heal";
+      // this.$emit("animation-started");
+      // await this.showTimedOverlayNumber(params.value);
+      // await this.fadeOverlay();
+      // this.currentHealth += params.value;
+      // if (this.currentHealth >= this.health) {
+      //   this.currentHealth = this.health;
+      // }
+      // this.$emit("animation-finished", this.character);
     },
 
     showTimedOverlayNumber(value) {
       return new Promise(resolve => {
-        this.overlayLabel.display = true;
+        this.overlay.display = true;
         if (value < 0) {
-          this.overlayLabel.style = "negative";
-          this.overlayLabel.value = `-${-value}`;
+          this.overlay.label.style = "negative";
+          this.overlay.label.value = `-${-value}`;
         } else if (value > 0) {
-          this.overlayLabel.style = "positive";
-          this.overlayLabel.value = `+${value}`;
+          this.overlay.label.style = "positive";
+          this.overlay.label.value = `+${value}`;
         } else {
-          this.overlayLabel.style = "";
-          this.overlayLabel.value = "0";
+          this.overlay.label.style = "";
+          this.overlay.label.value = "0";
         }
         window.setTimeout(() => {
           resolve();
@@ -180,12 +179,32 @@ const BattleCharacter = {
 
     fadeOverlay() {
       return new Promise(resolve => {
-        this.overlayLabel.animation = "fade";
+        this.overlay.label.animation = "fade";
         window.setTimeout(() => {
+          this.overlay.display = false;
           resolve();
         }, 300);
       });
     }
+  }
+};
+
+
+const BattleHeader = {
+  template: "#vue-battle-header",
+  props: {
+    history: {
+      type: Array,
+      required: true
+    }
+  },
+
+  data() {
+    return {};
+  },
+
+  methods: {
+    battleUpdate() {}
   }
 };
 

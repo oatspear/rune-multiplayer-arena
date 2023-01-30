@@ -4,10 +4,26 @@
 const { createApp } = Vue;
 
 
+const DEFAULT_ANIM_DURATION = 1000;
+
+
 function _sortCharactersById(a, b) {
   if (a.id < b.id) { return -1; }
   if (a.id > b.id) { return 1; }
   return 0;
+}
+
+
+function newAnimationSequence(game, playerId) {
+  const events = [];
+  if (game.events.length > 0) {
+    Array.prototype.push.apply(events, game.events);
+  }
+  return {
+    events: events,
+    finalState: game,
+    playerId: playerId
+  };
 }
 
 
@@ -56,7 +72,14 @@ const app = createApp({
       currentTurn: 0,
       enemies: [],
       players: [],
-      events: [],
+      history: [
+        null,
+        null,
+        null,
+        null,
+        null,
+        null
+      ],
       ui: {
         state: "initial",
         targetMode: null,
@@ -71,7 +94,8 @@ const app = createApp({
           itemName: "",
           itemDescription: ""
         },
-        animating: 0
+        isAnimating: false,
+        animationQueue: []
       }
     };
   },
@@ -108,7 +132,7 @@ const app = createApp({
       this.enemies = [newClientEnemy(game.enemy, 0)];
       this.setPlayerStates(game.players);
       this.currentTurn = game.currentTurn;
-      this.events = game.events;
+      this.eventQueue = game.events;
       this.resetFooterState();
     },
 
@@ -119,38 +143,67 @@ const app = createApp({
       }
     },
 
-    enqueueEvents(events) {
+    animateNewGameState(game, playerId) {
       console.log("enqueue animation events");
-      Array.prototype.push.apply(this.events, events);
-      window.setTimeout(() => { this.doNextAnimation(); }, 0);
+      this.ui.animationQueue.push(newAnimationSequence(game, playerId));
+      if (!this.ui.isAnimating) {
+        window.setTimeout(() => { this.doNextAnimation(); }, 0);
+      }
     },
 
     doNextAnimation() {
-      if (this.events.length === 0) {
+      if (this.ui.isAnimating) { return false; }
+      if (this.ui.animationQueue.length === 0) {
         // No more animations. Reset UI state.
         return false;
       }
-      const event = this.events.splice(0, 1)[0];
-      console.log("animating", event);
+      const seq = this.ui.animationQueue[0];
+      console.log("begin animation sequence", seq);
+      if (seq.events.length === 0) {
+        // Reached the end of this animation sequence
+        this.ui.animationQueue.splice(0, 1);
+        this.setGameState(seq.finalState, seq.playerId);
+        window.setTimeout(() => { this.doNextAnimation(); }, 0);
+      } else {
+        // Animate the next event
+        const event = seq.events.splice(0, 1)[0];
+        this.animateEvent(event);
+      }
+      return true;
+    },
+
+    animateEvent(event) {
+      console.log("animateEvent:", event);
+      this.ui.isAnimating = true;
       const i = event.target;
       if (i == null) {
         if (event.isPlayer) {
           for (const character of this.players) {
             character.animation = event;
-            this.ui.animating++;
           }
         } else {
           for (const character of this.enemies) {
             character.animation = event;
-            this.ui.animating++;
           }
         }
       } else {
         const character = event.isPlayer ? this.players[i] : this.enemies[i];
         character.animation = event;
-        this.ui.animating++;
       }
-      return true;
+      window.setTimeout(() => {
+        this.stopEventAnimation();
+        this.doNextAnimation();
+      }, DEFAULT_ANIM_DURATION);
+    },
+
+    stopEventAnimation() {
+      this.ui.isAnimating = false;
+      for (const character of this.enemies) {
+        character.animation = null;
+      }
+      for (const character of this.players) {
+        character.animation = null;
+      }
     },
 
     resetFooterState() {
@@ -290,11 +343,13 @@ const app = createApp({
     },
 
     onCharacterAnimationFinished(character) {
-      character.animation = null;
-      this.ui.animating--;
-      if (this.ui.animating <= 0) {
-        this.ui.animating = 0;
-        this.doNextAnimation();
+      if (character.animation != null) {
+        character.animation = null;
+        this.ui.isAnimating--;
+        if (this.ui.isAnimating <= 0) {
+          this.ui.isAnimating = 0;
+          this.doNextAnimation();
+        }
       }
     },
 
@@ -351,9 +406,7 @@ function initRuneClient(vueApp) {
         // Not a partial update. Might be a post-setup call, for example.
         vueApp.setGameState(newGame, yourPlayerId);
       } else {
-        // FIXME
-        vueApp.enqueueEvents(newGame.events);
-        // vueApp.setGameState(newGame, yourPlayerId);
+        vueApp.animateNewGameState(newGame, yourPlayerId);
       }
     },
   });

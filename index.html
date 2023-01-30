@@ -17,8 +17,7 @@
     <main id="app">
       <battle-header
         v-if="ui.state === 'battle'"
-        :current-turn="currentTurn"
-        :num-players="players.length"
+        :history="history"
       >
       </battle-header>
 
@@ -49,18 +48,11 @@
 
     <template id="vue-battle-header">
       <header>
-        <div class="turn">
-          <div class="slot">
-            <span v-if="currentTurn == 0">▼</span>
-          </div>
-          <div class="slot" v-if="numPlayers > 1">
-            <span v-if="currentTurn == 1">▼</span>
-          </div>
-          <div class="slot" v-if="numPlayers > 2">
-            <span v-if="currentTurn == 2">▼</span>
-          </div>
-          <div class="slot" v-if="numPlayers > 3">
-            <span v-if="currentTurn == 3">▼</span>
+        <div class="history">
+          <div v-for="event in history" class="slot">
+            <div v-if="event != null" class="event">
+              <span>▼</span>
+            </div>
           </div>
         </div>
       </header>
@@ -124,30 +116,38 @@
       <div class="tile-container">
         <div
           class="tile"
-          :class="{active: isActive, enemy: isEnemy, owned: isOwned, highlight: !isActive && isHighlighted}"
+          :class="{
+            active: isActive,
+            enemy: isEnemy,
+            owned: isOwned,
+            highlight: !isActive && isHighlighted,
+            animating: animation != '',
+            positive: animation == 'heal',
+            negative: animation == 'damage'
+          }"
           @click="onTileClick"
         >
           <span class="class" :class="character.classData.icon">{{ character.classData.name }}</span>
           <div class="icon">
             <img :src="`assets/${character.classData.icon}.png`" alt="?">
             <div
-              v-if="overlayLabel.display"
+              v-if="overlay.display"
               class="overlay"
-              :class="overlayLabel.animation"
+              :class="overlay.label.animation"
             >
-              <span class="label" :class="overlayLabel.style">
-                {{ overlayLabel.value }}
+              <span class="label" :class="overlay.label.style">
+                {{ overlay.label.value }}
               </span>
             </div>
           </div>
           <div class="effect-anchor"></div>
           <div class="stats">
             <div class="power">
-              <span>{{ power }}</span>
+              <span>{{ character.power }}</span>
             </div>
             /
             <div class="health">
-              <span>{{ currentHealth }}</span>
+              <span>{{ character.currentHealth }}</span>
             </div>
           </div>
         </div>
