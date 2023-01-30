@@ -55,12 +55,7 @@ const app = createApp({
       playerId: undefined,
       currentTurn: 0,
       enemies: [],
-      players: [
-        newClientPlayer(null, 0),
-        newClientPlayer(null, 1),
-        newClientPlayer(null, 2),
-        newClientPlayer(null, 3)
-      ],
+      players: [],
       events: [],
       ui: {
         state: "initial",
@@ -75,7 +70,8 @@ const app = createApp({
           skills: [],
           itemName: "",
           itemDescription: ""
-        }
+        },
+        animating: 0
       }
     };
   },
@@ -117,26 +113,44 @@ const app = createApp({
     },
 
     setPlayerStates(players) {
+      this.players = [];
       for (let i = 0; i < players.length; ++i) {
-        this.players[i] = newClientPlayer(players[i], i);
-      }
-      for (let i = players.length; i < this.players.length; ++i) {
-        this.players[i] = newClientPlayer(null, i);
+        this.players.push(newClientPlayer(players[i], i));
       }
     },
 
     enqueueEvents(events) {
-      // Array.prototype.push.apply(this.events, events);
-      for (const event of events) {
-        if (event.type === "damage") {
-          const i = event.target;
-          const character = event.isPlayer ? this.players[i] : this.enemies[i];
-          const anim = character.animations.damage;
-          if (anim != null) {
-            anim(event);
+      console.log("enqueue animation events");
+      Array.prototype.push.apply(this.events, events);
+      window.setTimeout(() => { this.doNextAnimation(); }, 0);
+    },
+
+    doNextAnimation() {
+      if (this.events.length === 0) {
+        // No more animations. Reset UI state.
+        return false;
+      }
+      const event = this.events.splice(0, 1)[0];
+      console.log("animating", event);
+      const i = event.target;
+      if (i == null) {
+        if (event.isPlayer) {
+          for (const character of this.players) {
+            character.animation = event;
+            this.ui.animating++;
+          }
+        } else {
+          for (const character of this.enemies) {
+            character.animation = event;
+            this.ui.animating++;
           }
         }
+      } else {
+        const character = event.isPlayer ? this.players[i] : this.enemies[i];
+        character.animation = event;
+        this.ui.animating++;
       }
+      return true;
     },
 
     resetFooterState() {
@@ -275,8 +289,13 @@ const app = createApp({
       }
     },
 
-    onBindAnimations(character, animations) {
-      character.animations = animations;
+    onCharacterAnimationFinished(character) {
+      character.animation = null;
+      this.ui.animating--;
+      if (this.ui.animating <= 0) {
+        this.ui.animating = 0;
+        this.doNextAnimation();
+      }
     },
 
     refreshSlides() {

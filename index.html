@@ -33,7 +33,7 @@
         :selected-player="ui.selectedPlayer"
         @selected-enemy="onEnemySelected"
         @selected-player="onPlayerSelected"
-        @bind-animations="onBindAnimations"
+        @animation-finished="onCharacterAnimationFinished"
       >
       </battle-board>
 
@@ -81,7 +81,7 @@
               :selected-player="selectedPlayer"
               @selected-enemy="onEnemySelected"
               @selected-player="onPlayerSelected"
-              @bind-animations="onBindAnimations"
+              @animation-finished="onCharacterAnimationFinished"
             >
             </battle-scene>
           </div>
@@ -99,7 +99,7 @@
             :is-active="selectedEnemy === i"
             :is-highlighted="highlightEnemies"
             @selected="onEnemySelected"
-            @init-animations="onEnemyTileAnimations"
+            @animation-finished="onCharacterAnimationFinished"
           >
           </battle-character>
         </div>
@@ -113,7 +113,7 @@
             :is-highlighted="highlightPlayers"
             :is-owned="playerId === player.id"
             @selected="onPlayerSelected"
-            @init-animations="onPlayerTileAnimations"
+            @animation-finished="onCharacterAnimationFinished"
           >
           </battle-character>
         </div>
@@ -143,11 +143,11 @@
           <div class="effect-anchor"></div>
           <div class="stats">
             <div class="power">
-              <span>{{ character.power }}</span>
+              <span>{{ power }}</span>
             </div>
             /
             <div class="health">
-              <span>{{ character.currentHealth }}</span>
+              <span>{{ currentHealth }}</span>
             </div>
           </div>
         </div>

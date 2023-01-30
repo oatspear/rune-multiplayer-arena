@@ -32,8 +32,8 @@ const BattleBoard = {
       this.$emit("selected-player", character);
     },
 
-    onBindAnimations(character, animations) {
-      this.$emit("bind-animations", character, animations);
+    onCharacterAnimationFinished(character) {
+      this.$emit("animation-finished", character);
     }
   }
 };
@@ -97,14 +97,8 @@ const BattleScene = {
       this.$emit("selected-player", character);
     },
 
-    onEnemyTileAnimations(i, animations) {
-      const character = this.enemies[i];
-      this.$emit("bind-animations", character, animations);
-    },
-
-    onPlayerTileAnimations(i, animations) {
-      const character = this.players[i];
-      this.$emit("bind-animations", character, animations);
+    onCharacterAnimationFinished(character) {
+      this.$emit("animation-finished", character);
     }
   }
 };
@@ -143,14 +137,12 @@ const BattleCharacter = {
 
   watch: {
     'character.animation'(newValue, oldValue) {
-
+      if (newValue == null) { return; }
+      switch (newValue.type) {
+        case "damage":
+          return this.animateDamage(newValue);
+      }
     }
-  },
-
-  mounted() {
-    this.$emit("init-animations", this.tileIndex, {
-      damage: (params) => { return this.animateDamage(params); }
-    });
   },
 
   methods: {
@@ -158,18 +150,41 @@ const BattleCharacter = {
       this.$emit("selected", this.tileIndex);
     },
 
-    animateDamage(params) {
-      const self = this;
+    animateDamage: async function (params) {
       this.$emit("animation-started");
-      this.overlayLabel.display = true;
-      this.overlayLabel.style = "negative";
-      this.overlayLabel.value = `-${params.value}`;
-      window.setTimeout(function () {
-        self.overlayLabel.animation = "fade";
-        window.setTimeout(function () {
-          self.$emit("animation-finished");
+      this.currentHealth = params.startingHealth;
+      await this.showTimedOverlayNumber(-params.value);
+      await this.fadeOverlay();
+      this.currentHealth = params.finalHealth;
+      this.$emit("animation-finished", this.character);
+    },
+
+    showTimedOverlayNumber(value) {
+      return new Promise(resolve => {
+        this.overlayLabel.display = true;
+        if (value < 0) {
+          this.overlayLabel.style = "negative";
+          this.overlayLabel.value = `-${-value}`;
+        } else if (value > 0) {
+          this.overlayLabel.style = "positive";
+          this.overlayLabel.value = `+${value}`;
+        } else {
+          this.overlayLabel.style = "";
+          this.overlayLabel.value = "0";
+        }
+        window.setTimeout(() => {
+          resolve();
+        }, 500);
+      });
+    },
+
+    fadeOverlay() {
+      return new Promise(resolve => {
+        this.overlayLabel.animation = "fade";
+        window.setTimeout(() => {
+          resolve();
         }, 300);
-      }, 500);
+      });
     }
   }
 };
