@@ -175,6 +175,8 @@ const app = createApp({
     animateEvent(event) {
       console.log("animateEvent:", event);
       this.ui.isAnimating = true;
+      this.history.splice(0, 1);
+      this.history.push(event);
       const i = event.target;
       if (i == null) {
         if (event.isPlayer) {

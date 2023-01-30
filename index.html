@@ -50,9 +50,11 @@
       <header>
         <div class="history">
           <div v-for="event in history" class="slot">
-            <div v-if="event != null" class="event">
-              <span>▼</span>
-            </div>
+            <Transition name="slide-fade">
+              <div v-if="event != null" class="event">
+                <span>▼</span>
+              </div>
+            </Transition>
           </div>
         </div>
       </header>

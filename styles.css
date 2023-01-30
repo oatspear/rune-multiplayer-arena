@@ -345,6 +345,20 @@ header > .history > .slot > .event {
   border-radius: .25rem;
 }
 
+.event.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.event.slide-fade-leave-active {
+  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.event.slide-fade-enter-from,
+.event.slide-fade-leave-to {
+  transform: translateX(64px);
+  opacity: 0;
+}
+
 /*******************************************************************************
   Footer Bar
 *******************************************************************************/
