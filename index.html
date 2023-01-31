@@ -149,8 +149,13 @@
             </div>
           </div>
           <Transition name="fade">
-            <div v-if="overlay.display" class="overlay" :class="overlay.animation">
-                <img v-if="overlay.icon" class="icon" :src="`assets/${overlay.icon}.png`" alt="?">
+            <div v-if="overlay.display" class="overlay">
+              <img v-if="overlay.icon" class="icon" :class="overlay.animation" :src="`assets/${overlay.icon}.png`" alt="?">
+              <div v-if="overlay.particles" class="particles" :class="overlay.particleAnimation">
+                <img class="icon" :src="`assets/${overlay.particles}.png`" alt="?">
+                <img class="icon" :src="`assets/${overlay.particles}.png`" alt="?">
+                <img class="icon" :src="`assets/${overlay.particles}.png`" alt="?">
+              </div>
             </div>
           </Transition>
         </div>

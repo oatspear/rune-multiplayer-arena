@@ -123,9 +123,11 @@ const BattleCharacter = {
     'character.animation'(newValue, oldValue) {
       if (newValue == null) {
         this.animation = "";
-        this.overlay.display = false;
-        this.overlay.icon = "";
-        this.overlay.animation = "";
+        // this.overlay.display = false;
+        // this.overlay.icon = "";
+        // this.overlay.animation = "";
+        // this.overlay.particles = "";
+        // this.overlay.particleAnimation = "";
         return;
       }
       switch (newValue.type) {
@@ -142,7 +144,7 @@ const BattleCharacter = {
       this.$emit("selected", this.tileIndex);
     },
 
-    animateDamage: async function (params) {
+    animateDamage(params) {
       this.animation = "damage";
       this.overlay.display = true;
       this.overlay.icon = "willpower";
@@ -160,11 +162,11 @@ const BattleCharacter = {
       // this.$emit("animation-finished", this.character);
     },
 
-    animateHealing: async function (params) {
+    animateHealing(params) {
       this.animation = "heal";
       this.overlay.display = true;
-      this.overlay.icon = "willpower";
-      this.overlay.animation = "floating";
+      this.overlay.particles = "heal";
+      this.overlay.particleAnimation = "floating";
       // window.setTimeout(() => {
       //   this.overlay.display = false;
       //   this.overlay.icon = "";
