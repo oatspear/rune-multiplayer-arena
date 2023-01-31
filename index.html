@@ -150,7 +150,7 @@
           </div>
           <Transition name="fade">
             <div v-if="overlay.display" class="overlay" :class="overlay.animation">
-                <img class="icon" v-if="overlay.icon" :src="`assets/${overlay.icon}.png`" alt="?">
+                <img v-if="overlay.icon" class="icon" :src="`assets/${overlay.icon}.png`" alt="?">
             </div>
           </Transition>
         </div>

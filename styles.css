@@ -322,8 +322,12 @@ main {
 }
 
 
-.overlay.shaking {
+.overlay.shaking > .icon {
   animation: shaking 0.65s;
+}
+
+.overlay.floating > .icon {
+  animation: floating 0.65s forwards;
 }
 
 @keyframes shaking {
@@ -333,6 +337,12 @@ main {
   20%, 30%, 60%, 70% { transform: translateX(-4px); }
   25%, 35%, 65%, 75% { transform: translateX(4px); }
   80% { transform: none; }
+}
+
+@keyframes floating {
+  0% { transform: none; opacity: 1; }
+  50% { opacity: 1; }
+  100% { transform: translateY(-32px); opacity: 0; }
 }
 
 
