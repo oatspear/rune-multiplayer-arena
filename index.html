@@ -135,17 +135,8 @@
           @click="onTileClick"
         >
           <span class="class" :class="character.classData.icon">{{ character.classData.name }}</span>
-          <div class="icon">
+          <div class="portrait">
             <img :src="`assets/${character.classData.icon}.png`" alt="?">
-            <div
-              v-if="overlay.display"
-              class="overlay"
-              :class="overlay.label.animation"
-            >
-              <span class="label" :class="overlay.label.style">
-                {{ overlay.label.value }}
-              </span>
-            </div>
           </div>
           <div class="effect-anchor"></div>
           <div class="stats">
@@ -157,6 +148,11 @@
               <span>{{ character.currentHealth }}</span>
             </div>
           </div>
+          <Transition name="fade">
+            <div v-if="overlay.display" class="overlay" :class="overlay.animation">
+                <img class="icon" v-if="overlay.icon" :src="`assets/${overlay.icon}.png`" alt="?">
+            </div>
+          </Transition>
         </div>
       </div>
     </template>

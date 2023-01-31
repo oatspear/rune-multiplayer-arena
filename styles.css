@@ -118,6 +118,7 @@ main {
 }
 
 .tile {
+  position: relative;
   width: 90%;
   max-width: 8rem;
   flex: 0 0 auto;
@@ -211,60 +212,67 @@ main {
   color: #202124;
 }
 
-.tile > .icon {
+.tile > .portrait {
   flex: 1 0 auto;
   position: relative;
   background-color: inherit;
 }
 
-.tile > .icon > img {
+.tile > .portrait > img {
   width: 32px;
   height: 32px;
   transition: opacity 200ms ease-out;
   opacity: 1;
 }
 
-.tile.enemy > .icon > img {
+.tile.enemy > .portrait > img {
   width: 64px;
   height: 64px;
 }
 
-.tile > .icon > .overlay {
+/* .tile > .portrait > .overlay {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: inherit;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: opacity 200ms ease-out;
   opacity: 1;
-}
+} */
 
-.tile > .icon > img.fade,
-.tile > .icon > .overlay.fade {
+/* .tile > .portrait > img.fade,
+.tile > .portrait > .overlay.fade {
   opacity: 0;
-}
+} */
 
-.tile > .icon > .overlay > .label {
+/* .tile > .portrait > .overlay > .label {
   font-size: 2rem;
   color: ivory;
-}
+} */
 
-.tile > .icon > .overlay > .label.positive {
+/* .tile > .portrait > .overlay > img {
+  width: 64px;
+  height: 64px;
+} */
+
+/* .tile > .portrait > .overlay > .label.positive {
   color: green;
-}
+} */
 
-.tile > .icon > .overlay > .label.negative {
+/* .tile > .portrait > .overlay > .label.negative {
   color: crimson;
-}
+} */
 
 .tile > .effect-anchor {
   width: 100%;
   position: relative;
   height: .5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tile > .stats {
@@ -282,6 +290,51 @@ main {
   justify-content: center;
   align-items: center;
 }
+
+.tile > .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  pointer-events: none;
+}
+
+.tile > .overlay > .icon {
+  width: 64px;
+  height: 64px;
+}
+
+.overlay.fade-enter-active,
+.overlay.fade-leave-active {
+  transition: all 0.16s linear;
+}
+
+.overlay.fade-enter-from,
+.overlay.fade-leave-to {
+  opacity: 0;
+}
+
+
+.overlay.shaking {
+  animation: shaking 0.65s;
+}
+
+@keyframes shaking {
+  0% { transform: none; }
+  40%, 50% { transform: translateX(-8px); }
+  45%, 55% { transform: translateX(8px); }
+  20%, 30%, 60%, 70% { transform: translateX(-4px); }
+  25%, 35%, 65%, 75% { transform: translateX(4px); }
+  80% { transform: none; }
+}
+
 
 /* .stats > .power {
   background: no-repeat center/contain url("assets/power.png");

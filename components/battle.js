@@ -108,6 +108,8 @@ const BattleCharacter = {
       animation: "",
       overlay: {
         display: false,
+        icon: null,
+        animation: "",
         label: {
           animation: "",
           style: "",
@@ -139,6 +141,14 @@ const BattleCharacter = {
 
     animateDamage: async function (params) {
       this.animation = "damage";
+      this.overlay.display = true;
+      this.overlay.icon = "willpower";
+      this.overlay.animation = "shaking";
+      window.setTimeout(() => {
+        this.overlay.display = false;
+        this.overlay.icon = "";
+        this.overlay.animation = "";
+      }, 800);
       // this.$emit("animation-started");
       // await this.showTimedOverlayNumber(-params.value);
       // await this.fadeOverlay();
