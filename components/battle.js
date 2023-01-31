@@ -197,14 +197,46 @@ const BattleHeader = {
       type: Array,
       required: true
     }
+  }
+};
+
+
+const BattleHistoryEvent = {
+  template: "#vue-battle-history-event",
+
+  props: {
+    currentEvent: Object
   },
 
   data() {
-    return {};
+    return {
+      event: this.currentEvent,
+      transition: false
+    };
+  },
+
+  computed: {
+    shouldDisplay() { return this.event != null && !this.transition; }
+  },
+
+  watch: {
+    currentEvent(newValue, oldValue) {
+      if (!this.transition) {
+        console.log("triggered history event transition");
+        this.transition = true;
+        window.setTimeout(() => {
+          console.log("history event transition done");
+          this.event = this.currentEvent;
+          this.transition = false;
+        }, 300);
+      }
+    }
   },
 
   methods: {
-    battleUpdate() {}
+    onHistoryEventClicked() {
+      console.log("check history event:", this.event);
+    }
   }
 };
 

@@ -49,15 +49,20 @@
     <template id="vue-battle-header">
       <header>
         <div class="history">
-          <div v-for="event in history" class="slot">
-            <Transition name="slide-fade">
-              <div v-if="event != null" class="event">
-                <span>▼</span>
-              </div>
-            </Transition>
-          </div>
+          <battle-history-event v-for="event in history" :current-event="event">
+          </battle-history-event>
         </div>
       </header>
+    </template>
+
+    <template id="vue-battle-history-event">
+      <div class="slot">
+        <Transition name="slide-fade">
+          <div v-if="shouldDisplay" class="event">
+            <span>▼</span>
+          </div>
+        </Transition>
+      </div>
     </template>
 
     <template id="vue-battle-board">

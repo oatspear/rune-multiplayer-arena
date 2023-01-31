@@ -337,25 +337,31 @@ header > .history > .slot {
 header > .history > .slot > .event {
   flex: 0 1 auto;
   min-width: 32px;
+  min-height: 32px;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #202124;
   border: 2px solid ivory;
   border-radius: .25rem;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.event.slide-fade-enter-active {
-  transition: all 0.3s ease-out;
-}
-
+.event.slide-fade-enter-active,
 .event.slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.2s linear;
 }
 
-.event.slide-fade-enter-from,
+.event.slide-fade-enter-from {
+  transform: translateX(32px);
+  opacity: 0;
+}
+
 .event.slide-fade-leave-to {
-  transform: translateX(64px);
+  transform: translateX(-32px);
   opacity: 0;
 }
 
@@ -382,7 +388,6 @@ footer > .player-info {
   padding: .2rem .5rem;
   border-top: 2px solid whitesmoke;
   border-bottom: 2px solid whitesmoke;
-  /* border-bottom: 2px solid #4e4e4e; */
   user-select: none;
   -webkit-user-select: none;
 }
