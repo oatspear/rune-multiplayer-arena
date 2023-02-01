@@ -109,7 +109,9 @@ const BattleCharacter = {
       overlay: {
         display: false,
         icon: null,
-        animation: "",
+        iconAnimation: null,
+        particles: null,
+        particleAnimation: null,
         label: {
           animation: "",
           style: "",
@@ -128,13 +130,8 @@ const BattleCharacter = {
         this.overlay.animation = "";
         this.overlay.particles = "";
         this.overlay.particleAnimation = "";
-        return;
-      }
-      switch (newValue.type) {
-        case "damage":
-          return this.animateDamage(newValue);
-        case "heal":
-          return this.animateHealing(newValue);
+      } else {
+        this.animateEvent(newValue);
       }
     }
   },
@@ -144,73 +141,51 @@ const BattleCharacter = {
       this.$emit("selected", this.tileIndex);
     },
 
-    animateDamage(params) {
-      this.animation = "damage";
+    animateEvent(params) {
+      this.animation = params.type;
+      const data = BattleEvents[params.type];
+      if (data == null || data.animation == null) { return; }
+      const animationData = data.animation;
+
       this.overlay.display = true;
-      this.overlay.icon = "willpower";
-      this.overlay.animation = "shaking";
-      // window.setTimeout(() => {
-      //   this.overlay.display = false;
-      //   this.overlay.icon = "";
-      //   this.overlay.animation = "";
-      // }, 800);
-
-      // this.$emit("animation-started");
-      // await this.showTimedOverlayNumber(-params.value);
-      // await this.fadeOverlay();
-      // this.currentHealth -= params.value;
-      // this.$emit("animation-finished", this.character);
-    },
-
-    animateHealing(params) {
-      this.animation = "heal";
-      this.overlay.display = true;
-      this.overlay.particles = "heal";
-      this.overlay.particleAnimation = "floating";
-      // window.setTimeout(() => {
-      //   this.overlay.display = false;
-      //   this.overlay.icon = "";
-      //   this.overlay.animation = "";
-      // }, 800);
-
-      // this.$emit("animation-started");
-      // await this.showTimedOverlayNumber(params.value);
-      // await this.fadeOverlay();
-      // this.currentHealth += params.value;
-      // if (this.currentHealth >= this.health) {
-      //   this.currentHealth = this.health;
-      // }
-      // this.$emit("animation-finished", this.character);
-    },
-
-    showTimedOverlayNumber(value) {
-      return new Promise(resolve => {
-        this.overlay.display = true;
-        if (value < 0) {
-          this.overlay.label.style = "negative";
-          this.overlay.label.value = `-${-value}`;
-        } else if (value > 0) {
-          this.overlay.label.style = "positive";
-          this.overlay.label.value = `+${value}`;
-        } else {
-          this.overlay.label.style = "";
-          this.overlay.label.value = "0";
-        }
-        window.setTimeout(() => {
-          resolve();
-        }, 500);
-      });
-    },
-
-    fadeOverlay() {
-      return new Promise(resolve => {
-        this.overlay.label.animation = "fade";
-        window.setTimeout(() => {
-          this.overlay.display = false;
-          resolve();
-        }, 300);
-      });
+      if (animationData.icon != null) {
+        this.overlay.icon = animationData.icon.name;
+        this.overlay.iconAnimation = animationData.icon.animation;
+      }
+      if (animationData.particles != null) {
+        this.overlay.particles = animationData.particles.name;
+        this.overlay.particleAnimation = animationData.particles.animation;
+      }
     }
+
+    // showTimedOverlayNumber(value) {
+    //   return new Promise(resolve => {
+    //     this.overlay.display = true;
+    //     if (value < 0) {
+    //       this.overlay.label.style = "negative";
+    //       this.overlay.label.value = `-${-value}`;
+    //     } else if (value > 0) {
+    //       this.overlay.label.style = "positive";
+    //       this.overlay.label.value = `+${value}`;
+    //     } else {
+    //       this.overlay.label.style = "";
+    //       this.overlay.label.value = "0";
+    //     }
+    //     window.setTimeout(() => {
+    //       resolve();
+    //     }, 500);
+    //   });
+    // },
+
+    // fadeOverlay() {
+    //   return new Promise(resolve => {
+    //     this.overlay.label.animation = "fade";
+    //     window.setTimeout(() => {
+    //       this.overlay.display = false;
+    //       resolve();
+    //     }, 300);
+    //   });
+    // }
   }
 };
 

@@ -98,7 +98,7 @@ const Skills = {
   },
   "greaterHeal": {
     name: "Greater Heal",
-    icon: "heal-skill",
+    icon: "heal",
     speed: 8,
     cooldown: 0,
     target: targetModeAlly(),
@@ -135,5 +135,31 @@ const Classes = {
     power: 8,
     health: 200,
     skills: ["rest"]
+  }
+};
+
+
+/*******************************************************************************
+  Events
+*******************************************************************************/
+
+const BattleEvents = {
+  damage: {
+    icon: "damage",
+    animation: {
+      icon: {
+        name: "damage",
+        animation: "shaking"
+      }
+    }
+  },
+  heal: {
+    icon: "healing",
+    animation: {
+      particles: {
+        name: "healing",
+        animation: "floating"
+      }
+    }
   }
 };
