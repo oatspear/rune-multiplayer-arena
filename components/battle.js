@@ -211,7 +211,8 @@ const BattleHistoryEvent = {
   data() {
     return {
       event: this.currentEvent,
-      transition: false
+      transition: false,
+      icon: null
     };
   },
 
@@ -228,6 +229,10 @@ const BattleHistoryEvent = {
           console.log("history event transition done");
           this.event = this.currentEvent;
           this.transition = false;
+          const data = BattleEvents[this.event.type];
+          if (data != null) {
+            this.icon = data.icon;
+          }
         }, 300);
       }
     }
