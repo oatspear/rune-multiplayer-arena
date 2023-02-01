@@ -98,7 +98,7 @@ const Skills = {
   },
   "greaterHeal": {
     name: "Greater Heal",
-    icon: "battle",
+    icon: "heal-skill",
     speed: 8,
     cooldown: 0,
     target: targetModeAlly(),
