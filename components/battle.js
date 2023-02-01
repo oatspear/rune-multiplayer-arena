@@ -123,11 +123,11 @@ const BattleCharacter = {
     'character.animation'(newValue, oldValue) {
       if (newValue == null) {
         this.animation = "";
-        // this.overlay.display = false;
-        // this.overlay.icon = "";
-        // this.overlay.animation = "";
-        // this.overlay.particles = "";
-        // this.overlay.particleAnimation = "";
+        this.overlay.display = false;
+        this.overlay.icon = "";
+        this.overlay.animation = "";
+        this.overlay.particles = "";
+        this.overlay.particleAnimation = "";
         return;
       }
       switch (newValue.type) {
