@@ -144,6 +144,12 @@ const Classes = {
 *******************************************************************************/
 
 const BattleEvents = {
+  attack: {
+    icon: "battle",
+    animation: {
+      
+    }
+  },
   damage: {
     icon: "damage",
     animation: {

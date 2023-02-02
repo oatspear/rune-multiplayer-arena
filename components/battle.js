@@ -223,10 +223,8 @@ const BattleHistoryEvent = {
   watch: {
     currentEvent(newValue, oldValue) {
       if (!this.transition) {
-        console.log("triggered history event transition");
         this.transition = true;
         window.setTimeout(() => {
-          console.log("history event transition done");
           this.event = this.currentEvent;
           this.transition = false;
           const data = BattleEvents[this.event.type];

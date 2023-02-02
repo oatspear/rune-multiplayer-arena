@@ -245,39 +245,55 @@ function getTarget(game, user, targetMode, targetIndex) {
 
 function handleHealTargetByPercent(game, user, target, skill) {
   const damage = ((target.health * skill.healingPercent) | 0) || 1;
-  healTarget(game, target, damage);
+  const e = healTarget(game, target, damage);
+  game.events.push(e);
 }
 
 
 function handleAttackTarget(game, user, target, skill) {
-  dealDamageToTarget(game, target, user.power);
-  dealDamageToTarget(game, user, target.power);
+  const e = userAttackTarget(game, user, target);
+  // FIXME
+  game.events.push(e.action);
+  game.events.push(e.reaction);
 }
 
 
 function handleDamageTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.powerFactor) | 0) || 1;
-  dealDamageToTarget(game, target, damage);
+  const e = dealDamageToTarget(game, target, damage);
+  game.events.push(e);
 }
 
 
 function handleHealTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.powerFactor) | 0) || 1;
-  healTarget(game, target, damage);
+  const e = healTarget(game, target, damage);
+  game.events.push(e);
+}
+
+
+function userAttackTarget(game, user, target) {
+  const action = dealDamageToTarget(game, target, user.power);
+  const reaction = dealDamageToTarget(game, user, target.power);
+  return {
+    type: "attack",
+    action: action,
+    reaction: reaction
+  };
 }
 
 
 function dealDamageToTarget(game, target, damage) {
   const hp = target.currentHealth;
   target.currentHealth -= damage;
-  game.events.push({
+  return {
     type: "damage",
     isPlayer: target.isPlayerCharacter,
     target: target.index,
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth
-  });
+  };
 }
 
 
@@ -287,14 +303,14 @@ function healTarget(game, target, damage) {
   if (target.currentHealth > target.health) {
     target.currentHealth = target.health;
   }
-  game.events.push({
+  return {
     type: "heal",
     isPlayer: target.isPlayerCharacter,
     target: target.index,
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth
-  });
+  };
 }
 
 
