@@ -101,12 +101,12 @@ function skillDataGreaterHeal() {
 *******************************************************************************/
 
 
-function newPlayer(playerId, index) {
+function newPlayerCharacter(playerId, index) {
   return {
-    id: playerId,
+    id: index,
     index: index,
+    playerId: playerId,
     classId: "ranger",
-    isPlayerCharacter: true,
     power: 10,
     health: 100,
     currentHealth: 50,
@@ -127,12 +127,11 @@ function newPlayer(playerId, index) {
 *******************************************************************************/
 
 
-function newEnemy() {
+function newEnemyCharacter() {
   return {
-    id: 0,
+    id: -1,
     index: 0,
     classId: "boss",
-    isPlayerCharacter: false,
     power: 10,
     health: 200,
     currentHealth: 200,
@@ -153,7 +152,7 @@ function processPlayerSkill(game, playerId, skill, args) {
   const player = getPlayer(game, playerId);
 
   // Check if it's the player's turn
-  if (game.currentTurn !== playerId || player == null) {
+  if (player == null || game.currentTurn !== player.id) {
     throw Rune.invalidAction();
   }
 
@@ -205,7 +204,7 @@ function resolveSkill(game, user, skill, args) {
 
 function getPlayer(game, playerId) {
   for (const player of game.players) {
-    if (player.id === playerId) {
+    if (player.playerId === playerId) {
       return player;
     }
   }
@@ -217,15 +216,15 @@ function getTarget(game, user, targetMode, targetIndex) {
     return user;
   }
   if (targetMode === targetModeAlly()) {
-    return user.isPlayerCharacter ? game.players[targetIndex] : user;
+    return user.playerId != null ? game.players[targetIndex] : user;
   }
   if (targetMode === targetModeEnemy()) {
-    return user.isPlayerCharacter ? game.enemy : game.players[targetIndex];
+    return user.playerId != null ? game.enemy : game.players[targetIndex];
   }
   const targets = [];
   if (targetMode !== targetModeAllAllies()) {
     // all enemies or all characters
-    if (user.isPlayerCharacter) {
+    if (user.playerId != null) {
       targets.push(game.enemy);
     } else {
       targets.push.apply(targets, game.players);
@@ -233,7 +232,7 @@ function getTarget(game, user, targetMode, targetIndex) {
   }
   if (targetMode !== targetModeAllEnemies()) {
     // all allies or all characters
-    if (user.isPlayerCharacter) {
+    if (user.playerId != null) {
       targets.push.apply(targets, game.players);
     } else {
       targets.push(game.enemy);
@@ -409,7 +408,7 @@ Rune.initLogic({
   setup(players) {
     // players: array of string IDs
     const game = {
-      enemy: newEnemy(),
+      enemy: newEnemyCharacter(),
       players: [],
       currentTurn: null,
       events: [],
@@ -417,10 +416,10 @@ Rune.initLogic({
     };
     let speed = 1000000;
     for (const playerId of players) {
-      const player = newPlayer(playerId, game.players.length);
+      const player = newPlayerCharacter(playerId, game.players.length);
       game.players.push(player);
       if (player.speed < speed) {
-        game.currentTurn = playerId;
+        game.currentTurn = player.id;
         speed = player.speed;
       }
       game.enemyTarget = player.index;

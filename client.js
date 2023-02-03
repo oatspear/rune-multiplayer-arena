@@ -7,11 +7,11 @@ const { createApp } = Vue;
 const DEFAULT_ANIM_DURATION = 1000;
 
 
-function _sortCharactersById(a, b) {
-  if (a.id < b.id) { return -1; }
-  if (a.id > b.id) { return 1; }
-  return 0;
-}
+// function _sortCharactersById(a, b) {
+//   if (a.id < b.id) { return -1; }
+//   if (a.id > b.id) { return 1; }
+//   return 0;
+// }
 
 
 function newAnimationSequence(game, playerId) {
@@ -53,6 +53,7 @@ function newClientPlayer(data, index) {
   return {
     id: data.id,
     index: index,
+    playerId: data.playerId,
     name: data.name,
     classData: cls,
     speed: data.speed,
@@ -103,7 +104,7 @@ const app = createApp({
   computed: {
     thisPlayer() {
       for (let i = this.players.length - 1; i >= 0; i--) {
-        if (this.players[i].id === this.playerId) {
+        if (this.players[i].playerId === this.playerId) {
           return this.players[i];
         }
       }
