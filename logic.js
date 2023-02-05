@@ -144,6 +144,20 @@ function newEnemyCharacter() {
 
 
 /*******************************************************************************
+  Battle Events
+*******************************************************************************/
+
+
+function newSkillBattleEvent(character, skill) {
+  return {
+    type: "skill",
+    skill: skill.id,
+    user: character.id
+  };
+}
+
+
+/*******************************************************************************
   Battle Logic
 *******************************************************************************/
 
@@ -177,6 +191,8 @@ function processPlayerSkill(game, playerId, skill, args) {
 
 function resolveSkill(game, user, skill, args) {
   const target = getTarget(game, user, skill.target, args.target);
+  const event = newSkillBattleEvent(player, skill);
+  game.events.push(event);
 
   switch (skill.mechanic) {
     case constHealTargetPercent():
@@ -287,8 +303,7 @@ function dealDamageToTarget(game, target, damage) {
   target.currentHealth -= damage;
   return {
     type: "damage",
-    isPlayer: target.isPlayerCharacter,
-    target: target.index,
+    target: target.id,
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth
@@ -304,8 +319,7 @@ function healTarget(game, target, damage) {
   }
   return {
     type: "heal",
-    isPlayer: target.isPlayerCharacter,
-    target: target.index,
+    target: target.id,
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth

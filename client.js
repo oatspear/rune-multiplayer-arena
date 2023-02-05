@@ -158,16 +158,16 @@ const app = createApp({
         // No more animations. Reset UI state.
         return false;
       }
-      const seq = this.ui.animationQueue[0];
-      console.log("begin animation sequence", seq);
-      if (seq.events.length === 0) {
+      const sequence = this.ui.animationQueue[0];
+      console.log("begin animation sequence", sequence);
+      if (sequence.events.length === 0) {
         // Reached the end of this animation sequence
         this.ui.animationQueue.splice(0, 1);
-        this.setGameState(seq.finalState, seq.playerId);
+        this.setGameState(sequence.finalState, sequence.playerId);
         window.setTimeout(() => { this.doNextAnimation(); }, 0);
       } else {
         // Animate the next event
-        const event = seq.events.splice(0, 1)[0];
+        const event = sequence.events.splice(0, 1)[0];
         this.animateEvent(event);
       }
       return true;
@@ -178,7 +178,9 @@ const app = createApp({
       this.ui.isAnimating = true;
       this.history.splice(0, 1);
       this.history.push(event);
-      const i = event.target;
+
+      // FIXME
+      const i = effect.target;
       if (i == null) {
         if (event.isPlayer) {
           for (const character of this.players) {
@@ -190,7 +192,7 @@ const app = createApp({
           }
         }
       } else {
-        const character = event.isPlayer ? this.players[i] : this.enemies[i];
+        const character = i >= 0 ? this.players[i] : this.enemies[-i - 1];
         character.animation = event;
       }
       window.setTimeout(() => {
@@ -199,7 +201,7 @@ const app = createApp({
       }, DEFAULT_ANIM_DURATION);
     },
 
-    stopEventAnimation() {
+    stopEffectAnimation() {
       this.ui.isAnimating = false;
       for (const character of this.enemies) {
         character.animation = null;
