@@ -175,11 +175,17 @@ const app = createApp({
 
     animateEvent(event) {
       console.log("animateEvent:", event);
-      this.ui.isAnimating = true;
-      if (event.type != "skill") {
-        this.history.splice(0, 1);
-        this.history.push(event);
+      if (event.type === "skill") {
+        // FIXME
+        window.setTimeout(() => {
+          this.doNextAnimation();
+        }, 0);
+        return;
       }
+
+      this.ui.isAnimating = true;
+      this.history.splice(0, 1);
+      this.history.push(event);
 
       if (event.multitarget) {
         // TODO
@@ -255,10 +261,16 @@ const app = createApp({
           break;
         case targetModeAlly():
           this.ui.selectedEnemy = null;
+          if (this.ui.selectedPlayer == null && this.players.length === 1) {
+            this.ui.selectedPlayer = 0;
+          }
           this.ui.footer.selectedTarget = this.ui.selectedPlayer;
           break;
         case targetModeEnemy():
           this.ui.selectedPlayer = null;
+          if (this.ui.selectedEnemy == null && this.enemies.length === 1) {
+            this.ui.selectedEnemy = 0;
+          }
           this.ui.footer.selectedTarget = this.ui.selectedEnemy;
           break;
         default:
