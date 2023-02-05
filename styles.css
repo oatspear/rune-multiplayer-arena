@@ -214,8 +214,6 @@ main {
 
 .tile > .portrait {
   flex: 1 0 auto;
-  position: relative;
-  background-color: inherit;
 }
 
 .tile > .portrait > img {
