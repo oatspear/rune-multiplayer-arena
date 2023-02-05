@@ -191,7 +191,7 @@ function processPlayerSkill(game, playerId, skill, args) {
 
 function resolveSkill(game, user, skill, args) {
   const target = getTarget(game, user, skill.target, args.target);
-  const event = newSkillBattleEvent(player, skill);
+  const event = newSkillBattleEvent(user, skill);
   game.events.push(event);
 
   switch (skill.mechanic) {

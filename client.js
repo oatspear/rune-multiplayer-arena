@@ -176,24 +176,24 @@ const app = createApp({
     animateEvent(event) {
       console.log("animateEvent:", event);
       this.ui.isAnimating = true;
-      this.history.splice(0, 1);
-      this.history.push(event);
+      if (event.type != "skill") {
+        this.history.splice(0, 1);
+        this.history.push(event);
+      }
 
-      // FIXME
-      const i = effect.target;
-      if (i == null) {
-        if (event.isPlayer) {
-          for (const character of this.players) {
-            character.animation = event;
-          }
-        } else {
-          for (const character of this.enemies) {
-            character.animation = event;
-          }
-        }
+      if (event.multitarget) {
+        // TODO
+        // for (const character of this.players) {
+        //   character.animation = event;
+        // }
       } else {
-        const character = i >= 0 ? this.players[i] : this.enemies[-i - 1];
-        character.animation = event;
+        const i = event.target;
+        if (i != null) {
+          const character = i >= 0 ? this.players[i] : this.enemies[-i - 1];
+          character.animation = event;
+        } else {
+          // FIXME e.g. notification-type event or death
+        }
       }
       window.setTimeout(() => {
         this.stopEventAnimation();
@@ -201,7 +201,7 @@ const app = createApp({
       }, DEFAULT_ANIM_DURATION);
     },
 
-    stopEffectAnimation() {
+    stopEventAnimation() {
       this.ui.isAnimating = false;
       for (const character of this.enemies) {
         character.animation = null;
