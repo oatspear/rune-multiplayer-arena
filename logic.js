@@ -29,6 +29,8 @@ function constAttackTarget() { return 1; }
 function constDamageTarget() { return 2; }
 function constHealTarget() { return 3; }
 
+function constEffectDuration() { return 4; }
+
 
 /*******************************************************************************
   Skill Data
@@ -101,6 +103,17 @@ function skillDataGreaterHeal() {
 *******************************************************************************/
 
 
+function newCharacterEffectsMap() {
+  // numbers are duration in turns
+  return {
+    shield: 0,
+    poison: 0,
+    healingModifier: 0,
+    damageModifier: 0,
+  };
+}
+
+
 function newPlayerCharacter(playerId, index) {
   return {
     id: index,
@@ -117,7 +130,8 @@ function newPlayerCharacter(playerId, index) {
       newSkillInstance(skillDataRangedAttack()),
       newSkillInstance(skillDataGreaterHeal()),
       newSkillInstance(skillDataRest())
-    ]
+    ],
+    effects: newCharacterEffectsMap()
   };
 }
 
@@ -138,7 +152,8 @@ function newEnemyCharacter() {
     speed: 8,
     skills: [
       newSkillInstance(skillDataRest())
-    ]
+    ],
+    effects: newCharacterEffectsMap()
   };
 }
 
@@ -186,6 +201,7 @@ function processPlayerSkill(game, playerId, skill, args) {
   doEnemyReaction(game, player, skill);
 
   // console.log("game state:", game);
+  doEndOfTurnEffects(game);
 }
 
 
@@ -396,6 +412,39 @@ function doEnemyReaction(game, player, usedSkill) {
   // const skill = skillDataAttack();
   // console.log("Enemy used a skill:", skill.id, player);
   // resolveSkill(game, enemy, skill, { target: player.index });
+}
+
+
+function doEndOfTurnEffects(game) {
+  doEndOfTurnEffectsForCharacter(game, game.enemy);
+  for (const player of game.players) {
+    doEndOfTurnEffectsForCharacter(game, player);
+  }
+}
+
+
+function doEndOfTurnEffectsForCharacter(game, character) {
+  const effects = character.effects;
+  // effects.shield: 0
+  let value = effects.healingOverTime[0];
+  if (value > 0) {
+    const e = healTarget(game, character, value);
+    game.events.push(e);
+  }
+  value = effects.damageOverTime[0];
+  if (value > 0) {
+    const e = dealDamageToTarget(game, character, value);
+    game.events.push(e);
+  }
+  if (effects.shield > 0) {
+    effects.shield--;
+  }
+  for (let i = 1; i < constEffectDuration(); ++i) {
+    effects.healingOverTime[i-1] = effects.healingOverTime[i];
+    effects.healingOverTime[i] = 0;
+  }
+  effects.powerDebuff: 0
+  effects.speedBuff: 0
 }
 
 
