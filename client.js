@@ -28,10 +28,10 @@ function newAnimationSequence(game, playerId) {
 
 
 function newClientSkill(skillInstance) {
-  const data = Skills[skillInstance.id];
-  // const skill = newSkillInstance(data);
+  const meta = Skills[skillInstance.data.id];
+  // NOTE: `skill.data` is shared! `Object.assign` is a shallow copy.
   const skill = Object.assign({}, skillInstance);
-  return Object.assign(skill, data);
+  return Object.assign(skill, meta);
 }
 
 
@@ -312,9 +312,10 @@ const app = createApp({
       this.resetFooterState();
       // call logic action
       console.log(this.playerId, "selected skill", self.skills[i].id);
-      const action = Rune.actions[self.skills[i].id];
-      console.log("action:", action);
-      action({ skill: i, target: t });
+      // const action = Rune.actions[self.skills[i].id];
+      // console.log("action:", action);
+      // action({ skill: i, target: t });
+      Rune.actions.useSkill({ skill: i, target: t });
     },
 
     onEnemySelected(character) {

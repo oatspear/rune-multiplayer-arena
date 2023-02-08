@@ -40,7 +40,7 @@ function constEffectDuration() { return 4; }
 
 function newSkillInstance(data) {
   return {
-    id: data.id,
+    data: data,
     speed: data.speed,
     cooldown: data.cooldown,
     wait: data.cooldown
@@ -184,7 +184,7 @@ function newEnemyCharacter() {
 function newSkillBattleEvent(character, skill) {
   return {
     type: "skill",
-    skill: skill.id,
+    skill: skill.data.id,
     user: character.id
   };
 }
@@ -195,14 +195,7 @@ function newSkillBattleEvent(character, skill) {
 *******************************************************************************/
 
 
-function processPlayerSkill(game, playerId, skill, args) {
-  const player = getPlayer(game, playerId);
-
-  // Check if it's the player's turn
-  if (player == null || game.currentTurn !== player.id) {
-    throw Rune.invalidAction();
-  }
-
+function processPlayerSkill(game, player, skill, args) {
   // Move the player down the queue
   adjustTurnOrder(game, player.speed);
   player.speed += skill.speed;
@@ -211,9 +204,9 @@ function processPlayerSkill(game, playerId, skill, args) {
   game.events = [];
 
   // Resolve the skill
-  // console.log(playerId, "used a skill:", skill.id, args.target);
+  // console.log(playerId, "used a skill:", skill.data.id, args.target);
   resolveSkill(game, player, skill, args);
-  updateThreatLevel(game, player.index, skill.threat);
+  updateThreatLevel(game, player.index, skill.data.threat);
 
   // Determine enemy reaction
   doEnemyReaction(game, player, skill);
@@ -224,23 +217,14 @@ function processPlayerSkill(game, playerId, skill, args) {
 
 
 function resolveSkill(game, user, skill, args) {
-  const target = getTarget(game, user, skill.target, args.target);
+  const target = getTarget(game, user, skill.data.target, args.target);
   const event = newSkillBattleEvent(user, skill);
   game.events.push(event);
 
-  let valid = false;
-  for (const s of user.skills) {
-    if (s.id === skill.id) {
-      valid = true;
-      s.wait = s.cooldown + 1;  // +1 to accomodate for tick at the end of the turn
-    }
-  }
+  // +1 to accomodate for tick at the end of the turn
+  skill.wait = skill.cooldown + 1;
 
-  if (!valid) {
-    throw Rune.invalidAction();
-  }
-
-  switch (skill.mechanic) {
+  switch (skill.data.mechanic) {
     case constHealTargetPercent():
       return handleHealTargetByPercent(game, user, target, skill);
 
@@ -322,21 +306,21 @@ function handleAttackPoisonTarget(game, user, target, skill) {
 
 
 function handleDamageTargetByFactor(game, user, target, skill) {
-  const damage = ((user.power * skill.powerFactor) | 0) || 1;
+  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
   const e = dealDamageToTarget(game, target, damage);
   game.events.push(e);
 }
 
 
 function handleHealTargetByPercent(game, user, target, skill) {
-  const damage = ((target.health * skill.healingPercent) | 0) || 1;
+  const damage = ((target.health * skill.data.healingPercent) | 0) || 1;
   const e = healTarget(game, target, damage);
   game.events.push(e);
 }
 
 
 function handleHealTargetByFactor(game, user, target, skill) {
-  const damage = ((user.power * skill.powerFactor) | 0) || 1;
+  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
   const e = healTarget(game, target, damage);
   game.events.push(e);
 }
@@ -431,35 +415,6 @@ function updateThreatLevel(game, index, value) {
 }
 
 
-// function reactToRest(game, enemy, currentPlayer) {
-//   const player = game.players[game.enemyTarget];
-//   dealDamageToTarget(game, player, enemy.power);
-// }
-//
-//
-// function reactToDirectDamage(game, enemy, currentPlayer) {
-//   const player = game.players[game.enemyTarget];
-//   dealDamageToTarget(game, player, enemy.power);
-// }
-//
-//
-// function reactToDirectHealing(game, enemy, currentPlayer) {
-//   let player = game.players[currentPlayer];
-//   if ((player.currentHealth / player.health) > 0.5) {
-//     player = game.players[game.enemyTarget];
-//   }
-//   dealDamageToTarget(game, player, enemy.power);
-// }
-
-
-// function slowTargetDown(game, target, value) {
-//   // Move the target down the queue
-//   const speed = target.speed;
-//   target.speed += value;
-//   adjustTurnOrder(game, speed);
-// }
-
-
 function adjustTurnOrder(game, value) {
   let threshold = 1000000;
   for (const player of game.players) {
@@ -478,7 +433,7 @@ function doEnemyReaction(game, player, usedSkill) {
 
   // Resolve the skill
   // const skill = skillDataAttack();
-  // console.log("Enemy used a skill:", skill.id, player);
+  // console.log("Enemy used a skill:", skill.data.id, player);
   // resolveSkill(game, enemy, skill, { target: player.index });
 }
 
@@ -575,85 +530,18 @@ Rune.initLogic({
   },
 
   actions: {
-    rest(payload, { game, playerId }) {
-      const skill = skillDataRest();
-      // TODO validate skill
-      processPlayerSkill(game, playerId, skill, payload);
-    },
-
-    attack(payload, { game, playerId }) {
-      const skill = skillDataAttack();
-      // TODO validate skill
-      processPlayerSkill(game, playerId, skill, payload);
-    },
-
-    rangedAttack(payload, { game, playerId }) {
-      const skill = skillDataRangedAttack();
-      // TODO validate skill
-      processPlayerSkill(game, playerId, skill, payload);
-    },
-
-    greaterHeal(payload, { game, playerId }) {
-      const skill = skillDataGreaterHeal();
-      // TODO validate skill
-      processPlayerSkill(game, playerId, skill, payload);
-    },
-
-    poisonAttack(payload, { game, playerId }) {
-      const skill = skillDataPoisonAttack();
-      // TODO validate skill
-      processPlayerSkill(game, playerId, skill, payload);
+    useSkill(payload, { game, playerId }) {
+      // Check if it's the player's turn
+      const player = getPlayer(game, playerId);
+      if (player == null || game.currentTurn !== player.id) {
+        throw Rune.invalidAction();
+      }
+      // Check if the selected skill can be used
+      const skill = player.skills[payload.skill];
+      if (skill == null || skill.wait > 0) {
+        throw Rune.invalidAction();
+      }
+      processPlayerSkill(game, player, skill, payload);
     }
   },
 });
-
-
-/*******************************************************************************
-  To Be Removed
-*******************************************************************************/
-
-
-// function startGameTurn(game, playerId, skillId) {
-//   // Check whether it is the player's turn
-//   if (game.currentTurn !== playerId) {
-//     throw Rune.invalidAction();
-//   }
-//
-//   // Move the player down the queue
-//   const player = game.players[playerId];
-//   const speed = player.speed;
-//   player.speed += skill.speed;
-//
-//   // Clear the event history for this turn
-//   game.events = [{
-//     type: "skill",
-//     value: skillId,
-//     user: playerId
-//   }];
-// }
-
-
-// function getTargetEnemy(game, target) {
-//   return game.enemy;
-// }
-
-
-// function speedValueRest() { return 2; }
-// function speedValueAttack() { return 5; }
-// function speedValueDirectDamage() { return 7; }
-// function speedValueDirectHealing() { return 8; }
-
-
-// function assert(condition, message) {
-//     if (!condition) {
-//         throw new Error(message || "Assertion failed");
-//     }
-// }
-
-
-// function checkProperty(obj, prop, type) {
-//   assert(
-//     (obj[prop] != null) && (typeof obj[prop] === type),
-//     `expected property "${prop}" of type ${type} in ${obj}`
-//   );
-// }

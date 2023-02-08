@@ -48,68 +48,30 @@
   Skills
 *******************************************************************************/
 
-// const SkillMetadata = {
-//   "rest": {
-//     name: "Rest",
-//     icon: "rest",
-//     description: "Recover some health."
-//   },
-//   "attack": {
-//     name: "Attack",
-//     icon: "battle",
-//     description: "Attack an enemy."
-//   },
-//   "rangedAttack": {
-//     name: "Ranged Attack",
-//     icon: "ranger",
-//     description: "Deal damage to an enemy."
-//   },
-//   "greaterHeal": {
-//     name: "Greater Heal",
-//     icon: "battle",
-//     description: "Heal an ally."
-//   }
-// };
-
 const Skills = {
   "rest": {
     name: "Rest",
     icon: "rest",
-    // speed: 1,
-    // cooldown: 0,
-    // target: targetModeSelf(),
     description: "Recover some health."
   },
   "attack": {
     name: "Attack",
     icon: "battle",
-    // speed: 5,
-    // cooldown: 0,
-    // target: targetModeEnemy(),
     description: "Attack an enemy."
   },
   "rangedAttack": {
     name: "Ranged Attack",
     icon: "ranger",
-    // speed: 7,
-    // cooldown: 0,
-    // target: targetModeEnemy(),
     description: "Deal damage to an enemy."
   },
   "greaterHeal": {
     name: "Greater Heal",
     icon: "heal",
-    // speed: 8,
-    // cooldown: 0,
-    // target: targetModeAlly(),
     description: "Heal an ally."
   },
   "poisonAttack": {
     name: "Poison Strike",
     icon: "battle",
-    // speed: 4,
-    // cooldown: 1,
-    // target: targetModeEnemy(),
     description: "Attack and Poison an enemy."
   }
 };
@@ -118,14 +80,6 @@ const Skills = {
 /*******************************************************************************
   Classes
 *******************************************************************************/
-
-// const ClassMetadata = {
-//   "ranger": {
-//     id: "ranger",
-//     name: "Ranger",
-//     icon: "ranger"
-//   }
-// };
 
 const Classes = {
   "ranger": {
