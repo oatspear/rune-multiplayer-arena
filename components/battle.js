@@ -126,10 +126,10 @@ const BattleCharacter = {
       if (newValue == null) {
         this.animation = "";
         this.overlay.display = false;
-        this.overlay.icon = "";
-        this.overlay.animation = "";
-        this.overlay.particles = "";
-        this.overlay.particleAnimation = "";
+        this.overlay.icon = null;
+        this.overlay.iconAnimation = null
+        this.overlay.particles = null;
+        this.overlay.particleAnimation = null;
       } else {
         this.animateEvent(newValue);
       }

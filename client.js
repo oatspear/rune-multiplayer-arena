@@ -27,12 +27,11 @@ function newAnimationSequence(game, playerId) {
 }
 
 
-function newClientSkill(id) {
-  const data = Skills[id];
-  const skill = newSkillInstance(data);
-  skill.id = id;
-  skill.data = data;
-  return skill;
+function newClientSkill(skillInstance) {
+  const data = Skills[skillInstance.id];
+  // const skill = newSkillInstance(data);
+  const skill = Object.assign({}, skillInstance);
+  return Object.assign(skill, data);
 }
 
 
@@ -46,10 +45,11 @@ function newClientPlayer(data, index) {
     return { id: null, index: index };
   }
   const cls = Classes[data.classId];
-  const skills = [];
-  for (const s of data.skills) {
-    skills.push(newClientSkill(s.id));
-  }
+  const skills = data.skills.map(newClientSkill);
+  // for (const skill of data.skills) {
+  //   // skills.push(newClientSkill(s.id));
+  //   skills.push(newClientSkill(skill));
+  // }
   return {
     id: data.id,
     index: index,
@@ -203,7 +203,9 @@ const app = createApp({
       }
       window.setTimeout(() => {
         this.stopEventAnimation();
-        this.doNextAnimation();
+        window.setTimeout(() => {
+          this.doNextAnimation();
+        }, 0);
       }, DEFAULT_ANIM_DURATION);
     },
 
@@ -226,8 +228,8 @@ const app = createApp({
       this.ui.footer.display = true;
       if (this.ui.footer.selectedSkill != null) {
         const skill = self.skills[this.ui.footer.selectedSkill];
-        this.ui.footer.itemName = skill.data.name;
-        this.ui.footer.itemDescription = this.buildSkillDescription(skill.data);
+        this.ui.footer.itemName = skill.name;
+        this.ui.footer.itemDescription = this.buildSkillDescription(skill);
       } else {
         this.ui.footer.itemName = "";
         this.ui.footer.itemDescription = "Choose a skill."
@@ -252,8 +254,8 @@ const app = createApp({
       const skill = self.skills[i];
       // reset selection
       this.ui.footer.characterData = self;
-      this.ui.targetMode = skill.data.target;
-      switch (skill.data.target) {
+      this.ui.targetMode = skill.target;
+      switch (skill.target) {
         case targetModeSelf():
           this.ui.selectedEnemy = null;
           this.ui.selectedPlayer = self.index;

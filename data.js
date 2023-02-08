@@ -75,34 +75,42 @@ const Skills = {
   "rest": {
     name: "Rest",
     icon: "rest",
-    speed: 1,
-    cooldown: 0,
-    target: targetModeSelf(),
+    // speed: 1,
+    // cooldown: 0,
+    // target: targetModeSelf(),
     description: "Recover some health."
   },
   "attack": {
     name: "Attack",
     icon: "battle",
-    speed: 5,
-    cooldown: 0,
-    target: targetModeEnemy(),
+    // speed: 5,
+    // cooldown: 0,
+    // target: targetModeEnemy(),
     description: "Attack an enemy."
   },
   "rangedAttack": {
     name: "Ranged Attack",
     icon: "ranger",
-    speed: 7,
-    cooldown: 0,
-    target: targetModeEnemy(),
+    // speed: 7,
+    // cooldown: 0,
+    // target: targetModeEnemy(),
     description: "Deal damage to an enemy."
   },
   "greaterHeal": {
     name: "Greater Heal",
     icon: "heal",
-    speed: 8,
-    cooldown: 0,
-    target: targetModeAlly(),
+    // speed: 8,
+    // cooldown: 0,
+    // target: targetModeAlly(),
     description: "Heal an ally."
+  },
+  "poisonAttack": {
+    name: "Poison Strike",
+    icon: "battle",
+    // speed: 4,
+    // cooldown: 1,
+    // target: targetModeEnemy(),
+    description: "Attack and Poison an enemy."
   }
 };
 
@@ -147,7 +155,7 @@ const BattleEvents = {
   attack: {
     icon: "battle",
     animation: {
-      
+
     }
   },
   damage: {
@@ -164,6 +172,24 @@ const BattleEvents = {
     animation: {
       particles: {
         name: "healing",
+        animation: "floating"
+      }
+    }
+  },
+  poison: {
+    icon: "skull-green",
+    animation: {
+      particles: {
+        name: "skull-green",
+        animation: "floating"
+      }
+    }
+  },
+  poisonDamage: {
+    icon: "skull-green",
+    animation: {
+      particles: {
+        name: "skull-green",
         animation: "floating"
       }
     }

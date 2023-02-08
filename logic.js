@@ -28,6 +28,7 @@ function constHealTargetPercent () { return 0; }
 function constAttackTarget() { return 1; }
 function constDamageTarget() { return 2; }
 function constHealTarget() { return 3; }
+function constAttackPoisonTarget() { return 4; }
 
 function constEffectDuration() { return 4; }
 
@@ -98,6 +99,19 @@ function skillDataGreaterHeal() {
 }
 
 
+function skillDataPoisonAttack() {
+  return {
+    id: "poisonAttack",
+    speed: 4,
+    cooldown: 1,
+    target: targetModeEnemy(),
+    threat: 7,
+    mechanic: constAttackPoisonTarget(),
+    powerFactor: 1
+  };
+}
+
+
 /*******************************************************************************
   Player Character Data
 *******************************************************************************/
@@ -130,7 +144,8 @@ function newPlayerCharacter(playerId, index) {
     threat: 0,
     skills: [
       newSkillInstance(skillDataAttack()),
-      newSkillInstance(skillDataRangedAttack()),
+      // newSkillInstance(skillDataRangedAttack()),
+      newSkillInstance(skillDataPoisonAttack()),
       newSkillInstance(skillDataGreaterHeal()),
       newSkillInstance(skillDataRest())
     ],
@@ -213,6 +228,18 @@ function resolveSkill(game, user, skill, args) {
   const event = newSkillBattleEvent(user, skill);
   game.events.push(event);
 
+  let valid = false;
+  for (const s of user.skills) {
+    if (s.id === skill.id) {
+      valid = true;
+      s.wait = s.cooldown + 1;  // +1 to accomodate for tick at the end of the turn
+    }
+  }
+
+  if (!valid) {
+    throw Rune.invalidAction();
+  }
+
   switch (skill.mechanic) {
     case constHealTargetPercent():
       return handleHealTargetByPercent(game, user, target, skill);
@@ -225,6 +252,9 @@ function resolveSkill(game, user, skill, args) {
 
     case constHealTarget():
       return handleHealTargetByFactor(game, user, target, skill);
+
+    case constAttackPoisonTarget():
+      return handleAttackPoisonTarget(game, user, target, skill);
 
     default:
       throw Rune.invalidAction();
@@ -277,18 +307,17 @@ function getTarget(game, user, targetMode, targetIndex) {
 }
 
 
-function handleHealTargetByPercent(game, user, target, skill) {
-  const damage = ((target.health * skill.healingPercent) | 0) || 1;
-  const e = healTarget(game, target, damage);
-  game.events.push(e);
-}
-
-
 function handleAttackTarget(game, user, target, skill) {
   const e = userAttackTarget(game, user, target);
   // FIXME
   game.events.push(e.action);
   game.events.push(e.reaction);
+}
+
+
+function handleAttackPoisonTarget(game, user, target, skill) {
+  handleAttackTarget(game, user, target, skill);
+  handlePoisonTarget(game, user, target, skill);
 }
 
 
@@ -299,9 +328,23 @@ function handleDamageTargetByFactor(game, user, target, skill) {
 }
 
 
+function handleHealTargetByPercent(game, user, target, skill) {
+  const damage = ((target.health * skill.healingPercent) | 0) || 1;
+  const e = healTarget(game, target, damage);
+  game.events.push(e);
+}
+
+
 function handleHealTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.powerFactor) | 0) || 1;
   const e = healTarget(game, target, damage);
+  game.events.push(e);
+}
+
+
+function handlePoisonTarget(game, user, target, skill) {
+  const damage = ((user.power * 0.5) | 0) || 1;
+  const e = poisonTarget(game, target, damage);
   game.events.push(e);
 }
 
@@ -317,7 +360,7 @@ function userAttackTarget(game, user, target) {
 }
 
 
-function dealDamageToTarget(game, target, damage, school) {
+function dealDamageToTarget(game, target, damage, type) {
   const hp = target.currentHealth;
   if (target.effects.invulnerable) {
     damage = 0;
@@ -333,8 +376,7 @@ function dealDamageToTarget(game, target, damage, school) {
     target.currentHealth -= damage;
   }
   return {
-    type: "damage",
-    school: school || "physical",
+    type: type || "damage",
     target: target.id,
     value: damage,
     startingHealth: hp,
@@ -355,6 +397,16 @@ function healTarget(game, target, damage) {
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth
+  };
+}
+
+
+function poisonTarget(game, target, damage) {
+  target.effects.poison = damage;
+  return {
+    type: "poison",
+    target: target.id,
+    value: damage
   };
 }
 
@@ -448,21 +500,34 @@ function doEndOfTurnEffectsForCharacter(game, character) {
   // stunned: duration
   // healingModifier: 0,
   // damageModifier: 0,
+
+  // apply healing over time effects
   let value = effects.healing;
   if (value > 0) {
     const e = healTarget(game, character, value);
     game.events.push(e);
   }
+
+  // apply damage over time effects
   value = effects.poison;
   if (value > 0) {
-    const e = dealDamageToTarget(game, character, value);
+    const e = dealDamageToTarget(game, character, value, "poisonDamage");
     game.events.push(e);
   }
+
+  // update duration-based effects
   if (effects.invulnerable > 0) {
     effects.invulnerable--;
   }
   if (effects.stunned > 0) {
     effects.stunned--;
+  }
+
+  // update skill cooldowns
+  for (const skill of character.skills) {
+    if (skill.wait > 0) {
+      skill.wait--;
+    }
   }
 }
 
@@ -530,6 +595,12 @@ Rune.initLogic({
 
     greaterHeal(payload, { game, playerId }) {
       const skill = skillDataGreaterHeal();
+      // TODO validate skill
+      processPlayerSkill(game, playerId, skill, payload);
+    },
+
+    poisonAttack(payload, { game, playerId }) {
+      const skill = skillDataPoisonAttack();
       // TODO validate skill
       processPlayerSkill(game, playerId, skill, payload);
     }
