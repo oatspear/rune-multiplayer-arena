@@ -106,8 +106,11 @@ function skillDataGreaterHeal() {
 function newCharacterEffectsMap() {
   // numbers are duration in turns
   return {
-    shield: 0,
-    poison: 0,
+    shield: 0,  // damage
+    poison: 0,  // damage
+    healing: 0,  // damage
+    invulnerable: 0,  // duration
+    stunned: 0,  // duration
     healingModifier: 0,
     damageModifier: 0,
   };
@@ -200,8 +203,8 @@ function processPlayerSkill(game, playerId, skill, args) {
   // Determine enemy reaction
   doEnemyReaction(game, player, skill);
 
-  // console.log("game state:", game);
   doEndOfTurnEffects(game);
+  // console.log("game state:", game);
 }
 
 
@@ -314,11 +317,24 @@ function userAttackTarget(game, user, target) {
 }
 
 
-function dealDamageToTarget(game, target, damage) {
+function dealDamageToTarget(game, target, damage, school) {
   const hp = target.currentHealth;
-  target.currentHealth -= damage;
+  if (target.effects.invulnerable) {
+    damage = 0;
+  } else {
+    const shield = target.effects.shield;
+    if (shield >= damage) {
+      damage = 0;
+      target.effects.shield = shield - damage;
+    } else {
+      damage -= shield;
+      target.effects.shield = 0;
+    }
+    target.currentHealth -= damage;
+  }
   return {
     type: "damage",
+    school: school || "physical",
     target: target.id,
     value: damage,
     startingHealth: hp,
@@ -425,26 +441,29 @@ function doEndOfTurnEffects(game) {
 
 function doEndOfTurnEffectsForCharacter(game, character) {
   const effects = character.effects;
-  // effects.shield: 0
-  let value = effects.healingOverTime[0];
+  // shield: damage
+  // poison: damage
+  // healing: damage
+  // invulnerable: duration
+  // stunned: duration
+  // healingModifier: 0,
+  // damageModifier: 0,
+  let value = effects.healing;
   if (value > 0) {
     const e = healTarget(game, character, value);
     game.events.push(e);
   }
-  value = effects.damageOverTime[0];
+  value = effects.poison;
   if (value > 0) {
     const e = dealDamageToTarget(game, character, value);
     game.events.push(e);
   }
-  if (effects.shield > 0) {
-    effects.shield--;
+  if (effects.invulnerable > 0) {
+    effects.invulnerable--;
   }
-  for (let i = 1; i < constEffectDuration(); ++i) {
-    effects.healingOverTime[i-1] = effects.healingOverTime[i];
-    effects.healingOverTime[i] = 0;
+  if (effects.stunned > 0) {
+    effects.stunned--;
   }
-  effects.powerDebuff: 0
-  effects.speedBuff: 0
 }
 
 
