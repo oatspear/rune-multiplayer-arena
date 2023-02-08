@@ -4,10 +4,6 @@
 const BattleBoard = {
   template: "#vue-battle-board",
   props: {
-    uiState: {
-      type: String,
-      required: true
-    },
     enemies: {
       type: Array,
       required: true
@@ -16,6 +12,7 @@ const BattleBoard = {
       type: Array,
       required: true
     },
+    isBattleState: Boolean,
     playerId: String,
     highlightEnemies: Boolean,
     highlightPlayers: Boolean,
@@ -30,10 +27,6 @@ const BattleBoard = {
 
     onPlayerSelected(character) {
       this.$emit("selected-player", character);
-    },
-
-    onCharacterAnimationFinished(character) {
-      this.$emit("animation-finished", character);
     }
   }
 };
@@ -74,10 +67,6 @@ const BattleScene = {
     onPlayerSelected(i) {
       const character = this.players[i];
       this.$emit("selected-player", character);
-    },
-
-    onCharacterAnimationFinished(character) {
-      this.$emit("animation-finished", character);
     }
   }
 };
@@ -258,7 +247,8 @@ const BattleFooter = {
     selectedSkill: Number,
     selectedTarget: Number,
     itemName: String,
-    itemDescription: String
+    itemDescription: String,
+    observer: Boolean
   },
   methods: {
     onSkillSelected(i) {
@@ -306,6 +296,10 @@ const BattlePlayerInfo = {
 const BattleActionBar = {
   template: "#vue-battle-action-bar",
   props: {
+    observer: {
+      type: String,
+      default: ""
+    },
     skills: {
       type: Array,
       required: true

@@ -6,13 +6,13 @@
 *******************************************************************************/
 
 
-// function newEnum(keys) {
-//   const enumObject = {};
-//   for (let i = 0; i < keys.length; ++i) {
-//     enumObject[keys[i]] = i;
-//   }
-//   return Object.freeze(enumObject);
-// }
+function newEnum(keys) {
+  const enumObject = {};
+  for (let i = 0; i < keys.length; ++i) {
+    enumObject[keys[i]] = i;
+  }
+  return Object.freeze(enumObject);
+}
 
 
 // function checkProperty(obj, prop, type) {

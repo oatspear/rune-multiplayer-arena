@@ -6,6 +6,15 @@ const { createApp } = Vue;
 
 const DEFAULT_ANIM_DURATION = 1000;
 
+const UIState = newEnum([
+  "INIT",
+  "CHOOSE_ACTION",
+  "CHOOSE_TARGET",
+  "SYNC",
+  "ANIMATION",
+  "AWAITING_PLAYER_ACTION"
+]);
+
 
 // function _sortCharactersById(a, b) {
 //   if (a.id < b.id) { return -1; }
@@ -73,21 +82,18 @@ const app = createApp({
       currentTurn: 0,
       enemies: [],
       players: [],
-      history: [
-        null,
-        null,
-        null,
-        null,
-        null,
-        null
-      ],
+      characters: {},
+      history: [null, null, null, null, null, null],
       ui: {
-        state: "initial",
+        // syncing: true,
+        state: UIState.INIT,
+        // observer: true,
         targetMode: null,
         selectedEnemy: null,
         selectedPlayer: null,
         footer: {
           display: false,
+          observer: true,
           selectedSkill: null,
           selectedTarget: null,
           characterData: null,
@@ -102,13 +108,26 @@ const app = createApp({
   },
 
   computed: {
-    thisPlayer() {
-      for (let i = this.players.length - 1; i >= 0; i--) {
-        if (this.players[i].playerId === this.playerId) {
-          return this.players[i];
-        }
-      }
-      return null;
+    activeCharacter() {
+      return this.characters[this.currentTurn];
+    },
+
+    controlledCharacter() {
+      if (this.playerId == null) { return null; }
+      const character = this.characters[this.currentTurn];
+      return this.playerId === character.playerId ? character : null;
+    },
+
+    isBattleState() {
+      return this.ui.state != UIState.INIT;
+    },
+
+    isObserverMode() {
+      if (this.playerId == null) { return true; }
+      const state = this.ui.state;
+      if (state === UIState.CHOOSE_ACTION) { return false; }
+      if (state === UIState.CHOOSE_TARGET) { return false; }
+      return true;
     },
 
     highlightEnemies() {
@@ -125,16 +144,34 @@ const app = createApp({
   },
 
   methods: {
+    onSetupDone(game, playerId) {
+      assert(this.ui.state === UIState.INIT, `UI state: ${this.ui.state}`);
+      this.setGameState(game, playerId);
+      // TODO animate battle start here
+      window.setTimeout(() => { this.setActionUIState(); }, DEFAULT_ANIM_DURATION);
+    },
+
+    setActionUIState() {
+      const character = this.controlledCharacter;
+      if (character != null) {
+        this.ui.state = UIState.CHOOSE_ACTION;
+      } else {
+        this.ui.state = UIState.AWAITING_PLAYER_ACTION;
+      }
+      this.resetFooterState();
+    },
+
     setGameState(game, playerId) {
       // Hard reset of the current game state
-      console.log("visualUpdate callback was called");
+      console.log("setGameState()");
       this.playerId = playerId;
       this.ui.state = "battle";
       this.enemies = [newClientEnemy(game.enemy, 0)];
       this.setPlayerStates(game.players);
+      this.resetCharacterMap();
       this.currentTurn = game.currentTurn;
       this.eventQueue = game.events;
-      this.resetFooterState();
+      // this.resetFooterState();
     },
 
     setPlayerStates(players) {
@@ -144,8 +181,18 @@ const app = createApp({
       }
     },
 
+    resetCharacterMap() {
+      this.characters = {};
+      for (const c of this.enemies) {
+        this.characters[c.id] = c;
+      }
+      for (const c of this.players) {
+        this.characters[c.id] = c;
+      }
+    },
+
     animateNewGameState(game, playerId) {
-      console.log("enqueue animation events");
+      console.log("animateNewGameState()");
       this.ui.animationQueue.push(newAnimationSequence(game, playerId));
       if (!this.ui.isAnimating) {
         window.setTimeout(() => { this.doNextAnimation(); }, 0);
@@ -156,8 +203,10 @@ const app = createApp({
       if (this.ui.isAnimating) { return false; }
       if (this.ui.animationQueue.length === 0) {
         // No more animations. Reset UI state.
+        this.setActionUIState();
         return false;
       }
+      this.ui.state = UIState.ANIMATION;
       const sequence = this.ui.animationQueue[0];
       console.log("begin animation sequence", sequence);
       if (sequence.events.length === 0) {
@@ -220,28 +269,41 @@ const app = createApp({
     },
 
     resetFooterState() {
-      const self = this.thisPlayer;
-      if (self == null) {
+      if (this.playerId == null) {
         this.ui.footer.display = false;
         return;
       }
+
       this.ui.footer.display = true;
-      if (this.ui.footer.selectedSkill != null) {
-        const skill = self.skills[this.ui.footer.selectedSkill];
-        this.ui.footer.itemName = skill.name;
-        this.ui.footer.itemDescription = this.buildSkillDescription(skill);
-      } else {
+      this.ui.footer.observer = this.isObserverMode;
+      const character = this.controlledCharacter;
+      if (this.isObserverMode) {
+        // not this player's turn to act
+        this.ui.footer.selectedSkill = null;
         this.ui.footer.itemName = "";
-        this.ui.footer.itemDescription = "Choose a skill."
+        this.ui.footer.itemDescription = "";
+        this.ui.footer.selectedTarget = null;
+        this.ui.footer.skills = [];
+      } else {
+        // it is this player's turn to act
+        this.ui.footer.skills = character.skills;
+        if (this.ui.footer.selectedSkill != null) {
+          const skill = character.skills[this.ui.footer.selectedSkill];
+          this.ui.footer.itemName = skill.name;
+          this.ui.footer.itemDescription = this.buildSkillDescription(skill);
+        } else {
+          this.ui.footer.itemName = "";
+          this.ui.footer.itemDescription = "Choose a skill."
+        }
       }
+
       if (this.ui.selectedEnemy != null) {
-        this.ui.footer.characterData = this.enemies[this.ui.selectedEnemy];  // FIXME
+        this.ui.footer.characterData = this.enemies[this.ui.selectedEnemy];
       } else if (this.ui.selectedPlayer != null) {
         this.ui.footer.characterData = this.players[this.ui.selectedPlayer];
       } else {
-        this.ui.footer.characterData = self;
+        this.ui.footer.characterData = this.activeCharacter;
       }
-      this.ui.footer.skills = self.skills;
     },
 
     buildSkillDescription(data) {
@@ -250,16 +312,17 @@ const app = createApp({
     },
 
     onSkillSelected(i) {
-      const self = this.thisPlayer;
-      const skill = self.skills[i];
+      assert(this.ui.state === UIState.CHOOSE_ACTION, `UI state: ${this.ui.state}`);
+      const character = this.controlledCharacter;
+      const skill = character.skills[i];
       // reset selection
-      this.ui.footer.characterData = self;
-      this.ui.targetMode = skill.target;
-      switch (skill.target) {
+      this.ui.footer.characterData = character;
+      this.ui.targetMode = skill.data.target;
+      switch (skill.data.target) {
         case targetModeSelf():
           this.ui.selectedEnemy = null;
-          this.ui.selectedPlayer = self.index;
-          this.ui.footer.selectedTarget = self.id;
+          this.ui.selectedPlayer = character.index;
+          this.ui.footer.selectedTarget = character.id;
           break;
         case targetModeAlly():
           this.ui.selectedEnemy = null;
@@ -282,47 +345,50 @@ const app = createApp({
       }
       // select or deselect skill
       // this.ui.footer.selectedSkill = (this.ui.footer.selectedSkill == i) ? null : i;
+      this.ui.state = UIState.CHOOSE_TARGET;
       this.ui.footer.selectedSkill = i;
       this.resetFooterState();
     },
 
     onCancelSkill() {
-      const self = this.thisPlayer;
+      assert(this.ui.state === UIState.CHOOSE_TARGET, `UI state: ${this.ui.state}`);
+      this.ui.state = UIState.CHOOSE_ACTION;
+      const character = this.controlledCharacter;
       // reset selection
       this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
-      this.ui.footer.characterData = self;
+      this.ui.footer.characterData = character;
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.resetFooterState();
     },
 
     onUseSkill() {
-      const self = this.thisPlayer;
+      assert(this.ui.state === UIState.CHOOSE_TARGET, `UI state: ${this.ui.state}`);
+      const character = this.controlledCharacter;
       const i = this.ui.footer.selectedSkill;
       const t = this.ui.footer.selectedTarget;
       // reset selection
       this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
-      this.ui.footer.characterData = self;
+      this.ui.footer.characterData = character;
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
-      this.resetFooterState();
       // call logic action
-      console.log(this.playerId, "selected skill", self.skills[i].id);
-      // const action = Rune.actions[self.skills[i].id];
-      // console.log("action:", action);
-      // action({ skill: i, target: t });
+      console.log(this.playerId, "selected skill", character.skills[i].id);
       Rune.actions.useSkill({ skill: i, target: t });
+      // refresh UI
+      this.ui.state = UIState.SYNC;
+      this.resetFooterState();
     },
 
     onEnemySelected(character) {
       const i = character.index;
-      this.ui.selectedPlayer = null;
       if (this.ui.footer.selectedSkill != null) {
         if (this.ui.targetMode == targetModeEnemy()) {
+          this.ui.selectedPlayer = null;
           this.ui.selectedEnemy = i;
           this.ui.footer.selectedTarget = i;
           // this.ui.footer.characterData = character;
@@ -330,6 +396,7 @@ const app = createApp({
           // do nothing or display error message
         }
       } else {
+        this.ui.selectedPlayer = null;
         if (i == this.ui.selectedEnemy) {
           this.ui.selectedEnemy = null;
           this.ui.footer.characterData = this.thisPlayer;
@@ -342,9 +409,9 @@ const app = createApp({
 
     onPlayerSelected(character) {
       const i = character.index;
-      this.ui.selectedEnemy = null;
       if (this.ui.footer.selectedSkill != null) {
         if (this.ui.targetMode == targetModeAlly()) {
+          this.ui.selectedEnemy = null;
           this.ui.selectedPlayer = i;
           this.ui.footer.selectedTarget = i;
           // this.ui.footer.characterData = character;
@@ -352,6 +419,7 @@ const app = createApp({
           // do nothing or display error message
         }
       } else {
+        this.ui.selectedEnemy = null;
         if (i == this.ui.selectedPlayer) {
           this.ui.selectedPlayer = null;
           this.ui.footer.characterData = this.thisPlayer;
@@ -360,25 +428,14 @@ const app = createApp({
           this.ui.footer.characterData = character;
         }
       }
-    },
-
-    onCharacterAnimationFinished(character) {
-      if (character.animation != null) {
-        character.animation = null;
-        this.ui.isAnimating--;
-        if (this.ui.isAnimating <= 0) {
-          this.ui.isAnimating = 0;
-          this.doNextAnimation();
-        }
-      }
-    },
-
-    refreshSlides() {
-      const slidesContainer = document.getElementById("slides-container");
-      const slide = document.querySelector(".slide");
-      const slideWidth = slide.clientWidth;
-      slidesContainer.scrollLeft = this.currentTurn * slideWidth;
     }
+
+    // refreshSlides() {
+    //   const slidesContainer = document.getElementById("slides-container");
+    //   const slide = document.querySelector(".slide");
+    //   const slideWidth = slide.clientWidth;
+    //   slidesContainer.scrollLeft = this.currentTurn * slideWidth;
+    // }
   },
 
   mounted() {
@@ -418,14 +475,14 @@ function initRuneClient(vueApp) {
       // The `visualUpdate` function must be synchronous.
       // It may trigger async functions if needed, but cannot `await` them.
       console.log("visualUpdate()");
-      console.log("yourPlayerId:", yourPlayerId);
-      console.log("action:", action);
-      console.log("event:", event);
-      console.log("new game state:", newGame);
-      console.log("rollbacks:", rollbacks);
+      // console.log("yourPlayerId:", yourPlayerId);
+      // console.log("action:", action);
+      // console.log("event:", event);
+      // console.log("new game state:", newGame);
+      // console.log("rollbacks:", rollbacks);
       if (action == null) {
         // Not a partial update. Might be a post-setup call, for example.
-        vueApp.setGameState(newGame, yourPlayerId);
+        vueApp.onSetupDone(newGame, yourPlayerId);
       } else {
         vueApp.animateNewGameState(newGame, yourPlayerId);
       }

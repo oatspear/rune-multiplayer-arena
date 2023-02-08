@@ -524,7 +524,7 @@ footer > .description {
   font-size: .75rem;
 }
 
-.description > .name {
+.description .name {
   color: gold;
 }
 

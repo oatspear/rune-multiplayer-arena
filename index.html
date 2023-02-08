@@ -16,13 +16,13 @@
   <body>
     <main id="app">
       <battle-header
-        v-if="ui.state === 'battle'"
+        v-if="isBattleState"
         :history="history"
       >
       </battle-header>
 
       <battle-board
-        :ui-state="ui.state"
+        :is-battle-state="isBattleState"
         :player-id="playerId"
         :enemies="enemies"
         :players="players"
@@ -32,7 +32,6 @@
         :selected-player="ui.selectedPlayer"
         @selected-enemy="onEnemySelected"
         @selected-player="onPlayerSelected"
-        @animation-finished="onCharacterAnimationFinished"
       >
       </battle-board>
 
@@ -69,7 +68,7 @@
       <div id="board">
           <div class="slides-container" id="slides-container">
             <battle-scene
-              v-if="uiState === 'battle'"
+              v-if="isBattleState"
               :scene-index="0"
               :player-id="playerId"
               :enemies="enemies"
@@ -80,7 +79,6 @@
               :selected-player="selectedPlayer"
               @selected-enemy="onEnemySelected"
               @selected-player="onPlayerSelected"
-              @animation-finished="onCharacterAnimationFinished"
             >
             </battle-scene>
           </div>
@@ -98,7 +96,6 @@
             :is-active="selectedEnemy === i"
             :is-highlighted="highlightEnemies"
             @selected="onEnemySelected"
-            @animation-finished="onCharacterAnimationFinished"
           >
           </battle-character>
         </div>
@@ -112,7 +109,6 @@
             :is-highlighted="highlightPlayers"
             :is-owned="playerId === player.id"
             @selected="onPlayerSelected"
-            @animation-finished="onCharacterAnimationFinished"
           >
           </battle-character>
         </div>
@@ -172,6 +168,7 @@
           :health-value="characterData.health"
         ></battle-player-info>
         <battle-action-bar
+          :observer="observer"
           :selected-skill="selectedSkill"
           :selected-target="selectedTarget"
           :skills="skills"
@@ -187,8 +184,10 @@
         &#8250;
         </button> -->
         <p class="description">
-          <span class="name">{{ itemName }}</span>
-          {{ itemDescription }}
+          <span v-if="!observer">
+            <span class="name">{{ itemName }}</span>
+            {{ itemDescription }}
+          </span>
         </p>
       </footer>
     </template>
@@ -207,7 +206,8 @@
     </template>
 
     <template id="vue-battle-action-bar">
-      <div class="action-bar" v-if="selectedSkill == null">
+      <div class="action-bar" v-if="observer"></div>
+      <div class="action-bar" v-else-if="selectedSkill == null">
         <div class="center-container" v-for="(skill, i) in skills">
           <button
             class="action-button"
