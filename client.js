@@ -202,9 +202,9 @@ const app = createApp({
         this.setActionUIState();
         return false;
       }
-      this.ui.state = UIState.ANIMATION;
       const sequence = this.ui.animationQueue[0];
       console.log("begin animation sequence", sequence);
+      this.enterAnimationState();
       if (sequence.events.length === 0) {
         // Reached the end of this animation sequence
         this.ui.animationQueue.splice(0, 1);
@@ -296,6 +296,7 @@ const app = createApp({
     },
 
     onEnemySelected(character) {
+      if (this.ui.state === UIState.ANIMATION) { return; }
       const i = character.index;
       // if (this.ui.footer.selectedSkill != null)
       if (this.ui.state === UIState.CHOOSE_TARGET) {
@@ -320,6 +321,7 @@ const app = createApp({
     },
 
     onPlayerSelected(character) {
+      if (this.ui.state === UIState.ANIMATION) { return; }
       const i = character.index;
       // if (this.ui.footer.selectedSkill != null)
       if (this.ui.state === UIState.CHOOSE_TARGET) {
@@ -410,7 +412,7 @@ const app = createApp({
       this.ui.footer.characterData = character;
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
-      this.ui.footer.skills = character.skills;
+      // this.ui.footer.skills = character.skills;
       this.ui.footer.itemName = "Syncing";
       this.ui.footer.itemDescription = "...";
     },
@@ -427,6 +429,22 @@ const app = createApp({
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.ui.footer.skills = [];
+      this.ui.footer.itemName = character.name;
+      this.ui.footer.itemDescription = "is thinking...";
+    },
+
+    enterAnimationState() {
+      this.ui.state = UIState.ANIMATION;
+      this.ui.targetMode = null;
+      this.ui.selectedEnemy = null;
+      this.ui.selectedPlayer = null;
+      const character = this.activeCharacter;
+      this.ui.footer.display = this.playerId != null;
+      this.ui.footer.observer = true;
+      this.ui.footer.characterData = character;
+      this.ui.footer.selectedSkill = null;
+      this.ui.footer.selectedTarget = null;
+      // this.ui.footer.skills = [];
       this.ui.footer.itemName = character.name;
       this.ui.footer.itemDescription = "'s turn.";
     }
