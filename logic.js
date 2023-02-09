@@ -139,6 +139,41 @@ function skillDataEvasion() {
 
 
 /*******************************************************************************
+  Class Data
+*******************************************************************************/
+
+
+function classDataRogue() {
+  return {
+    classId: "rogue",
+    power: 12,
+    health: 92,
+    speed: 4,
+    skills: [
+      newSkillInstance(skillDataEnvenom()),
+      newSkillInstance(skillDataPoisonAttack()),
+      newSkillInstance(skillDataEvasion()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
+function bossDataDummy() {
+  return {
+    classId: "boss",
+    power: 10,
+    health: 200,
+    speed: 5,
+    skills: [
+      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
+/*******************************************************************************
   Player Character Data
 *******************************************************************************/
 
@@ -158,28 +193,15 @@ function newCharacterEffectsMap() {
 
 
 function newPlayerCharacter(playerId, index, name) {
-  return {
-    id: index,
-    index: index,
-    name: name,
-    playerId: playerId,
-    classId: "ranger",
-    power: 10,
-    health: 100,
-    currentHealth: 50,
-    speed: 5,
-    threat: 0,
-    skills: [
-      newSkillInstance(skillDataAttack()),
-      // newSkillInstance(skillDataRangedAttack()),
-      newSkillInstance(skillDataPoisonAttack()),
-      // newSkillInstance(skillDataGreaterHeal()),
-      // newSkillInstance(skillDataEnvenom()),
-      newSkillInstance(skillDataEvasion()),
-      newSkillInstance(skillDataRest())
-    ],
-    effects: newCharacterEffectsMap()
-  };
+  const data = classDataRogue();
+  data.id = index;
+  data.index = index;
+  data.name = name;
+  data.playerId = playerId;
+  data.currentHealth = data.health;
+  data.threat = 0;
+  data.effects = newCharacterEffectsMap();
+  return data;
 }
 
 
@@ -189,20 +211,12 @@ function newPlayerCharacter(playerId, index, name) {
 
 
 function newEnemyCharacter() {
-  return {
-    id: -1,
-    index: 0,
-    classId: "boss",
-    power: 10,
-    health: 200,
-    currentHealth: 200,
-    speed: 8,
-    skills: [
-      newSkillInstance(skillDataAttack()),
-      newSkillInstance(skillDataRest())
-    ],
-    effects: newCharacterEffectsMap()
-  };
+  const data = bossDataDummy();
+  data.id = -1;
+  data.index = 0;
+  data.currentHealth = data.health;
+  data.effects = newCharacterEffectsMap();
+  return data;
 }
 
 
