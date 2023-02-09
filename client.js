@@ -152,11 +152,10 @@ const app = createApp({
     setActionUIState() {
       const character = this.controlledCharacter;
       if (character != null) {
-        this.ui.state = UIState.CHOOSE_ACTION;
+        this.enterChooseActionState();
       } else {
-        this.ui.state = UIState.AWAITING_PLAYER_ACTION;
+        this.enterAwaitPlayerState();
       }
-      this.resetFooterState();
     },
 
     setGameState(game, playerId) {
@@ -169,7 +168,6 @@ const app = createApp({
       this.resetCharacterMap();
       this.currentTurn = game.currentTurn;
       this.eventQueue = game.events;
-      // this.resetFooterState();
     },
 
     setPlayerStates(players) {
@@ -266,44 +264,6 @@ const app = createApp({
       }
     },
 
-    resetFooterState() {
-      if (this.playerId == null) {
-        this.ui.footer.display = false;
-        return;
-      }
-
-      this.ui.footer.display = true;
-      this.ui.footer.observer = this.isObserverMode;
-      const character = this.controlledCharacter;
-      if (this.isObserverMode) {
-        // not this player's turn to act
-        this.ui.footer.selectedSkill = null;
-        this.ui.footer.itemName = "";
-        this.ui.footer.itemDescription = "";
-        this.ui.footer.selectedTarget = null;
-        this.ui.footer.skills = [];
-      } else {
-        // it is this player's turn to act
-        this.ui.footer.skills = character.skills;
-        if (this.ui.footer.selectedSkill != null) {
-          const skill = character.skills[this.ui.footer.selectedSkill];
-          this.ui.footer.itemName = skill.name;
-          this.ui.footer.itemDescription = this.buildSkillDescription(skill);
-        } else {
-          this.ui.footer.itemName = "";
-          this.ui.footer.itemDescription = "Choose a skill."
-        }
-      }
-
-      if (this.ui.selectedEnemy != null) {
-        this.ui.footer.characterData = this.enemies[this.ui.selectedEnemy];
-      } else if (this.ui.selectedPlayer != null) {
-        this.ui.footer.characterData = this.players[this.ui.selectedPlayer];
-      } else {
-        this.ui.footer.characterData = this.activeCharacter;
-      }
-    },
-
     buildSkillDescription(data) {
       if (data.cooldown <= 0) { return data.description; }
       return `${data.description} [Cooldown: ${data.cooldown}]`;
@@ -311,44 +271,7 @@ const app = createApp({
 
     onSkillSelected(i) {
       assert(this.ui.state === UIState.CHOOSE_ACTION, `UI state: ${this.ui.state}`);
-      const character = this.controlledCharacter;
-      const skill = character.skills[i];
-      // reset selection
-      this.ui.footer.characterData = character;
-      this.ui.targetMode = skill.data.target;
-      switch (skill.data.target) {
-        case targetModeSelf():
-          this.ui.selectedEnemy = null;
-          this.ui.selectedPlayer = character.index;
-          this.ui.footer.selectedTarget = character.id;
-          break;
-        case targetModeAlly():
-          this.ui.selectedEnemy = null;
-          if (this.ui.selectedPlayer == null && this.players.length === 1) {
-            this.ui.selectedPlayer = 0;
-          }
-          this.ui.footer.selectedTarget = this.ui.selectedPlayer;
-          break;
-        case targetModeEnemy():
-          this.ui.selectedPlayer = null;
-          if (this.ui.selectedEnemy == null && this.enemies.length === 1) {
-            this.ui.selectedEnemy = 0;
-          }
-          this.ui.footer.selectedTarget = this.ui.selectedEnemy;
-          break;
-        default:
-          this.ui.selectedEnemy = null;
-          this.ui.selectedPlayer = null;
-          this.ui.footer.selectedTarget = 0;
-      }
-      // transition to select skill target
-      this.ui.state = UIState.CHOOSE_TARGET;
-      //this.resetFooterState();
-      this.ui.footer.display = true;
-      this.ui.footer.observer = false;
-      this.ui.footer.selectedSkill = i;
-      this.ui.footer.itemName = skill.name;
-      this.ui.footer.itemDescription = this.buildSkillDescription(skill);
+      this.enterChooseTargetState(i);
     },
 
     onCancelSkill() {
@@ -359,22 +282,17 @@ const app = createApp({
 
     onUseSkill() {
       assert(this.ui.state === UIState.CHOOSE_TARGET, `UI state: ${this.ui.state}`);
-      const character = this.controlledCharacter;
       const i = this.ui.footer.selectedSkill;
       const t = this.ui.footer.selectedTarget;
-      // reset selection
-      this.ui.targetMode = null;
-      this.ui.selectedEnemy = null;
-      this.ui.selectedPlayer = null;
-      this.ui.footer.characterData = character;
-      this.ui.footer.selectedSkill = null;
-      this.ui.footer.selectedTarget = null;
-      // call logic action
-      console.log(this.playerId, "selected skill", character.skills[i].id);
-      Rune.actions.useSkill({ skill: i, target: t });
+      assert(i != null);
+      assert(t != null);
+
       // refresh UI
-      this.ui.state = UIState.SYNC;
-      this.resetFooterState();
+      this.enterSyncState();
+
+      // call logic action
+      console.log(this.playerId, "selected skill", i);
+      Rune.actions.useSkill({ skill: i, target: t });
     },
 
     onEnemySelected(character) {
@@ -430,7 +348,6 @@ const app = createApp({
       this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
-      // this.resetFooterState();
       const character = this.controlledCharacter;
       this.ui.footer.display = true;
       this.ui.footer.observer = false;
@@ -447,7 +364,6 @@ const app = createApp({
       const skill = character.skills[i];
       this.ui.state = UIState.CHOOSE_TARGET;
       this.ui.targetMode = skill.data.target;
-      // this.resetFooterState();
       this.ui.footer.display = true;
       this.ui.footer.observer = false;
       this.ui.footer.characterData = character;
@@ -481,6 +397,38 @@ const app = createApp({
           this.ui.selectedPlayer = null;
           this.ui.footer.selectedTarget = 0;
       }
+    },
+
+    enterSyncState() {
+      this.ui.state = UIState.SYNC;
+      this.ui.targetMode = null;
+      this.ui.selectedEnemy = null;
+      this.ui.selectedPlayer = null;
+      const character = this.controlledCharacter;
+      this.ui.footer.display = true;
+      this.ui.footer.observer = true;
+      this.ui.footer.characterData = character;
+      this.ui.footer.selectedSkill = null;
+      this.ui.footer.selectedTarget = null;
+      this.ui.footer.skills = character.skills;
+      this.ui.footer.itemName = "Syncing";
+      this.ui.footer.itemDescription = "...";
+    },
+
+    enterAwaitPlayerState() {
+      this.ui.state = UIState.AWAITING_PLAYER_ACTION;
+      this.ui.targetMode = null;
+      this.ui.selectedEnemy = null;
+      this.ui.selectedPlayer = null;
+      const character = this.activeCharacter;
+      this.ui.footer.display = this.playerId != null;
+      this.ui.footer.observer = true;
+      this.ui.footer.characterData = character;
+      this.ui.footer.selectedSkill = null;
+      this.ui.footer.selectedTarget = null;
+      this.ui.footer.skills = [];
+      this.ui.footer.itemName = character.name;
+      this.ui.footer.itemDescription = "'s turn.";
     }
 
     // refreshSlides() {
@@ -492,7 +440,6 @@ const app = createApp({
   },
 
   mounted() {
-    // this.resetFooterState();
     initRuneClient(this);
   }
 });
