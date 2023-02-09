@@ -131,10 +131,11 @@ function newCharacterEffectsMap() {
 }
 
 
-function newPlayerCharacter(playerId, index) {
+function newPlayerCharacter(playerId, index, name) {
   return {
     id: index,
     index: index,
+    name: name,
     playerId: playerId,
     classId: "ranger",
     power: 10,
@@ -518,7 +519,7 @@ Rune.initLogic({
     };
     let speed = 1000000;
     for (const playerId of players) {
-      const player = newPlayerCharacter(playerId, game.players.length);
+      const player = newPlayerCharacter(playerId, game.players.length, `Player ${game.players.length + 1}`);
       game.players.push(player);
       if (player.speed < speed) {
         game.currentTurn = player.id;
