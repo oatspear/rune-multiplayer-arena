@@ -92,7 +92,7 @@ const Skills = {
 *******************************************************************************/
 
 const Classes = {
-  "ranger": {
+  ranger: {
     id: "ranger",
     name: "Ranger",
     icon: "ranger",
@@ -100,7 +100,15 @@ const Classes = {
     health: 20,
     skills: ["attack", "rangedAttack", "greaterHeal", "rest"],
   },
-  "boss": {
+  rogue: {
+    id: "rogue",
+    name: "Rogue",
+    icon: "rogue",
+    power: 12,
+    health: 100,
+    skills: ["rest"]
+  },
+  boss: {
     id: "boss",
     name: "Unnamed Boss",
     icon: "boss",
