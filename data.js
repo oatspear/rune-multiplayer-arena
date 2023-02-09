@@ -49,30 +49,40 @@ function newEnum(keys) {
 *******************************************************************************/
 
 const Skills = {
-  "rest": {
+  rest: {
     name: "Rest",
     icon: "rest",
     description: "Recover some health."
   },
-  "attack": {
+  attack: {
     name: "Attack",
     icon: "battle",
     description: "Attack an enemy."
   },
-  "rangedAttack": {
+  rangedAttack: {
     name: "Ranged Attack",
     icon: "ranger",
     description: "Deal damage to an enemy."
   },
-  "greaterHeal": {
+  greaterHeal: {
     name: "Greater Heal",
     icon: "heal",
     description: "Heal an ally."
   },
-  "poisonAttack": {
+  poisonAttack: {
     name: "Poison Strike",
     icon: "battle",
     description: "Attack and Poison an enemy."
+  },
+  envenom: {
+    name: "Envenom",
+    icon: "battle",
+    description: "Attack an enemy. Bonus damage if poisoned."
+  },
+  evasion: {
+    name: "Evasion",
+    icon: "evasion",
+    description: "Avoid enemy attacks."
   }
 };
 
@@ -145,6 +155,15 @@ const BattleEvents = {
       particles: {
         name: "skull-green",
         animation: "floating"
+      }
+    }
+  },
+  invulnerable: {
+    icon: "invulnerable",
+    animation: {
+      icon: {
+        name: "invulnerable",
+        animation: "fading"
       }
     }
   }

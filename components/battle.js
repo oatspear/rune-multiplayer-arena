@@ -206,7 +206,9 @@ const BattleHistoryEvent = {
   },
 
   computed: {
-    shouldDisplay() { return this.event != null && !this.transition; }
+    shouldDisplay() { return this.event != null && !this.transition; },
+    isHostile() { return this.event.user != null && this.event.user < 0; },
+    isFriendly() { return this.event.user != null && this.event.user >= 0; }
   },
 
   watch: {
@@ -216,7 +218,10 @@ const BattleHistoryEvent = {
         window.setTimeout(() => {
           this.event = this.currentEvent;
           this.transition = false;
-          const data = BattleEvents[this.event.type];
+          let data = BattleEvents[this.event.type];
+          if (this.event.type === "skill") {
+            data = Skills[this.event.skill];
+          }
           if (data != null) {
             this.icon = data.icon;
           }

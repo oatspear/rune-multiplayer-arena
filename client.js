@@ -220,19 +220,12 @@ const app = createApp({
 
     animateEvent(event) {
       console.log("animateEvent:", event);
-      if (event.type === "skill") {
-        // FIXME
-        window.setTimeout(() => {
-          this.doNextAnimation();
-        }, 0);
-        return;
-      }
-
       this.ui.isAnimating = true;
-      this.history.splice(0, 1);
-      this.history.push(event);
 
-      if (event.multitarget) {
+      if (event.type === "skill") {
+        this.history.splice(0, 1);
+        this.history.push(event);
+      } else if (event.multitarget) {
         // TODO
         // for (const character of this.players) {
         //   character.animation = event;

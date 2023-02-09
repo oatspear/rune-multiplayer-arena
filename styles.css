@@ -341,6 +341,10 @@ main {
   animation: floating 0.65s forwards;
 }
 
+.overlay > .icon.fading {
+  animation: fading 0.65s forwards;
+}
+
 .overlay > .particles.floating > .icon {
   animation: floating 0.5s forwards;
 }
@@ -370,6 +374,12 @@ main {
   0% { transform: none; opacity: 1; }
   50% { opacity: 1; }
   100% { transform: translateY(-32px); opacity: 0; }
+}
+
+@keyframes fading {
+  0% { opacity: 0; }
+  10%, 75% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 
@@ -438,6 +448,14 @@ header > .history > .slot > .event {
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
+}
+
+header > .history > .slot > .event.friendly {
+  border: 2px solid royalblue;
+}
+
+header > .history > .slot > .event.enemy {
+  border: 2px solid crimson;
 }
 
 .event.slide-fade-enter-active,

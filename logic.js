@@ -29,8 +29,8 @@ function constAttackTarget() { return 1; }
 function constDamageTarget() { return 2; }
 function constHealTarget() { return 3; }
 function constAttackPoisonTarget() { return 4; }
-
-function constEffectDuration() { return 4; }
+function constAttackTargetBoostIfPoisoned() { return 5; }
+function constInvulnerability() { return 6; }
 
 
 /*******************************************************************************
@@ -103,11 +103,37 @@ function skillDataPoisonAttack() {
   return {
     id: "poisonAttack",
     speed: 4,
-    cooldown: 1,
+    cooldown: 0,
     target: targetModeEnemy(),
     threat: 7,
     mechanic: constAttackPoisonTarget(),
     powerFactor: 1
+  };
+}
+
+
+function skillDataEnvenom() {
+  return {
+    id: "envenom",
+    speed: 7,
+    cooldown: 2,
+    target: targetModeEnemy(),
+    threat: 8,
+    mechanic: constAttackTargetBoostIfPoisoned(),
+    powerFactor: 3
+  };
+}
+
+
+function skillDataEvasion() {
+  return {
+    id: "evasion",
+    speed: 2,
+    cooldown: 3,
+    target: targetModeSelf(),
+    threat: 4,
+    mechanic: constInvulnerability(),
+    duration: 1
   };
 }
 
@@ -147,7 +173,9 @@ function newPlayerCharacter(playerId, index, name) {
       newSkillInstance(skillDataAttack()),
       // newSkillInstance(skillDataRangedAttack()),
       newSkillInstance(skillDataPoisonAttack()),
-      newSkillInstance(skillDataGreaterHeal()),
+      // newSkillInstance(skillDataGreaterHeal()),
+      // newSkillInstance(skillDataEnvenom()),
+      newSkillInstance(skillDataEvasion()),
       newSkillInstance(skillDataRest())
     ],
     effects: newCharacterEffectsMap()
@@ -170,6 +198,7 @@ function newEnemyCharacter() {
     currentHealth: 200,
     speed: 8,
     skills: [
+      newSkillInstance(skillDataAttack()),
       newSkillInstance(skillDataRest())
     ],
     effects: newCharacterEffectsMap()
@@ -241,6 +270,12 @@ function resolveSkill(game, user, skill, args) {
     case constAttackPoisonTarget():
       return handleAttackPoisonTarget(game, user, target, skill);
 
+    case constAttackTargetBoostIfPoisoned():
+      return handleAttackTargetBoostIfPoisoned(game, user, target, skill);
+
+    case constInvulnerability():
+      return handleMakeTargetInvulnerable(game, user, target, skill);
+
     default:
       throw Rune.invalidAction();
   }
@@ -306,6 +341,18 @@ function handleAttackPoisonTarget(game, user, target, skill) {
 }
 
 
+function handleAttackTargetBoostIfPoisoned(game, user, target, skill) {
+  if (target.effects.poison > 0) {
+    const power = user.power;
+    user.power = (power * skill.data.powerFactor) | 0;
+    handleAttackTarget(game, user, target, skill);
+    user.power = power;
+  } else {
+    handleAttackTarget(game, user, target, skill);
+  }
+}
+
+
 function handleDamageTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
   const e = dealDamageToTarget(game, target, damage);
@@ -330,6 +377,12 @@ function handleHealTargetByFactor(game, user, target, skill) {
 function handlePoisonTarget(game, user, target, skill) {
   const damage = ((user.power * 0.5) | 0) || 1;
   const e = poisonTarget(game, target, damage);
+  game.events.push(e);
+}
+
+
+function handleMakeTargetInvulnerable(game, user, target, skill) {
+  const e = makeTargetInvulnerable(game, target, skill.data.duration);
   game.events.push(e);
 }
 
@@ -396,6 +449,16 @@ function poisonTarget(game, target, damage) {
 }
 
 
+function makeTargetInvulnerable(game, target, duration) {
+  target.effects.invulnerable = duration;
+  return {
+    type: "invulnerable",
+    target: target.id,
+    value: duration
+  }
+}
+
+
 function updateThreatLevel(game, index, value) {
   const half = (value / 2) | 0;
   let highest = game.players[game.enemyTarget].threat;
@@ -433,9 +496,9 @@ function doEnemyReaction(game, player, usedSkill) {
   const enemy = game.enemy;
 
   // Resolve the skill
-  // const skill = skillDataAttack();
+  const skill = enemy.skills[0];
   // console.log("Enemy used a skill:", skill.data.id, player);
-  // resolveSkill(game, enemy, skill, { target: player.index });
+  resolveSkill(game, enemy, skill, { target: player.index });
 }
 
 
