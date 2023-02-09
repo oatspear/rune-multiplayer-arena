@@ -119,6 +119,9 @@ const BattleCharacter = {
         this.overlay.iconAnimation = null
         this.overlay.particles = null;
         this.overlay.particleAnimation = null;
+        if (oldValue.finalHealth != null) {
+          this.currentHealth = oldValue.finalHealth;
+        }
       } else {
         this.animateEvent(newValue);
       }
@@ -144,6 +147,10 @@ const BattleCharacter = {
       if (animationData.particles != null) {
         this.overlay.particles = animationData.particles.name;
         this.overlay.particleAnimation = animationData.particles.animation;
+      }
+
+      if (params.startingHealth != null) {
+        this.currentHealth = params.startingHealth;
       }
     }
 
