@@ -31,6 +31,9 @@ function constHealTarget() { return 3; }
 function constAttackPoisonTarget() { return 4; }
 function constAttackTargetBoostIfPoisoned() { return 5; }
 function constInvulnerability() { return 6; }
+function constStunTarget()() { return 7; }
+function constAttackStunTarget()() { return 8; }
+function constPowerBoost()() { return 9; }
 
 
 /*******************************************************************************
@@ -138,9 +141,76 @@ function skillDataEvasion() {
 }
 
 
+function skillDataStunTarget() {
+  return {
+    id: "stun",
+    speed: 4,
+    cooldown: 2,
+    target: targetModeEnemy(),
+    threat: 7,
+    mechanic: constStunTarget(),
+    duration: 1
+  };
+}
+
+
+function skillDataStunAttack() {
+  return {
+    id: "stunAttack",
+    speed: 8,
+    cooldown: 3,
+    target: targetModeEnemy(),
+    threat: 8,
+    mechanic: constAttackStunTarget(),
+    duration: 1
+  };
+}
+
+
+function skillDataAdrenalineRush() {
+  return {
+    id: "adrenaline",
+    speed: 3,
+    cooldown: 2,
+    target: targetModeSelf(),
+    threat: 3,
+    mechanic: constPowerBoost(),
+    value: 2
+  };
+}
+
+
+function skillDataQuickAttack() {
+  return {
+    id: "quickAttack",
+    speed: 3,
+    cooldown: 0,
+    target: targetModeEnemy(),
+    threat: 6,
+    mechanic: constAttackTarget()
+  };
+}
+
+
 /*******************************************************************************
   Class Data
 *******************************************************************************/
+
+
+function classDataAssassin() {
+  return {
+    classId: "assassin",
+    power: 12,
+    health: 92,
+    speed: 4,
+    skills: [
+      newSkillInstance(skillDataEnvenom()),
+      newSkillInstance(skillDataPoisonAttack()),
+      newSkillInstance(skillDataEvasion()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
 
 
 function classDataRogue() {
@@ -150,9 +220,9 @@ function classDataRogue() {
     health: 92,
     speed: 4,
     skills: [
-      newSkillInstance(skillDataEnvenom()),
-      newSkillInstance(skillDataPoisonAttack()),
-      newSkillInstance(skillDataEvasion()),
+      newSkillInstance(skillDataAdrenalineRush()),
+      newSkillInstance(skillDataQuickAttack()),
+      newSkillInstance(skillDataStunTarget()),
       newSkillInstance(skillDataRest())
     ]
   };
@@ -290,6 +360,15 @@ function resolveSkill(game, user, skill, args) {
     case constInvulnerability():
       return handleMakeTargetInvulnerable(game, user, target, skill);
 
+    case constStunTarget():
+      return handleStunTarget(game, user, target, skill);
+
+    case constAttackStunTarget():
+      return handleAttackStunTarget(game, user, target, skill);
+
+    case constPowerBoost():
+      return handlePowerBoostTarget(game, user, target, skill);
+
     default:
       throw Rune.invalidAction();
   }
@@ -367,6 +446,12 @@ function handleAttackTargetBoostIfPoisoned(game, user, target, skill) {
 }
 
 
+function handleAttackStunTarget(game, user, target, skill) {
+  handleAttackTarget(game, user, target, skill);
+  handleStunTarget(game, user, target, skill);
+}
+
+
 function handleDamageTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
   const e = dealDamageToTarget(game, target, damage);
@@ -388,9 +473,21 @@ function handleHealTargetByFactor(game, user, target, skill) {
 }
 
 
+function handlePowerBoostTarget(game, user, target, skill) {
+  const e = boostTargetPower(game, target, skill.data.value);
+  game.events.push(e);
+}
+
+
 function handlePoisonTarget(game, user, target, skill) {
   const damage = ((user.power * 0.5) | 0) || 1;
   const e = poisonTarget(game, target, damage);
+  game.events.push(e);
+}
+
+
+function handleStunTarget(game, user, target, skill) {
+  const e = stunTarget(game, target, skill.data.duration);
   game.events.push(e);
 }
 
@@ -453,6 +550,20 @@ function healTarget(game, target, damage) {
 }
 
 
+function boostTargetPower(game, target, value) {
+  const old = target.power;
+  target.power += value;
+  return {
+    type: "buff",
+    target: target.id,
+    stat: "power",
+    startingValue: old,
+    finalValue: target.power,
+    value: value
+  };
+}
+
+
 function poisonTarget(game, target, damage) {
   target.effects.poison = damage;
   return {
@@ -460,6 +571,16 @@ function poisonTarget(game, target, damage) {
     target: target.id,
     value: damage
   };
+}
+
+
+function stunTarget(game, target, duration) {
+  target.effects.stunned = duration;
+  return {
+    type: "stun",
+    target: target.id,
+    value: duration
+  }
 }
 
 

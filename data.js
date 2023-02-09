@@ -83,6 +83,26 @@ const Skills = {
     name: "Evasion",
     icon: "evasion",
     description: "Avoid enemy attacks."
+  },
+  stun: {
+    name: "Gouge",
+    icon: "stun",
+    description: "Stun an enemy."
+  },
+  stunAttack: {
+    name: "Heavy Blow",
+    icon: "stun",
+    description: "Attack and Stun an enemy."
+  },
+  adrenaline: {
+    name: "Adrenaline Rush",
+    icon: "battle",
+    description: "Power up."
+  },
+  quickAttack: {
+    name: "Swift Strike",
+    icon: "rogue",
+    description: "Attack an enemy."
   }
 };
 
@@ -172,6 +192,15 @@ const BattleEvents = {
       icon: {
         name: "invulnerable",
         animation: "fading"
+      }
+    }
+  },
+  buff: {
+    icon: "battle",
+    animation: {
+      icon: {
+        name: "battle",
+        animation: "floating"
       }
     }
   }
