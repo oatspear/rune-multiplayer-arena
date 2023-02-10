@@ -103,6 +103,11 @@ const Skills = {
     name: "Swift Strike",
     icon: "rogue",
     description: "Attack an enemy."
+  },
+  poisonArrow: {
+    name: "Poison Arrow",
+    icon: "poison-arrow",
+    description: "Damage and Poison an enemy."
   }
 };
 
@@ -115,26 +120,22 @@ const Classes = {
   ranger: {
     id: "ranger",
     name: "Ranger",
-    icon: "ranger",
-    power: 10,
-    health: 20,
-    skills: ["attack", "rangedAttack", "greaterHeal", "rest"],
+    icon: "ranger"
+  },
+  assassin: {
+    id: "assassin",
+    name: "Assassin",
+    icon: "assassin"
   },
   rogue: {
     id: "rogue",
     name: "Rogue",
-    icon: "rogue",
-    power: 12,
-    health: 100,
-    skills: ["rest"]
+    icon: "rogue"
   },
   boss: {
     id: "boss",
     name: "Unnamed Boss",
-    icon: "boss",
-    power: 8,
-    health: 200,
-    skills: ["rest"]
+    icon: "boss"
   }
 };
 

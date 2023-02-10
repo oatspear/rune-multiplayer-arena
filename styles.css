@@ -681,6 +681,10 @@ footer > .action-bar {
   color: yellow;
 }
 
+.class.assassin {
+  color: lightgreen;
+}
+
 .class.mage {
   color: violet;
 }

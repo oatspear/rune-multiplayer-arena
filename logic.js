@@ -34,6 +34,8 @@ function constInvulnerability() { return 6; }
 function constStunTarget() { return 7; }
 function constAttackStunTarget() { return 8; }
 function constPowerBoost() { return 9; }
+function constPoisonTarget() { return 10; }
+function constDamagePoisonTarget() { return 11; }
 
 
 /*******************************************************************************
@@ -102,6 +104,19 @@ function skillDataGreaterHeal() {
 }
 
 
+function skillDataPoisonTarget() {
+  return {
+    id: "poison",
+    speed: 6,
+    cooldown: 1,
+    target: targetModeEnemy(),
+    threat: 4,
+    mechanic: constPoisonTarget(),
+    powerFactor: 1
+  };
+}
+
+
 function skillDataPoisonAttack() {
   return {
     id: "poisonAttack",
@@ -110,6 +125,19 @@ function skillDataPoisonAttack() {
     target: targetModeEnemy(),
     threat: 7,
     mechanic: constAttackPoisonTarget(),
+    powerFactor: 1
+  };
+}
+
+
+function skillDataPoisonArrow() {
+  return {
+    id: "poisonArrow",
+    speed: 7,
+    cooldown: 1,
+    target: targetModeEnemy(),
+    threat: 7,
+    mechanic: constDamagePoisonTarget(),
     powerFactor: 1
   };
 }
@@ -229,6 +257,22 @@ function classDataRogue() {
 }
 
 
+function classDataRanger() {
+  return {
+    classId: "ranger",
+    power: 10,
+    health: 92,
+    speed: 6,
+    skills: [
+      newSkillInstance(skillDataPoisonArrow()),
+      newSkillInstance(skillDataRangedAttack()),
+      newSkillInstance(skillDataEvasion()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
 function bossDataDummy() {
   return {
     classId: "boss",
@@ -263,7 +307,7 @@ function newCharacterEffectsMap() {
 
 
 function newPlayerCharacter(playerId, index, name) {
-  const data = classDataRogue();
+  const data = classDataRanger();
   data.id = index;
   data.index = index;
   data.name = name;
@@ -369,6 +413,12 @@ function resolveSkill(game, user, skill, args) {
     case constPowerBoost():
       return handlePowerBoostTarget(game, user, target, skill);
 
+    case constPoisonTarget():
+      return handlePoisonTarget(game, user, target, skill);
+
+    case constDamagePoisonTarget():
+      return handleDamagePoisonTarget(game, user, target, skill);
+
     default:
       throw Rune.invalidAction();
   }
@@ -430,6 +480,12 @@ function handleAttackTarget(game, user, target, skill) {
 
 function handleAttackPoisonTarget(game, user, target, skill) {
   handleAttackTarget(game, user, target, skill);
+  handlePoisonTarget(game, user, target, skill);
+}
+
+
+function handleDamagePoisonTarget(game, user, target, skill) {
+  handleDamageTargetByFactor(game, user, target, skill);
   handlePoisonTarget(game, user, target, skill);
 }
 
