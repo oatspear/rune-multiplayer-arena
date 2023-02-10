@@ -59,7 +59,7 @@ function skillDataRest() {
     target: targetModeSelf(),
     threat: -2,
     mechanic: constHealTargetPercent(),
-    healingPercent: 0.1
+    healingPercent: 0.075
   };
 }
 
@@ -171,11 +171,11 @@ function skillDataAdrenalineRush() {
   return {
     id: "adrenaline",
     speed: 3,
-    cooldown: 2,
+    cooldown: 1,
     target: targetModeSelf(),
     threat: 3,
     mechanic: constPowerBoost(),
-    value: 2
+    value: 3
   };
 }
 
