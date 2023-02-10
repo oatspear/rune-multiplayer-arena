@@ -673,7 +673,8 @@ footer > .action-bar {
   color: limegreen;
 }
 
-.class.warrior {
+.class.warrior,
+.class.berserker {
   color: peru;
 }
 

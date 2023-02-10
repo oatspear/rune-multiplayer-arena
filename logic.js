@@ -36,6 +36,7 @@ function constAttackStunTarget() { return 8; }
 function constPowerBoost() { return 9; }
 function constPoisonTarget() { return 10; }
 function constDamagePoisonTarget() { return 11; }
+function constArmorModifier() { return 12; }
 
 
 /*******************************************************************************
@@ -186,11 +187,11 @@ function skillDataStunAttack() {
   return {
     id: "stunAttack",
     speed: 8,
-    cooldown: 3,
+    cooldown: 5,
     target: targetModeEnemy(),
     threat: 8,
     mechanic: constAttackStunTarget(),
-    duration: 1
+    duration: 2
   };
 }
 
@@ -216,6 +217,19 @@ function skillDataQuickAttack() {
     target: targetModeEnemy(),
     threat: 6,
     mechanic: constAttackTarget()
+  };
+}
+
+
+function skillDataBreakArmor() {
+  return {
+    id: "breakArmor",
+    speed: 5,
+    cooldown: 2,
+    target: targetModeEnemy(),
+    threat: 7,
+    mechanic: constArmorModifier(),
+    value: -2
   };
 }
 
@@ -273,6 +287,22 @@ function classDataRanger() {
 }
 
 
+function classDataBerserker() {
+  return {
+    classId: "berserker",
+    power: 10,
+    health: 90,
+    speed: 8,
+    skills: [
+      newSkillInstance(skillDataStunAttack()),
+      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataBreakArmor()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
 function bossDataDummy() {
   return {
     classId: "boss",
@@ -301,13 +331,13 @@ function newCharacterEffectsMap() {
     invulnerable: 0,  // duration
     stunned: 0,  // duration
     healingModifier: 0,
-    damageModifier: 0,
+    armorModifier: 0,
   };
 }
 
 
 function newPlayerCharacter(playerId, index, name) {
-  const data = classDataRanger();
+  const data = classDataBerserker();
   data.id = index;
   data.index = index;
   data.name = name;
@@ -418,6 +448,9 @@ function resolveSkill(game, user, skill, args) {
 
     case constDamagePoisonTarget():
       return handleDamagePoisonTarget(game, user, target, skill);
+
+    case constArmorModifier():
+      return handleTargetArmorModifier(game, user, target, skill);
 
     default:
       throw Rune.invalidAction();
@@ -554,6 +587,12 @@ function handleMakeTargetInvulnerable(game, user, target, skill) {
 }
 
 
+function handleTargetArmorModifier(game, user, target, skill) {
+  const e = applyTargetArmorModifier(game, target, skill.data.value);
+  game.events.push(e);
+}
+
+
 function userAttackTarget(game, user, target) {
   const action = dealDamageToTarget(game, target, user.power);
   const reaction = dealDamageToTarget(game, user, target.power);
@@ -567,9 +606,10 @@ function userAttackTarget(game, user, target) {
 
 function dealDamageToTarget(game, target, damage, type) {
   const hp = target.currentHealth;
-  if (target.effects.invulnerable) {
+  if (target.effects.invulnerable || target.effects.armorModifier >= damage) {
     damage = 0;
   } else {
+    damage -= target.effects.armorModifier;
     const shield = target.effects.shield;
     if (shield >= damage) {
       damage = 0;
@@ -592,9 +632,14 @@ function dealDamageToTarget(game, target, damage, type) {
 
 function healTarget(game, target, damage) {
   const hp = target.currentHealth;
-  target.currentHealth += damage;
-  if (target.currentHealth > target.health) {
-    target.currentHealth = target.health;
+  damage += target.effects.healingModifier;
+  if (damage < 0) {
+    damage = 0;
+  } else {
+    target.currentHealth += damage;
+    if (target.currentHealth > target.health) {
+      target.currentHealth = target.health;
+    }
   }
   return {
     type: "heal",
@@ -636,6 +681,16 @@ function stunTarget(game, target, duration) {
     target: target.id,
     value: duration
   }
+}
+
+
+function applyTargetArmorModifier(game, target, value) {
+  target.effects.armorModifier += value;
+  return {
+    type: "armor",
+    target: target.id,
+    value: value
+  };
 }
 
 
@@ -710,7 +765,7 @@ function doEndOfTurnEffectsForCharacter(game, character) {
   // invulnerable: duration
   // stunned: duration
   // healingModifier: 0,
-  // damageModifier: 0,
+  // armorModifier: 0,
 
   // apply healing over time effects
   let value = effects.healing;

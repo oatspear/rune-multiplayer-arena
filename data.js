@@ -108,6 +108,11 @@ const Skills = {
     name: "Poison Arrow",
     icon: "poison-arrow",
     description: "Damage and Poison an enemy."
+  },
+  breakArmor: {
+    name: "Break Armor",
+    icon: "break-armor",
+    description: "Enemy takes more damage."
   }
 };
 
@@ -131,6 +136,11 @@ const Classes = {
     id: "rogue",
     name: "Rogue",
     icon: "rogue"
+  },
+  berserker: {
+    id: "berserker",
+    name: "Berserker",
+    icon: "berserker"
   },
   boss: {
     id: "boss",
@@ -211,6 +221,15 @@ const BattleEvents = {
       icon: {
         name: "battle",
         animation: "floating"
+      }
+    }
+  },
+  armor: {
+    icon: "shield",
+    animation: {
+      icon: {
+        name: "shield",
+        animation: "shaking"
       }
     }
   }
