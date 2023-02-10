@@ -195,6 +195,15 @@ const BattleEvents = {
       }
     }
   },
+  stun: {
+    icon: "stun",
+    animation: {
+      icon: {
+        name: "stun",
+        animation: "floating"
+      }
+    }
+  },
   buff: {
     icon: "battle",
     animation: {
