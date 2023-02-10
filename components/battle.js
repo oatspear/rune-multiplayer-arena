@@ -122,6 +122,9 @@ const BattleCharacter = {
         if (oldValue.finalHealth != null) {
           this.currentHealth = oldValue.finalHealth;
         }
+        if (oldValue.finalPower != null) {
+          this.power = oldValue.finalPower;
+        }
       } else {
         this.animateEvent(newValue);
       }
@@ -151,6 +154,9 @@ const BattleCharacter = {
 
       if (params.startingHealth != null) {
         this.currentHealth = params.startingHealth;
+      }
+      if (params.startingPower != null) {
+        this.power = params.startingPower;
       }
     }
 

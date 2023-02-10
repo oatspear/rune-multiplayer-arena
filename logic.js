@@ -31,9 +31,9 @@ function constHealTarget() { return 3; }
 function constAttackPoisonTarget() { return 4; }
 function constAttackTargetBoostIfPoisoned() { return 5; }
 function constInvulnerability() { return 6; }
-function constStunTarget()() { return 7; }
-function constAttackStunTarget()() { return 8; }
-function constPowerBoost()() { return 9; }
+function constStunTarget() { return 7; }
+function constAttackStunTarget() { return 8; }
+function constPowerBoost() { return 9; }
 
 
 /*******************************************************************************
@@ -556,9 +556,8 @@ function boostTargetPower(game, target, value) {
   return {
     type: "buff",
     target: target.id,
-    stat: "power",
-    startingValue: old,
-    finalValue: target.power,
+    startingPower: old,
+    finalPower: target.power,
     value: value
   };
 }
@@ -629,6 +628,8 @@ function adjustTurnOrder(game, value) {
 
 function doEnemyReaction(game, player, usedSkill) {
   const enemy = game.enemy;
+
+  if (enemy.effects.stunned) { return; }
 
   // Resolve the skill
   const skill = enemy.skills[0];
