@@ -122,6 +122,9 @@ const BattleCharacter = {
         if (oldValue.finalHealth != null) {
           this.currentHealth = oldValue.finalHealth;
         }
+        if (oldValue.finalMaxHealth != null) {
+          this.health = oldValue.finalMaxHealth;
+        }
         if (oldValue.finalPower != null) {
           this.power = oldValue.finalPower;
         }
@@ -154,6 +157,9 @@ const BattleCharacter = {
 
       if (params.startingHealth != null) {
         this.currentHealth = params.startingHealth;
+      }
+      if (params.startingMaxHealth != null) {
+        this.health = params.startingMaxHealth;
       }
       if (params.startingPower != null) {
         this.power = params.startingPower;
