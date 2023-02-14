@@ -30,6 +30,7 @@
         :highlight-players="highlightPlayers"
         :selected-enemy="ui.selectedEnemy"
         :selected-player="ui.selectedPlayer"
+        :acting-character="ui.actingCharacter"
         @selected-enemy="onEnemySelected"
         @selected-player="onPlayerSelected"
       >
@@ -77,6 +78,7 @@
               :highlight-players="highlightPlayers"
               :selected-enemy="selectedEnemy"
               :selected-player="selectedPlayer"
+              :acting-character="actingCharacter"
               @selected-enemy="onEnemySelected"
               @selected-player="onPlayerSelected"
             >
@@ -95,6 +97,7 @@
             :is-enemy
             :is-active="selectedEnemy === i"
             :is-highlighted="highlightEnemies"
+            :is-acting="actingCharacter === enemy.id"
             @selected="onEnemySelected"
           >
           </battle-character>
@@ -107,7 +110,7 @@
             :is-enemy="false"
             :is-active="selectedPlayer === i"
             :is-highlighted="highlightPlayers"
-            :is-owned="playerId === player.id"
+            :is-acting="actingCharacter === player.id"
             @selected="onPlayerSelected"
           >
           </battle-character>
@@ -122,7 +125,7 @@
           :class="{
             active: isActive,
             enemy: isEnemy,
-            owned: isOwned,
+            acting: isActing,
             highlight: !isActive && isHighlighted,
             animating: animation != '',
             positive: animation == 'heal',

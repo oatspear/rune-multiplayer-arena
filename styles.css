@@ -140,7 +140,7 @@ main {
   transition: background-color 100ms ease-out;
 }
 
-.tile.owned {
+.tile.acting {
   border: 2px solid gold;
 }
 

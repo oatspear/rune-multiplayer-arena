@@ -17,7 +17,8 @@ const BattleBoard = {
     highlightEnemies: Boolean,
     highlightPlayers: Boolean,
     selectedEnemy: Number,
-    selectedPlayer: Number
+    selectedPlayer: Number,
+    actingCharacter: Number
   },
   data() {},
   methods: {
@@ -51,7 +52,8 @@ const BattleScene = {
     highlightEnemies: Boolean,
     highlightPlayers: Boolean,
     selectedEnemy: Number,
-    selectedPlayer: Number
+    selectedPlayer: Number,
+    actingCharacter: Number
   },
 
   data() {
@@ -86,7 +88,7 @@ const BattleCharacter = {
     isEnemy: Boolean,
     isActive: Boolean,
     isHighlighted: Boolean,
-    isOwned: Boolean
+    isActing: Boolean
   },
 
   data() {
@@ -94,6 +96,7 @@ const BattleCharacter = {
       power: this.character.power,
       health: this.character.health,
       currentHealth: this.character.currentHealth,
+      order: 0,
       animation: "",
       overlay: {
         display: false,

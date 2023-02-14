@@ -89,6 +89,7 @@ const app = createApp({
         targetMode: null,
         selectedEnemy: null,
         selectedPlayer: null,
+        actingCharacter: null,
         footer: {
           display: false,
           observer: true,
@@ -204,7 +205,9 @@ const app = createApp({
       }
       const sequence = this.ui.animationQueue[0];
       console.log("begin animation sequence", sequence);
-      this.enterAnimationState();
+      if (this.ui.state != UIState.ANIMATION) {
+        this.enterAnimationState();
+      }
       if (sequence.events.length === 0) {
         // Reached the end of this animation sequence
         this.ui.animationQueue.splice(0, 1);
@@ -225,6 +228,7 @@ const app = createApp({
       if (event.type === "skill") {
         this.history.splice(0, 1);
         this.history.push(event);
+        this.ui.actingCharacter = event.user;
       } else if (event.multitarget) {
         // TODO
         // for (const character of this.players) {
@@ -344,6 +348,7 @@ const app = createApp({
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       const character = this.controlledCharacter;
+      this.ui.actingCharacter = character.id;
       this.ui.footer.display = true;
       this.ui.footer.observer = false;
       this.ui.footer.characterData = character;
@@ -359,6 +364,7 @@ const app = createApp({
       const skill = character.skills[i];
       this.ui.state = UIState.CHOOSE_TARGET;
       this.ui.targetMode = skill.data.target;
+      // this.ui.actingCharacter = character.id;
       this.ui.footer.display = true;
       this.ui.footer.observer = false;
       this.ui.footer.characterData = character;
@@ -400,6 +406,7 @@ const app = createApp({
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       const character = this.controlledCharacter;
+      // this.ui.actingCharacter = character.id;
       this.ui.footer.display = true;
       this.ui.footer.observer = true;
       this.ui.footer.characterData = character;
@@ -416,6 +423,7 @@ const app = createApp({
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       const character = this.activeCharacter;
+      this.ui.actingCharacter = character.id;
       this.ui.footer.display = this.playerId != null;
       this.ui.footer.observer = true;
       this.ui.footer.characterData = character;
@@ -432,6 +440,7 @@ const app = createApp({
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       const character = this.activeCharacter;
+      this.ui.actingCharacter = character.id;
       this.ui.footer.display = this.playerId != null;
       this.ui.footer.observer = true;
       this.ui.footer.characterData = character;
