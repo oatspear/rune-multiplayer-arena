@@ -18,7 +18,8 @@ const BattleBoard = {
     highlightPlayers: Boolean,
     selectedEnemy: Number,
     selectedPlayer: Number,
-    actingCharacter: Number
+    actingCharacter: Number,
+    globalAnimation: String
   },
   data() {},
   methods: {
@@ -201,10 +202,13 @@ const BattleCharacter = {
 };
 
 
-const SetupHeader = {
-  template: "#vue-setup-header",
-  props: {
-    message: String
+const BattleSetup = {
+  template: "#vue-battle-setup",
+
+  methods: {
+    proceed() {
+      this.$emit("character-selected");
+    }
   }
 };
 

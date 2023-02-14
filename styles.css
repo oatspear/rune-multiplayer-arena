@@ -54,6 +54,10 @@ body {
   position: relative;
 }
 
+.text-large {
+  font-size: 2rem;
+}
+
 
 /*******************************************************************************
   Game Board
@@ -71,6 +75,58 @@ main {
   flex-grow: 1;
   position: relative;
   overflow: hidden;
+}
+
+.animation-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  z-index: 100;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.animation-container.anim-battle-start > .left-object {
+  flex: 0 0 auto;
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  background-image: url("assets/sword-left.png");
+  background-size: cover;
+  animation: slideFromLeft 1.2s forwards;
+}
+
+.animation-container.anim-battle-start > .right-object {
+  flex: 0 0 auto;
+  position: absolute;
+  width: 128px;
+  height: 128px;
+  background-image: url("assets/sword-right.png");
+  background-size: cover;
+  animation: slideFromRight 1.2s forwards;
+}
+
+@keyframes slideFromLeft {
+  0% { transform: translateX(-100vw); opacity: 1; }
+  50%, 60% { transform: translateX(16px); }
+  70% { transform: none; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes slideFromRight {
+  0% { transform: translateX(100vw); opacity: 1; }
+  50%, 60% { transform: translateX(-16px); }
+  70% { transform: none; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 .slides-container {
@@ -551,7 +607,7 @@ footer > .description {
   color: gold;
 }
 
-footer > .action-bar {
+.action-bar {
   flex: 0 0 auto;
   position: relative;
   display: flex;
@@ -560,6 +616,10 @@ footer > .action-bar {
   align-items: center;
   padding: 0 .25rem;
   min-height: 64px;
+}
+
+.row > .action-bar {
+  width: 100%;
 }
 
 
@@ -697,33 +757,4 @@ footer > .action-bar {
 
 .class.druid {
   color: orange;
-}
-
-
-.icon.ranger {
-  background: no-repeat center/contain url("assets/ranger.png");
-}
-
-.icon.warrior {
-  background: no-repeat center/contain url("assets/warrior.png");
-}
-
-.icon.rogue {
-  background: no-repeat center/contain url("assets/rogue.png");
-}
-
-.icon.mage {
-  background: no-repeat center/contain url("assets/mage.png");
-}
-
-.icon.berserker {
-  background: no-repeat center/contain url("assets/berserker.png");
-}
-
-.icon.paladin {
-  background: no-repeat center/contain url("assets/paladin.png");
-}
-
-.icon.enemy {
-  background: no-repeat center/contain url("assets/boss.png");
 }

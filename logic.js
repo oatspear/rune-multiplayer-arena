@@ -462,17 +462,6 @@ function newCharacterEffectsMap() {
 }
 
 
-function newSetupPlayer(playerId, index, name) {
-  return {
-    id: index,
-    index: index,
-    name: name,
-    playerId: playerId,
-    classId: null
-  };
-}
-
-
 function newPlayerCharacter(playerId, index, name) {
   const data = classDataDummy();
   data.id = index;
@@ -1045,8 +1034,12 @@ Rune.initLogic({
       const player = newPlayerCharacter(playerId, game.players.length);
       const classData = choices.pop();
       Object.assign(player, classData);
+      player.currentHealth = player.health;
       game.players.push(player);
     }
+
+    enterBattleState(game);
+
     return game;
   },
 

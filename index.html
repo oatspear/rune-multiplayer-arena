@@ -15,13 +15,14 @@
   </head>
   <body>
     <main id="app">
+      <!-- <battle-setup v-if="isSetupState" @character-selected="onSetupCharacterSelected">
+      </battle-setup> -->
+
       <battle-header
         v-if="isBattleState"
         :history="history"
       >
       </battle-header>
-      <setup-header v-else :message="'Select Character'">
-      </setup-header>
 
       <battle-board
         :is-battle-state="isBattleState"
@@ -33,6 +34,7 @@
         :selected-enemy="ui.selectedEnemy"
         :selected-player="ui.selectedPlayer"
         :acting-character="ui.actingCharacter"
+        :global-animation="ui.globalAnimation"
         @selected-enemy="onEnemySelected"
         @selected-player="onPlayerSelected"
       >
@@ -47,6 +49,20 @@
       >
       </battle-footer>
     </main>
+
+    <template id="vue-battle-setup">
+      <div class="slide">
+        <h2>Class</h2>
+        <p>Something or other here.</p>
+        <div class="action-bar">
+          <div class="center-container">
+            <button class="action-button" @click.prevent.stop="proceed()">
+              <img src="assets/confirm.png" alt="Ok" width="64" height="64">
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
 
     <template id="vue-battle-header">
       <header>
@@ -67,31 +83,29 @@
       </div>
     </template>
 
-    <template id="vue-setup-header">
-      <header>
-        <h2>{{ message }}</h2>
-      </header>
-    </template>
-
     <template id="vue-battle-board">
       <div id="board">
-          <div class="slides-container" id="slides-container">
-            <battle-scene
-              v-if="isBattleState"
-              :scene-index="0"
-              :player-id="playerId"
-              :enemies="enemies"
-              :players="players"
-              :highlight-enemies="highlightEnemies"
-              :highlight-players="highlightPlayers"
-              :selected-enemy="selectedEnemy"
-              :selected-player="selectedPlayer"
-              :acting-character="actingCharacter"
-              @selected-enemy="onEnemySelected"
-              @selected-player="onPlayerSelected"
-            >
-            </battle-scene>
-          </div>
+        <div class="slides-container" id="slides-container">
+          <battle-scene
+            v-if="isBattleState"
+            :scene-index="0"
+            :player-id="playerId"
+            :enemies="enemies"
+            :players="players"
+            :highlight-enemies="highlightEnemies"
+            :highlight-players="highlightPlayers"
+            :selected-enemy="selectedEnemy"
+            :selected-player="selectedPlayer"
+            :acting-character="actingCharacter"
+            @selected-enemy="onEnemySelected"
+            @selected-player="onPlayerSelected"
+          >
+          </battle-scene>
+        </div>
+        <div v-if="globalAnimation" class="animation-container" :class="globalAnimation">
+          <div class="left-object"></div>
+          <div class="right-object"></div>
+        </div>
       </div>
     </template>
 

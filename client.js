@@ -102,7 +102,8 @@ const app = createApp({
           itemDescription: ""
         },
         isAnimating: false,
-        animationQueue: []
+        animationQueue: [],
+        globalAnimation: ""
       }
     };
   },
@@ -116,6 +117,10 @@ const app = createApp({
       if (this.playerId == null) { return null; }
       const character = this.characters[this.currentTurn];
       return this.playerId === character.playerId ? character : null;
+    },
+
+    isSetupState() {
+      return this.ui.state === UIState.CHOOSE_CHARACTER;
     },
 
     isBattleState() {
@@ -147,9 +152,9 @@ const app = createApp({
     onSetupDone(game, playerId) {
       assert(this.ui.state === UIState.INIT, `UI state: ${this.ui.state}`);
       this.setGameState(game, playerId);
-      // this.ui.state = UIState.CHOOSE_CHARACTER;
-      // window.setTimeout(() => { this.enterChooseCharacterUIState(); }, 0);
-      this.enterChooseCharacterUIState();
+      this.ui.globalAnimation = "anim-battle-start";
+      window.setTimeout(() => { this.setActionUIState(); }, 2000);
+      // this.enterChooseCharacterUIState();
     },
 
     setActionUIState() {
@@ -159,6 +164,7 @@ const app = createApp({
       } else {
         this.enterAwaitPlayerState();
       }
+      this.ui.globalAnimation = "";
     },
 
     setGameState(game, playerId) {
@@ -344,21 +350,27 @@ const app = createApp({
       }
     },
 
+    onSetupCharacterSelected() {
+      // call logic action
+      const character = this.controlledCharacter;  // FIXME
+      console.log(this.playerId, "selected", character.classId, "class");
+      Rune.actions.selectCharacter({ classId: character.classId });
+    },
+
     enterChooseCharacterUIState() {
       this.ui.state = UIState.CHOOSE_CHARACTER;
       this.ui.targetMode = null;
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
-      const character = this.controlledCharacter;
       this.ui.actingCharacter = null;
-      this.ui.footer.display = true;
+      this.ui.footer.display = false;
       this.ui.footer.observer = false;
-      this.ui.footer.characterData = character;
+      this.ui.footer.characterData = null;
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
-      this.ui.footer.skills = character.skills;
+      this.ui.footer.skills = [];
       this.ui.footer.itemName = "";
-      this.ui.footer.itemDescription = "Choose a skill.";
+      this.ui.footer.itemDescription = "";
     },
 
     enterChooseActionState() {
@@ -483,7 +495,7 @@ const app = createApp({
   }
 });
 
-app.component("SetupHeader", SetupHeader);
+app.component("BattleSetup", BattleSetup);
 app.component("BattleHeader", BattleHeader);
 app.component("BattleHistoryEvent", BattleHistoryEvent);
 app.component("BattleBoard", BattleBoard);
