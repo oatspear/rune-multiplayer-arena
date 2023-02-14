@@ -37,6 +37,7 @@ function constPowerBoost() { return 9; }
 function constPoisonTarget() { return 10; }
 function constDamagePoisonTarget() { return 11; }
 function constArmorModifier() { return 12; }
+function constShieldTarget() { return 13; }
 
 
 /*******************************************************************************
@@ -234,6 +235,19 @@ function skillDataBreakArmor() {
 }
 
 
+function skillDataDivineProtection() {
+  return {
+    id: "divineProtection",
+    speed: 10,
+    cooldown: 3,
+    target: targetModeAllAllies(),
+    threat: 7,
+    mechanic: constShieldTarget(),
+    powerFactor: 2.5
+  };
+}
+
+
 /*******************************************************************************
   Class Data
 *******************************************************************************/
@@ -303,6 +317,22 @@ function classDataBerserker() {
 }
 
 
+function classDataCleric() {
+  return {
+    classId: "cleric",
+    power: 6,
+    health: 80,
+    speed: 8,
+    skills: [
+      newSkillInstance(skillDataGreaterHeal()),
+      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataDivineProtection()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
 function bossDataDummy() {
   return {
     classId: "boss",
@@ -337,7 +367,7 @@ function newCharacterEffectsMap() {
 
 
 function newPlayerCharacter(playerId, index, name) {
-  const data = classDataBerserker();
+  const data = classDataCleric();
   data.id = index;
   data.index = index;
   data.name = name;
@@ -451,6 +481,9 @@ function resolveSkill(game, user, skill, args) {
 
     case constArmorModifier():
       return handleTargetArmorModifier(game, user, target, skill);
+
+    case constShieldTarget():
+      return handleShieldTarget(game, user, target, skill);
 
     default:
       throw Rune.invalidAction();
@@ -568,6 +601,18 @@ function handlePowerBoostTarget(game, user, target, skill) {
 }
 
 
+function handleShieldTarget(game, user, target, skill) {
+  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const e = shieldTarget(game, character, damage);
+    game.events.push(e);
+  }
+}
+
+
 function handlePoisonTarget(game, user, target, skill) {
   const damage = ((user.power * 0.5) | 0) || 1;
   const e = poisonTarget(game, target, damage);
@@ -612,13 +657,13 @@ function dealDamageToTarget(game, target, damage, type) {
     damage -= target.effects.armorModifier;
     const shield = target.effects.shield;
     if (shield >= damage) {
-      damage = 0;
       target.effects.shield = shield - damage;
+      damage = 0;
     } else {
       damage -= shield;
       target.effects.shield = 0;
+      target.currentHealth -= damage;
     }
-    target.currentHealth -= damage;
   }
   return {
     type: type || "damage",
@@ -660,6 +705,16 @@ function boostTargetPower(game, target, value) {
     startingPower: old,
     finalPower: target.power,
     value: value
+  };
+}
+
+
+function shieldTarget(game, target, damage) {
+  target.effects.shield += damage;
+  return {
+    type: "shield",
+    target: target.id,
+    value: damage
   };
 }
 

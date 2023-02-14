@@ -113,6 +113,11 @@ const Skills = {
     name: "Break Armor",
     icon: "break-armor",
     description: "Enemy takes more damage."
+  },
+  divineProtection: {
+    name: "Divine Protection",
+    icon: "shield",
+    description: "Shield all allies."
   }
 };
 
@@ -141,6 +146,11 @@ const Classes = {
     id: "berserker",
     name: "Berserker",
     icon: "berserker"
+  },
+  cleric: {
+    id: "cleric",
+    name: "Cleric",
+    icon: "paladin"
   },
   boss: {
     id: "boss",
@@ -175,6 +185,15 @@ const BattleEvents = {
     animation: {
       particles: {
         name: "healing",
+        animation: "floating"
+      }
+    }
+  },
+  shield: {
+    icon: "shield",
+    animation: {
+      icon: {
+        name: "shield",
         animation: "floating"
       }
     }
