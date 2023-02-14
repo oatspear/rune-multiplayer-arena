@@ -38,6 +38,7 @@ function constPoisonTarget() { return 10; }
 function constDamagePoisonTarget() { return 11; }
 function constArmorModifier() { return 12; }
 function constShieldTarget() { return 13; }
+function constHealTargetOverTime() { return 14; }
 
 
 /*******************************************************************************
@@ -248,6 +249,32 @@ function skillDataDivineProtection() {
 }
 
 
+function skillDataRegrowth() {
+  return {
+    id: "regrowth",
+    speed: 6,
+    cooldown: 1,
+    target: targetModeAlly(),
+    threat: 7,
+    mechanic: constHealTargetOverTime(),
+    powerFactor: 0.75
+  };
+}
+
+
+function skillDataMassBarkskin() {
+  return {
+    id: "massBarkskin",
+    speed: 10,
+    cooldown: 3,
+    target: targetModeAllAllies(),
+    threat: 8,
+    mechanic: constArmorModifier(),
+    value: 1
+  };
+}
+
+
 /*******************************************************************************
   Class Data
 *******************************************************************************/
@@ -333,6 +360,22 @@ function classDataCleric() {
 }
 
 
+function classDataDruid() {
+  return {
+    classId: "druid",
+    power: 7,
+    health: 80,
+    speed: 7,
+    skills: [
+      newSkillInstance(skillDataRegrowth()),
+      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataMassBarkskin()),
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
 function bossDataDummy() {
   return {
     classId: "boss",
@@ -367,7 +410,7 @@ function newCharacterEffectsMap() {
 
 
 function newPlayerCharacter(playerId, index, name) {
-  const data = classDataCleric();
+  const data = classDataDruid();
   data.id = index;
   data.index = index;
   data.name = name;
@@ -485,6 +528,9 @@ function resolveSkill(game, user, skill, args) {
     case constShieldTarget():
       return handleShieldTarget(game, user, target, skill);
 
+    case constHealTargetOverTime():
+      return handleHealTargetOverTime(game, user, target, skill);
+
     default:
       throw Rune.invalidAction();
   }
@@ -595,6 +641,13 @@ function handleHealTargetByFactor(game, user, target, skill) {
 }
 
 
+function handleHealTargetOverTime(game, user, target, skill) {
+  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
+  const e = healTargetOverTime(game, target, damage);
+  game.events.push(e);
+}
+
+
 function handlePowerBoostTarget(game, user, target, skill) {
   const e = boostTargetPower(game, target, skill.data.value);
   game.events.push(e);
@@ -633,8 +686,13 @@ function handleMakeTargetInvulnerable(game, user, target, skill) {
 
 
 function handleTargetArmorModifier(game, user, target, skill) {
-  const e = applyTargetArmorModifier(game, target, skill.data.value);
-  game.events.push(e);
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const e = applyTargetArmorModifier(game, character, skill.data.value);
+    game.events.push(e);
+  }
 }
 
 
@@ -723,6 +781,16 @@ function poisonTarget(game, target, damage) {
   target.effects.poison = damage;
   return {
     type: "poison",
+    target: target.id,
+    value: damage
+  };
+}
+
+
+function healTargetOverTime(game, target, damage) {
+  target.effects.healing = damage;
+  return {
+    type: "healOverTime",
     target: target.id,
     value: damage
   };

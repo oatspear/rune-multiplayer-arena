@@ -130,7 +130,7 @@
           }"
           @click="onTileClick"
         >
-          <span class="class" :class="character.classData.icon">{{ character.classData.name }}</span>
+          <span class="class" :class="character.classData.id">{{ character.classData.name }}</span>
           <div class="portrait">
             <img :src="`assets/${character.classData.icon}.png`" alt="?">
           </div>
@@ -162,6 +162,7 @@
       <footer>
         <battle-player-info
           :display-name="characterData.name"
+          :class-id="characterData.classData.id"
           :class-icon="characterData.classData.icon"
           :class-name="characterData.classData.name"
           :power-value="characterData.power"
@@ -195,7 +196,7 @@
     <template id="vue-battle-player-info">
       <div class="player-info">
         <h2 class="nameplate">
-          <span class="class" :class="classIcon">{{ className }}</span>
+          <span class="class" :class="classId">{{ className }}</span>
           <span class="name">{{ displayName || "&nbsp;" }}</span>
         </h2>
         <div class="stats">

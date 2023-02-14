@@ -690,6 +690,10 @@ footer > .action-bar {
   color: violet;
 }
 
+.class.druid {
+  color: orange;
+}
+
 
 .icon.ranger {
   background: no-repeat center/contain url("assets/ranger.png");

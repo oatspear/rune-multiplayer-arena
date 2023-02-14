@@ -118,6 +118,16 @@ const Skills = {
     name: "Divine Protection",
     icon: "shield",
     description: "Shield all allies."
+  },
+  regrowth: {
+    name: "Regrowth",
+    icon: "heal",
+    description: "Heal target over time."
+  },
+  massBarkskin: {
+    name: "Mass Barkskin",
+    icon: "shield",
+    description: "+Armor to all allies."
   }
 };
 
@@ -151,6 +161,11 @@ const Classes = {
     id: "cleric",
     name: "Cleric",
     icon: "paladin"
+  },
+  druid: {
+    id: "druid",
+    name: "Druid",
+    icon: "mage"
   },
   boss: {
     id: "boss",
@@ -204,6 +219,15 @@ const BattleEvents = {
       particles: {
         name: "skull-green",
         animation: "floating"
+      }
+    }
+  },
+  healOverTime: {
+    icon: "heal",
+    animation: {
+      icon: {
+        name: "heal",
+        animation: "fading"
       }
     }
   },
