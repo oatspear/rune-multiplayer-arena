@@ -8,6 +8,7 @@ const DEFAULT_ANIM_DURATION = 1000;
 
 const UIState = newEnum([
   "INIT",
+  "CHOOSE_CHARACTER",
   "CHOOSE_ACTION",
   "CHOOSE_TARGET",
   "SYNC",
@@ -118,7 +119,7 @@ const app = createApp({
     },
 
     isBattleState() {
-      return this.ui.state != UIState.INIT;
+      return this.ui.state != UIState.INIT && this.ui.state != UIState.CHOOSE_CHARACTER;
     },
 
     isObserverMode() {
@@ -146,8 +147,9 @@ const app = createApp({
     onSetupDone(game, playerId) {
       assert(this.ui.state === UIState.INIT, `UI state: ${this.ui.state}`);
       this.setGameState(game, playerId);
-      // TODO animate battle start here
-      window.setTimeout(() => { this.setActionUIState(); }, DEFAULT_ANIM_DURATION);
+      // this.ui.state = UIState.CHOOSE_CHARACTER;
+      // window.setTimeout(() => { this.enterChooseCharacterUIState(); }, 0);
+      this.enterChooseCharacterUIState();
     },
 
     setActionUIState() {
@@ -342,6 +344,23 @@ const app = createApp({
       }
     },
 
+    enterChooseCharacterUIState() {
+      this.ui.state = UIState.CHOOSE_CHARACTER;
+      this.ui.targetMode = null;
+      this.ui.selectedEnemy = null;
+      this.ui.selectedPlayer = null;
+      const character = this.controlledCharacter;
+      this.ui.actingCharacter = null;
+      this.ui.footer.display = true;
+      this.ui.footer.observer = false;
+      this.ui.footer.characterData = character;
+      this.ui.footer.selectedSkill = null;
+      this.ui.footer.selectedTarget = null;
+      this.ui.footer.skills = character.skills;
+      this.ui.footer.itemName = "";
+      this.ui.footer.itemDescription = "Choose a skill.";
+    },
+
     enterChooseActionState() {
       this.ui.state = UIState.CHOOSE_ACTION;
       this.ui.targetMode = null;
@@ -464,9 +483,10 @@ const app = createApp({
   }
 });
 
-app.component("BattleBoard", BattleBoard);
+app.component("SetupHeader", SetupHeader);
 app.component("BattleHeader", BattleHeader);
 app.component("BattleHistoryEvent", BattleHistoryEvent);
+app.component("BattleBoard", BattleBoard);
 app.component("BattleScene", BattleScene);
 app.component("BattleCharacter", BattleCharacter);
 app.component("BattleFooter", BattleFooter);

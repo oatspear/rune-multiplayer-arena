@@ -201,6 +201,14 @@ const BattleCharacter = {
 };
 
 
+const SetupHeader = {
+  template: "#vue-setup-header",
+  props: {
+    message: String
+  }
+};
+
+
 const BattleHeader = {
   template: "#vue-battle-header",
   props: {

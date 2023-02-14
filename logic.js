@@ -13,9 +13,23 @@ function assert(condition, message) {
 }
 
 
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const rand = Math.floor(Math.random() * (i + 1));
+    const temp = array[i];
+    array[i] = array[rand];
+    array[rand] = temp;
+  }
+  return array;
+}
+
+
 /*******************************************************************************
   Data Constants
 *******************************************************************************/
+
+function constStateSetup() { return 0; }
+function constStateBattle() { return 1; }
 
 function targetModeSelf() { return 0; }
 function targetModeAlly() { return 1; }
@@ -280,6 +294,45 @@ function skillDataMassBarkskin() {
 *******************************************************************************/
 
 
+function getClassById(id) {
+  switch (id) {
+    case "assassin":
+      return classDataAssassin();
+
+    case "rogue":
+      return classDataRogue();
+
+    case "berserker":
+      return classDataBerserker();
+
+    case "ranger":
+      return classDataRanger();
+
+    case "cleric":
+      return classDataCleric();
+
+    case "druid":
+      return classDataDruid();
+
+    default:
+      throw Rune.invalidAction();
+  }
+}
+
+
+function classDataDummy() {
+  return {
+    classId: null,
+    power: 1,
+    health: 1,
+    speed: 1,
+    skills: [
+      newSkillInstance(skillDataRest())
+    ]
+  };
+}
+
+
 function classDataAssassin() {
   return {
     classId: "assassin",
@@ -409,11 +462,22 @@ function newCharacterEffectsMap() {
 }
 
 
+function newSetupPlayer(playerId, index, name) {
+  return {
+    id: index,
+    index: index,
+    name: name,
+    playerId: playerId,
+    classId: null
+  };
+}
+
+
 function newPlayerCharacter(playerId, index, name) {
-  const data = classDataDruid();
+  const data = classDataDummy();
   data.id = index;
   data.index = index;
-  data.name = name;
+  // data.name = name;
   data.playerId = playerId;
   data.currentHealth = data.health;
   data.threat = 0;
@@ -921,6 +985,23 @@ function doEndOfTurnEffectsForCharacter(game, character) {
 }
 
 
+function enterBattleState(game) {
+  game.state = constStateBattle();
+  game.enemy = newEnemyCharacter();
+  game.currentTurn = null;
+  game.events = [];
+  game.enemyTarget = 0;
+  let speed = 1000000;
+  for (const character of game.players) {
+    if (character.speed < speed) {
+      game.currentTurn = character.id;
+      speed = character.speed;
+    }
+    game.enemyTarget = character.index;
+  }
+}
+
+
 function isGameOver(game) {
   if (game.enemy.currentHealth <= 0) {
     return true;
@@ -944,27 +1025,61 @@ Rune.initLogic({
   setup(players) {
     // players: array of string IDs
     const game = {
-      enemy: newEnemyCharacter(),
+      state: constStateSetup(),
+      enemy: null,
       players: [],
       currentTurn: null,
       events: [],
       enemyTarget: 0
     };
-    let speed = 1000000;
+
+    const choices = shuffle([
+      classDataAssassin(),
+      classDataRogue(),
+      classDataBerserker(),
+      classDataRanger(),
+      classDataCleric(),
+      classDataDruid()
+    ]);
     for (const playerId of players) {
-      const player = newPlayerCharacter(playerId, game.players.length, `Player ${game.players.length + 1}`);
+      const player = newPlayerCharacter(playerId, game.players.length);
+      const classData = choices.pop();
+      Object.assign(player, classData);
       game.players.push(player);
-      if (player.speed < speed) {
-        game.currentTurn = player.id;
-        speed = player.speed;
-      }
-      game.enemyTarget = player.index;
     }
     return game;
   },
 
   actions: {
+    selectCharacter(payload, { game, playerId }) {
+      if (game.state !== constStateSetup()) {
+        throw Rune.invalidAction();
+      }
+
+      // Get the corresponding player
+      const player = getPlayer(game, playerId);
+      if (player == null) {
+        throw Rune.invalidAction();
+      }
+
+      // Get the selected class data
+      const classData = getClassById(payload.classId);
+      Object.assign(player, classData);
+
+      // Check if everyone is ready
+      for (const character of game.players) {
+        if (!character.classId) { return; }
+      }
+
+      // Transition to battle state
+      enterBattleState(game);
+    },
+
     useSkill(payload, { game, playerId }) {
+      if (game.state !== constStateBattle()) {
+        throw Rune.invalidAction();
+      }
+
       // Check if it's the player's turn
       const player = getPlayer(game, playerId);
       if (player == null || game.currentTurn !== player.id) {

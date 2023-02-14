@@ -420,6 +420,11 @@ header {
   border-bottom: 2px solid whitesmoke;
 }
 
+header > h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
 header > .history {
   flex: 1 1 0;
   display: flex;
@@ -538,7 +543,7 @@ footer > .description {
   padding: 0 .5rem;
   color: ivory;
   font-weight: normal;
-  min-height: 3rem;
+  height: 3rem;
   font-size: .75rem;
 }
 
