@@ -385,7 +385,7 @@ function classDataBerserker() {
   return {
     classId: "berserker",
     power: 10,
-    health: 90,
+    health: 100,
     speed: 5,
     skills: [
       newSkillInstance(skillDataStunAttack()),

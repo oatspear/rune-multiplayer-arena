@@ -71,7 +71,7 @@ const Skills = {
   },
   poisonAttack: {
     name: "Poison Strike",
-    icon: "battle",
+    icon: "poison",
     description: "Attack and Poison an enemy."
   },
   envenom: {
