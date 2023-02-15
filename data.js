@@ -181,6 +181,11 @@ const Classes = {
     id: "blackDragon",
     name: "Dragon",
     icon: "dragon-black"
+  },
+  stormDragon: {
+    id: "stormDragon",
+    name: "Dragon",
+    icon: "dragon-blue"
   }
 };
 

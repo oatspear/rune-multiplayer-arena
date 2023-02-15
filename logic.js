@@ -293,12 +293,12 @@ function skillDataFireBreath() {
   return {
     id: "fireBreath",
     // speed: 10,
-    cooldown: 2,
+    cooldown: 3,
     target: targetModeAllEnemies(),
     threat: 8,
     mechanic: constDamageTarget(),
     damageType: "fire",
-    powerFactor: 3
+    powerFactor: 2
   };
 }
 
@@ -466,6 +466,22 @@ function bossDataBlackDragon() {
     rest: newSkillInstance(skillDataRest()),
     skills: [
       newSkillInstance(skillDataFireBreath()),
+      newSkillInstance(skillDataStunAttack()),
+    ]
+  };
+}
+
+
+function bossDataStormDragon() {
+  return {
+    classId: "stormDragon",
+    power: 9,
+    health: 250,
+    speed: 5,
+    basicAttack: newSkillInstance(skillDataAttack()),
+    rest: newSkillInstance(skillDataRegrowth()),
+    skills: [
+      newSkillInstance(skillDataFireBreath()),
     ]
   };
 }
@@ -509,12 +525,17 @@ function newPlayerCharacter(playerId, index, name) {
 
 
 function newEnemyCharacter() {
-  const data = bossDataBlackDragon();
+  const options = shuffle([
+    bossDataBlackDragon,
+    bossDataStormDragon
+  ]);
+  const data = options[0]();
   data.id = -1;
   data.index = 0;
   data.currentHealth = data.health;
   data.effects = newCharacterEffectsMap();
   data.lastHealed = 0;
+  data.lastSpecial = 0;
   return data;
 }
 
@@ -956,15 +977,16 @@ function doEnemyReaction(game, player, usedSkill) {
 
   // Select a skill
   let skill = enemy.basicAttack;
-  if (((enemy.currentHealth / enemy.health) <= 0.25) && ((game.turns - enemy.lastHealed) > 10)) {
+  if (((enemy.currentHealth / enemy.health) <= 0.25) && ((game.turns - enemy.lastHealed) > 3)) {
     skill = enemy.rest;
+    enemy.lastHealed = game.turns;
   } else {
-    const n = enemy.skills.length;
-    if (n > 0) {
-      const i = (Math.random() * n) | 0;
-      const special = enemy.skills[i];
+    // if ((game.turns - enemy.lastSpecial) > 1)
+    for (const special of enemy.skills) {
       if (special.wait <= 0) {
         skill = special;
+        enemy.lastSpecial = game.turns;
+        break;
       }
     }
   }
