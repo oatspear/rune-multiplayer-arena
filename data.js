@@ -128,6 +128,11 @@ const Skills = {
     name: "Mass Barkskin",
     icon: "shield",
     description: "+Armor to all allies."
+  },
+  fireBreath: {
+    name: "Fire Breath",
+    icon: "fire",
+    description: "Damage all enemies."
   }
 };
 
@@ -169,8 +174,13 @@ const Classes = {
   },
   boss: {
     id: "boss",
-    name: "Unnamed Boss",
+    name: "Boss",
     icon: "boss"
+  },
+  blackDragon: {
+    id: "blackDragon",
+    name: "Dragon",
+    icon: "dragon-black"
   }
 };
 

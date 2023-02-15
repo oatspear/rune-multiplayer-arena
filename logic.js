@@ -289,6 +289,19 @@ function skillDataMassBarkskin() {
 }
 
 
+function skillDataFireBreath() {
+  return {
+    id: "fireBreath",
+    // speed: 10,
+    cooldown: 2,
+    target: targetModeAllEnemies(),
+    threat: 8,
+    mechanic: constDamageTarget(),
+    powerFactor: 3
+  };
+}
+
+
 /*******************************************************************************
   Class Data
 *******************************************************************************/
@@ -435,9 +448,23 @@ function bossDataDummy() {
     power: 10,
     health: 200,
     speed: 5,
+    basicAttack: newSkillInstance(skillDataAttack()),
+    rest: newSkillInstance(skillDataRest()),
+    skills: []
+  };
+}
+
+
+function bossDataBlackDragon() {
+  return {
+    classId: "blackDragon",
+    power: 7,
+    health: 300,
+    speed: 5,
+    basicAttack: newSkillInstance(skillDataAttack()),
+    rest: newSkillInstance(skillDataRest()),
     skills: [
-      newSkillInstance(skillDataAttack()),
-      newSkillInstance(skillDataRest())
+      newSkillInstance(skillDataFireBreath()),
     ]
   };
 }
@@ -481,11 +508,12 @@ function newPlayerCharacter(playerId, index, name) {
 
 
 function newEnemyCharacter() {
-  const data = bossDataDummy();
+  const data = bossDataBlackDragon();
   data.id = -1;
   data.index = 0;
   data.currentHealth = data.health;
   data.effects = newCharacterEffectsMap();
+  data.lastHealed = 0;
   return data;
 }
 
@@ -526,9 +554,9 @@ function processPlayerSkill(game, player, skill, args) {
   doEnemyReaction(game, player, skill);
 
   doEndOfTurnEffects(game);
-  // console.log("game state:", game);
-
+  game.turns++;
   game.currentTurn = (game.currentTurn + 1) % game.players.length;
+  // console.log("game state:", game);
 }
 
 
@@ -677,8 +705,13 @@ function handleAttackStunTarget(game, user, target, skill) {
 
 function handleDamageTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  const e = dealDamageToTarget(game, target, damage);
-  game.events.push(e);
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const e = dealDamageToTarget(game, character, damage);
+    game.events.push(e);
+  }
 }
 
 
@@ -920,10 +953,23 @@ function doEnemyReaction(game, player, usedSkill) {
 
   if (enemy.effects.stunned) { return; }
 
+  // Select a skill
+  let skill = enemy.basicAttack;
+  if (((enemy.currentHealth / enemy.health) <= 0.25) && ((game.turns - enemy.lastHealed) > 10)) {
+    skill = enemy.rest;
+  } else {
+    const n = enemy.skills.length;
+    if (n > 0) {
+      const i = (Math.random() * n) | 0;
+      const special = enemy.skills[i];
+      if (special.wait <= 0) {
+        skill = special;
+      }
+    }
+  }
+
   // Resolve the skill
-  const skill = enemy.skills[0];
-  // console.log("Enemy used a skill:", skill.data.id, player);
-  resolveSkill(game, enemy, skill, { target: player.index });
+  resolveSkill(game, enemy, skill, { target: game.enemyTarget });
 }
 
 
@@ -1022,22 +1068,23 @@ Rune.initLogic({
       currentTurn: null,
       events: [],
       enemyTarget: 0,
-      availableHeroes: []
+      availableHeroes: [],
+      turns: 0
     };
 
     game.availableHeroes = shuffle([
-      classDataAssassin(),
-      classDataRogue(),
-      classDataBerserker(),
-      classDataRanger(),
-      classDataCleric(),
-      classDataDruid()
+      classDataAssassin,
+      classDataRogue,
+      classDataBerserker,
+      classDataRanger,
+      classDataCleric,
+      classDataDruid
     ]);
 
     for (const playerId of players) {
       const player = newPlayerCharacter(playerId, game.players.length);
       const classData = game.availableHeroes.pop();
-      Object.assign(player, classData);
+      Object.assign(player, classData());
       player.currentHealth = player.health;
       game.players.push(player);
     }
