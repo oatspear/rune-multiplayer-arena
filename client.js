@@ -8,7 +8,7 @@ const DEFAULT_ANIM_DURATION = 1000;
 
 const UIState = newEnum([
   "INIT",
-  "CHOOSE_CHARACTER",
+  "BATTLE_SETUP",
   "CHOOSE_ACTION",
   "CHOOSE_TARGET",
   "SYNC",
@@ -120,11 +120,11 @@ const app = createApp({
     },
 
     isSetupState() {
-      return this.ui.state === UIState.CHOOSE_CHARACTER;
+      return this.ui.state === UIState.BATTLE_SETUP;
     },
 
     isBattleState() {
-      return this.ui.state != UIState.INIT && this.ui.state != UIState.CHOOSE_CHARACTER;
+      return this.ui.state != UIState.INIT && this.ui.state != UIState.BATTLE_SETUP;
     },
 
     isObserverMode() {
@@ -357,7 +357,7 @@ const app = createApp({
     // },
 
     // enterChooseCharacterUIState() {
-    //   this.ui.state = UIState.CHOOSE_CHARACTER;
+    //   this.ui.state = UIState.BATTLE_SETUP;
     //   this.ui.targetMode = null;
     //   this.ui.selectedEnemy = null;
     //   this.ui.selectedPlayer = null;
