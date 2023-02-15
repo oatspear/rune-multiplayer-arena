@@ -58,6 +58,10 @@ body {
   font-size: 2rem;
 }
 
+.text-red {
+  color: red;
+}
+
 
 /*******************************************************************************
   Game Board
@@ -261,6 +265,18 @@ main {
   }
 }
 
+@keyframes pulseBackgroundOlive {
+  0% {
+    background-color: inherit;
+  }
+  50% {
+    background-color: olive;
+  }
+  100% {
+    background-color: inherit;
+  }
+}
+
 .tile > .class {
   width: 100%;
   overflow: hidden;
@@ -346,8 +362,15 @@ main {
 .stats > .health {
   flex: 1 1 0;
   display: flex;
-  justify-content: center;
   align-items: center;
+}
+
+.stats > .power {
+  justify-content: flex-start;
+}
+
+.stats > .health {
+  justify-content: flex-end;
 }
 
 .tile > .overlay {
@@ -492,6 +515,14 @@ header > .history {
   flex-direction: row;
 }
 
+header > .history > .title {
+  flex: 0 0 auto;
+  height: 40px;
+  font-size: 1.25rem;
+  line-height: 1;
+  padding: 0.5rem;
+}
+
 header > .history > .slot {
   flex: 1 1 0;
   display: flex;
@@ -553,6 +584,7 @@ footer {
   background: linear-gradient(#4e4e4e, #202124);
   display: flex;
   flex-direction: column;
+  border-top: 2px solid whitesmoke;
 }
 
 
@@ -678,6 +710,8 @@ footer > .description {
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
+  animation: pulseBackgroundOlive 3s;
+  animation-iteration-count: infinite;
   /* touch-action: manipulation; */
   /* width: 100%; */
   /* will-change: transform; */
@@ -688,15 +722,19 @@ footer > .description {
   pointer-events: none;
   background-color: slategray;
   border: 2px solid silver;
+  animation: none;
+  opacity: 0.75;
 }
 
 .action-button:hover {
   background-color: olive;
+  animation: none;
 }
 
 .action-button:active,
 .action-button.active {
   background-color: olive;
+  animation: none;
 }
 
 

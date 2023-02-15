@@ -84,7 +84,7 @@ const app = createApp({
       enemies: [],
       players: [],
       characters: {},
-      history: [null, null, null, null, null, null],
+      history: [null, null, null, null],
       ui: {
         state: UIState.INIT,
         targetMode: null,

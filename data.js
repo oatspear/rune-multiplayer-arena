@@ -91,7 +91,7 @@ const Skills = {
   },
   stunAttack: {
     name: "Heavy Blow",
-    icon: "stun",
+    icon: "warrior",
     description: "Attack and Stun an enemy."
   },
   adrenaline: {

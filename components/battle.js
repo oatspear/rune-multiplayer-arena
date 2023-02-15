@@ -115,6 +115,12 @@ const BattleCharacter = {
     };
   },
 
+  computed: {
+    isDamaged() {
+      return this.currentHealth < this.health;
+    }
+  },
+
   watch: {
     'character.animation'(newValue, oldValue) {
       if (newValue == null) {

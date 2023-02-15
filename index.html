@@ -67,6 +67,7 @@
     <template id="vue-battle-header">
       <header>
         <div class="history">
+          <span class="title">Events:</span>
           <battle-history-event v-for="event in history" :current-event="event">
           </battle-history-event>
         </div>
@@ -163,13 +164,15 @@
           </div>
           <div class="effect-anchor"></div>
           <div class="stats">
-            <div class="power">
+            <battle-icon-label name="power" :value="power" :size="16"></battle-icon-label>
+            <battle-icon-label name="health" :value="currentHealth" :size="16"></battle-icon-label>
+            <!-- <div class="power">
               <span>{{ power }}</span>
             </div>
             /
-            <div class="health">
+            <div class="health" :class="{'text-red': isDamaged}">
               <span>{{ currentHealth }}</span>
-            </div>
+            </div> -->
           </div>
           <Transition name="fade">
             <div v-if="overlay.display" class="overlay">
@@ -187,14 +190,14 @@
 
     <template id="vue-battle-footer">
       <footer>
-        <battle-player-info
+        <!-- <battle-player-info
           :display-name="characterData.name"
           :class-id="characterData.classData.id"
           :class-icon="characterData.classData.icon"
           :class-name="characterData.classData.name"
           :power-value="characterData.power"
           :health-value="characterData.health"
-        ></battle-player-info>
+        ></battle-player-info> -->
         <battle-action-bar
           :observer="observer"
           :selected-skill="selectedSkill"
@@ -220,7 +223,7 @@
       </footer>
     </template>
 
-    <template id="vue-battle-player-info">
+    <!-- <template id="vue-battle-player-info">
       <div class="player-info">
         <h2 class="nameplate">
           <span class="class" :class="classId">{{ className }}</span>
@@ -231,7 +234,7 @@
           <battle-icon-label name="shield" :value="healthValue" :size="16" v-if="healthValue > 0"></battle-icon-label>
         </div>
       </div>
-    </template>
+    </template> -->
 
     <template id="vue-battle-action-bar">
       <div class="action-bar" v-if="observer">
