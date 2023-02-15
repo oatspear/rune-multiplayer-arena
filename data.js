@@ -232,6 +232,15 @@ const BattleEvents = {
       }
     }
   },
+  fire: {
+    icon: "fire",
+    animation: {
+      particles: {
+        name: "fire",
+        animation: "floating"
+      }
+    }
+  },
   healOverTime: {
     icon: "heal",
     animation: {

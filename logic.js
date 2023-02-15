@@ -297,6 +297,7 @@ function skillDataFireBreath() {
     target: targetModeAllEnemies(),
     threat: 8,
     mechanic: constDamageTarget(),
+    damageType: "fire",
     powerFactor: 3
   };
 }
@@ -709,7 +710,7 @@ function handleDamageTargetByFactor(game, user, target, skill) {
     target = [target];
   }
   for (const character of target) {
-    const e = dealDamageToTarget(game, character, damage);
+    const e = dealDamageToTarget(game, character, damage, skill.data.damageType);
     game.events.push(e);
   }
 }
