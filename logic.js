@@ -1019,10 +1019,11 @@ Rune.initLogic({
       players: [],
       currentTurn: null,
       events: [],
-      enemyTarget: 0
+      enemyTarget: 0,
+      availableHeroes: []
     };
 
-    const choices = shuffle([
+    game.availableHeroes = shuffle([
       classDataAssassin(),
       classDataRogue(),
       classDataBerserker(),
@@ -1030,9 +1031,10 @@ Rune.initLogic({
       classDataCleric(),
       classDataDruid()
     ]);
+
     for (const playerId of players) {
       const player = newPlayerCharacter(playerId, game.players.length);
-      const classData = choices.pop();
+      const classData = game.availableHeroes.pop();
       Object.assign(player, classData);
       player.currentHealth = player.health;
       game.players.push(player);
@@ -1041,6 +1043,16 @@ Rune.initLogic({
     enterBattleState(game);
 
     return game;
+  },
+
+  events: {
+    // playerJoined(playerId, { game }) {
+    //   const player = newPlayerCharacter(playerId, game.players.length);
+    //   const classData = game.availableHeroes.pop();
+    //   Object.assign(player, classData);
+    //   player.currentHealth = player.health;
+    //   game.players.push(player);
+    // }
   },
 
   actions: {
