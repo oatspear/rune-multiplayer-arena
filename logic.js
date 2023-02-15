@@ -63,7 +63,7 @@ function constHealTargetOverTime() { return 14; }
 function newSkillInstance(data) {
   return {
     data: data,
-    speed: data.speed,
+    // speed: data.speed,
     cooldown: data.cooldown,
     wait: data.cooldown
   };
@@ -73,7 +73,7 @@ function newSkillInstance(data) {
 function skillDataRest() {
   return {
     id: "rest",
-    speed: 1,
+    // speed: 1,
     cooldown: 0,
     target: targetModeSelf(),
     threat: -2,
@@ -86,7 +86,7 @@ function skillDataRest() {
 function skillDataAttack() {
   return {
     id: "attack",
-    speed: 5,
+    // speed: 5,
     cooldown: 0,
     target: targetModeEnemy(),
     threat: 10,
@@ -98,7 +98,7 @@ function skillDataAttack() {
 function skillDataRangedAttack() {
   return {
     id: "rangedAttack",
-    speed: 7,
+    // speed: 7,
     cooldown: 0,
     target: targetModeEnemy(),
     threat: 6,
@@ -111,7 +111,7 @@ function skillDataRangedAttack() {
 function skillDataGreaterHeal() {
   return {
     id: "greaterHeal",
-    speed: 8,
+    // speed: 8,
     cooldown: 0,
     target: targetModeAlly(),
     threat: 6,
@@ -124,7 +124,7 @@ function skillDataGreaterHeal() {
 function skillDataPoisonTarget() {
   return {
     id: "poison",
-    speed: 6,
+    // speed: 6,
     cooldown: 1,
     target: targetModeEnemy(),
     threat: 4,
@@ -137,7 +137,7 @@ function skillDataPoisonTarget() {
 function skillDataPoisonAttack() {
   return {
     id: "poisonAttack",
-    speed: 4,
+    // speed: 4,
     cooldown: 0,
     target: targetModeEnemy(),
     threat: 7,
@@ -150,7 +150,7 @@ function skillDataPoisonAttack() {
 function skillDataPoisonArrow() {
   return {
     id: "poisonArrow",
-    speed: 7,
+    // speed: 7,
     cooldown: 1,
     target: targetModeEnemy(),
     threat: 7,
@@ -163,7 +163,7 @@ function skillDataPoisonArrow() {
 function skillDataEnvenom() {
   return {
     id: "envenom",
-    speed: 7,
+    // speed: 7,
     cooldown: 2,
     target: targetModeEnemy(),
     threat: 8,
@@ -176,7 +176,7 @@ function skillDataEnvenom() {
 function skillDataEvasion() {
   return {
     id: "evasion",
-    speed: 2,
+    // speed: 2,
     cooldown: 3,
     target: targetModeSelf(),
     threat: 4,
@@ -189,7 +189,7 @@ function skillDataEvasion() {
 function skillDataStunTarget() {
   return {
     id: "stun",
-    speed: 4,
+    // speed: 4,
     cooldown: 2,
     target: targetModeEnemy(),
     threat: 7,
@@ -202,7 +202,7 @@ function skillDataStunTarget() {
 function skillDataStunAttack() {
   return {
     id: "stunAttack",
-    speed: 8,
+    // speed: 8,
     cooldown: 5,
     target: targetModeEnemy(),
     threat: 8,
@@ -215,7 +215,7 @@ function skillDataStunAttack() {
 function skillDataAdrenalineRush() {
   return {
     id: "adrenaline",
-    speed: 3,
+    // speed: 3,
     cooldown: 1,
     target: targetModeSelf(),
     threat: 3,
@@ -228,7 +228,7 @@ function skillDataAdrenalineRush() {
 function skillDataQuickAttack() {
   return {
     id: "quickAttack",
-    speed: 3,
+    // speed: 3,
     cooldown: 0,
     target: targetModeEnemy(),
     threat: 6,
@@ -240,7 +240,7 @@ function skillDataQuickAttack() {
 function skillDataBreakArmor() {
   return {
     id: "breakArmor",
-    speed: 5,
+    // speed: 5,
     cooldown: 2,
     target: targetModeEnemy(),
     threat: 7,
@@ -253,7 +253,7 @@ function skillDataBreakArmor() {
 function skillDataDivineProtection() {
   return {
     id: "divineProtection",
-    speed: 10,
+    // speed: 10,
     cooldown: 3,
     target: targetModeAllAllies(),
     threat: 7,
@@ -266,7 +266,7 @@ function skillDataDivineProtection() {
 function skillDataRegrowth() {
   return {
     id: "regrowth",
-    speed: 6,
+    // speed: 6,
     cooldown: 1,
     target: targetModeAlly(),
     threat: 7,
@@ -279,7 +279,7 @@ function skillDataRegrowth() {
 function skillDataMassBarkskin() {
   return {
     id: "massBarkskin",
-    speed: 10,
+    // speed: 10,
     cooldown: 3,
     target: targetModeAllAllies(),
     threat: 8,
@@ -338,7 +338,7 @@ function classDataAssassin() {
     classId: "assassin",
     power: 12,
     health: 92,
-    speed: 4,
+    speed: 7,
     skills: [
       newSkillInstance(skillDataEnvenom()),
       newSkillInstance(skillDataPoisonAttack()),
@@ -354,7 +354,7 @@ function classDataRogue() {
     classId: "rogue",
     power: 12,
     health: 92,
-    speed: 4,
+    speed: 8,
     skills: [
       newSkillInstance(skillDataAdrenalineRush()),
       newSkillInstance(skillDataQuickAttack()),
@@ -386,7 +386,7 @@ function classDataBerserker() {
     classId: "berserker",
     power: 10,
     health: 90,
-    speed: 8,
+    speed: 5,
     skills: [
       newSkillInstance(skillDataStunAttack()),
       newSkillInstance(skillDataAttack()),
@@ -402,7 +402,7 @@ function classDataCleric() {
     classId: "cleric",
     power: 6,
     health: 80,
-    speed: 8,
+    speed: 3,
     skills: [
       newSkillInstance(skillDataGreaterHeal()),
       newSkillInstance(skillDataAttack()),
@@ -418,7 +418,7 @@ function classDataDruid() {
     classId: "druid",
     power: 7,
     health: 80,
-    speed: 7,
+    speed: 4,
     skills: [
       newSkillInstance(skillDataRegrowth()),
       newSkillInstance(skillDataAttack()),
@@ -511,8 +511,8 @@ function newSkillBattleEvent(character, skill) {
 
 function processPlayerSkill(game, player, skill, args) {
   // Move the player down the queue
-  adjustTurnOrder(game, player.speed);
-  player.speed += skill.speed;
+  // adjustTurnOrder(game, player.speed);
+  // player.speed += skill.speed;
 
   // Clear the event queue
   game.events = [];
@@ -527,6 +527,8 @@ function processPlayerSkill(game, player, skill, args) {
 
   doEndOfTurnEffects(game);
   // console.log("game state:", game);
+
+  game.currentTurn = (game.currentTurn + 1) % game.players.length;
 }
 
 
@@ -900,17 +902,17 @@ function updateThreatLevel(game, index, value) {
 }
 
 
-function adjustTurnOrder(game, value) {
-  let threshold = 1000000;
-  for (const player of game.players) {
-    const speed = player.speed - value;
-    player.speed = speed;
-    if (speed < threshold) {
-      game.currentTurn = player.id;
-      threshold = speed;
-    }
-  }
-}
+// function adjustTurnOrder(game, value) {
+//   let threshold = 1000000;
+//   for (const player of game.players) {
+//     const speed = player.speed - value;
+//     player.speed = speed;
+//     if (speed < threshold) {
+//       game.currentTurn = player.id;
+//       threshold = speed;
+//     }
+//   }
+// }
 
 
 function doEnemyReaction(game, player, usedSkill) {
@@ -977,17 +979,17 @@ function doEndOfTurnEffectsForCharacter(game, character) {
 function enterBattleState(game) {
   game.state = constStateBattle();
   game.enemy = newEnemyCharacter();
-  game.currentTurn = null;
+  game.currentTurn = 0;
   game.events = [];
   game.enemyTarget = 0;
-  let speed = 1000000;
-  for (const character of game.players) {
-    if (character.speed < speed) {
-      game.currentTurn = character.id;
-      speed = character.speed;
-    }
-    game.enemyTarget = character.index;
-  }
+  // let speed = 1000000;
+  // for (const character of game.players) {
+  //   if (character.speed < speed) {
+  //     game.currentTurn = character.id;
+  //     speed = character.speed;
+  //   }
+  //   game.enemyTarget = character.index;
+  // }
 }
 
 
@@ -1056,29 +1058,29 @@ Rune.initLogic({
   },
 
   actions: {
-    selectCharacter(payload, { game, playerId }) {
-      if (game.state !== constStateSetup()) {
-        throw Rune.invalidAction();
-      }
+    // selectCharacter(payload, { game, playerId }) {
+    //   if (game.state !== constStateSetup()) {
+    //     throw Rune.invalidAction();
+    //   }
 
-      // Get the corresponding player
-      const player = getPlayer(game, playerId);
-      if (player == null) {
-        throw Rune.invalidAction();
-      }
+    //   // Get the corresponding player
+    //   const player = getPlayer(game, playerId);
+    //   if (player == null) {
+    //     throw Rune.invalidAction();
+    //   }
 
-      // Get the selected class data
-      const classData = getClassById(payload.classId);
-      Object.assign(player, classData);
+    //   // Get the selected class data
+    //   const classData = getClassById(payload.classId);
+    //   Object.assign(player, classData);
 
-      // Check if everyone is ready
-      for (const character of game.players) {
-        if (!character.classId) { return; }
-      }
+    //   // Check if everyone is ready
+    //   for (const character of game.players) {
+    //     if (!character.classId) { return; }
+    //   }
 
-      // Transition to battle state
-      enterBattleState(game);
-    },
+    //   // Transition to battle state
+    //   enterBattleState(game);
+    // },
 
     useSkill(payload, { game, playerId }) {
       if (game.state !== constStateBattle()) {

@@ -66,7 +66,7 @@ function newClientPlayer(data, index) {
     playerId: data.playerId,
     name: data.name,
     classData: cls,
-    speed: data.speed,
+    // speed: data.speed,
     power: data.power,
     health: data.health,
     currentHealth: data.currentHealth,
