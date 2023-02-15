@@ -350,28 +350,27 @@ const app = createApp({
       }
     },
 
-    onSetupCharacterSelected() {
-      // call logic action
-      const character = this.controlledCharacter;  // FIXME
-      console.log(this.playerId, "selected", character.classId, "class");
-      Rune.actions.selectCharacter({ classId: character.classId });
-    },
+    // onSetupCharacterSelected() {
+    //   const character = this.controlledCharacter;  // FIXME
+    //   console.log(this.playerId, "selected", character.classId, "class");
+    //   Rune.actions.selectCharacter({ classId: character.classId });
+    // },
 
-    enterChooseCharacterUIState() {
-      this.ui.state = UIState.CHOOSE_CHARACTER;
-      this.ui.targetMode = null;
-      this.ui.selectedEnemy = null;
-      this.ui.selectedPlayer = null;
-      this.ui.actingCharacter = null;
-      this.ui.footer.display = false;
-      this.ui.footer.observer = false;
-      this.ui.footer.characterData = null;
-      this.ui.footer.selectedSkill = null;
-      this.ui.footer.selectedTarget = null;
-      this.ui.footer.skills = [];
-      this.ui.footer.itemName = "";
-      this.ui.footer.itemDescription = "";
-    },
+    // enterChooseCharacterUIState() {
+    //   this.ui.state = UIState.CHOOSE_CHARACTER;
+    //   this.ui.targetMode = null;
+    //   this.ui.selectedEnemy = null;
+    //   this.ui.selectedPlayer = null;
+    //   this.ui.actingCharacter = null;
+    //   this.ui.footer.display = false;
+    //   this.ui.footer.observer = false;
+    //   this.ui.footer.characterData = null;
+    //   this.ui.footer.selectedSkill = null;
+    //   this.ui.footer.selectedTarget = null;
+    //   this.ui.footer.skills = [];
+    //   this.ui.footer.itemName = "";
+    //   this.ui.footer.itemDescription = "";
+    // },
 
     enterChooseActionState() {
       this.ui.state = UIState.CHOOSE_ACTION;
@@ -379,7 +378,7 @@ const app = createApp({
       this.ui.selectedEnemy = null;
       this.ui.selectedPlayer = null;
       const character = this.controlledCharacter;
-      this.ui.actingCharacter = character.id;
+      this.ui.actingCharacter = null;
       this.ui.footer.display = true;
       this.ui.footer.observer = false;
       this.ui.footer.characterData = character;

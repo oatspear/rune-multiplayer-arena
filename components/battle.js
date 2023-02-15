@@ -89,7 +89,8 @@ const BattleCharacter = {
     isEnemy: Boolean,
     isActive: Boolean,
     isHighlighted: Boolean,
-    isActing: Boolean
+    isActing: Boolean,
+    isOwned: Boolean
   },
 
   data() {

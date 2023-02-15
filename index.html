@@ -109,23 +109,6 @@
       </div>
     </template>
 
-    <template id="vue-character-selection">
-      <div class="slide">
-        <div class="row">
-          <battle-character
-            v-for="(player, i) in players"
-            :tile-index="i"
-            :character="player"
-            :is-enemy="false"
-            :is-active="selectedPlayer === i"
-            :is-highlighted="highlightPlayers"
-            :is-acting="actingCharacter === player.id"
-            @selected="onPlayerSelected"
-          >
-        </div>
-      </div>
-    </template>
-
     <template id="vue-battle-scene">
       <div :id="`battle-scene-${sceneIndex}`" class="slide">
         <div class="row">
@@ -150,6 +133,7 @@
             :is-active="selectedPlayer === i"
             :is-highlighted="highlightPlayers"
             :is-acting="actingCharacter === player.id"
+            :is-owned="player.playerId === playerId"
             @selected="onPlayerSelected"
           >
           </battle-character>
@@ -165,6 +149,7 @@
             active: isActive,
             enemy: isEnemy,
             acting: isActing,
+            owned: isOwned,
             highlight: !isActive && isHighlighted,
             animating: animation != '',
             positive: animation == 'heal',
