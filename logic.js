@@ -278,11 +278,11 @@ function skillDataRegrowth() {
   return {
     id: "regrowth",
     // speed: 6,
-    cooldown: 1,
-    target: targetModeAlly(),
+    cooldown: 2,
+    target: targetModeAllAllies(),
     threat: 7,
     mechanic: constHealTargetOverTime(),
-    powerFactor: 0.75
+    powerFactor: 0.5
   };
 }
 
@@ -553,6 +553,7 @@ function newPlayerCharacter(playerId, index, name) {
   data.playerId = playerId;
   data.currentHealth = data.health;
   data.threat = 0;
+  data.dead = false;
   data.effects = newCharacterEffectsMap();
   return data;
 }
@@ -598,6 +599,14 @@ function newSkillBattleEvent(character, skill) {
     type: "skill",
     skill: skill.data.id,
     user: character.id
+  };
+}
+
+
+function newCharacterDiedBattleEvent(character) {
+  return {
+    type: "died",
+    character: character.id
   };
 }
 
@@ -817,8 +826,13 @@ function handleHealTargetByFactor(game, user, target, skill) {
 
 function handleHealTargetOverTime(game, user, target, skill) {
   const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  const e = healTargetOverTime(game, target, damage);
-  game.events.push(e);
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const e = healTargetOverTime(game, character, damage);
+    game.events.push(e);
+  }
 }
 
 
@@ -895,6 +909,9 @@ function dealDamageToTarget(game, target, damage, type) {
       damage -= shield;
       target.effects.shield = 0;
       target.currentHealth -= damage;
+      if (target.currentHealth <= 0 && target.playerId != null) {
+        killPlayerCharacter(game, target);
+      }
     }
   }
   return {
@@ -1011,9 +1028,9 @@ function updateThreatLevel(game, index, value) {
     } else {
       player.threat -= quarter;
     }
-    // if (player.threat < 0) {
-    //   player.threat = 0;
-    // }
+    if (player.threat < 0) {
+      player.threat = 0;
+    }
     // console.log("Player", player.index, "threat:", player.threat);
     if (player.threat >= highest) {
       highest = player.threat;
@@ -1039,7 +1056,7 @@ function updateThreatLevel(game, index, value) {
 function doEnemyReaction(game, player, usedSkill) {
   const enemy = game.enemy;
 
-  if (enemy.effects.stunned) { return; }
+  if (enemy.effects.stunned || enemy.currentHealth <= 0) { return; }
 
   // Select a skill
   let skill = enemy.basicAttack;
@@ -1145,6 +1162,15 @@ function advanceTurns(game) {
       break;
     }
   }
+}
+
+
+function killPlayerCharacter(game, player) {
+  player.dead = true;
+  player.currentHealth = 0;
+  player.effects = newCharacterEffectsMap();
+  updateThreatLevel(game, player.index, 0);
+  player.threat = -1;
 }
 
 
