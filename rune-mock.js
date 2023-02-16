@@ -58,6 +58,7 @@ const Rune = {
           cb(payload, context);
           console.timeEnd("action");
           self.game = newGame;
+          self.internal.currentTurn = newGame.players[newGame.currentTurn].playerId;
           window.setTimeout(function () {
             console.time("visualUpdate");
             self.visualUpdate({
@@ -74,7 +75,6 @@ const Rune = {
               rollbacks: []
             });
             console.timeEnd("visualUpdate");
-            self.internal.currentTurn = self.game.players[self.game.currentTurn].playerId;
           }, 0);
         };
       })(key);
