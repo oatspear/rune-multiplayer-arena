@@ -89,6 +89,17 @@ function skillDataAttack() {
     // speed: 5,
     cooldown: 0,
     target: targetModeEnemy(),
+    threat: 5,
+    mechanic: constAttackTarget()
+  };
+}
+
+function skillDataMockingAttack() {
+  return {
+    id: "mockAttack",
+    // speed: 5,
+    cooldown: 0,
+    target: targetModeEnemy(),
     threat: 10,
     mechanic: constAttackTarget()
   };
@@ -416,7 +427,7 @@ function classDataBerserker() {
     speed: 5,
     skills: [
       newSkillInstance(skillDataStunAttack()),
-      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataMockingAttack()),
       newSkillInstance(skillDataBreakArmor()),
       newSkillInstance(skillDataRest())
     ]
@@ -992,17 +1003,18 @@ function makeTargetInvulnerable(game, target, duration) {
 
 
 function updateThreatLevel(game, index, value) {
-  const half = (value / 2) | 0;
+  const quarter = (value / 4) | 0;
   let highest = game.players[game.enemyTarget].threat;
   for (const player of game.players) {
     if (player.index === index) {
       player.threat += value;
     } else {
-      player.threat -= half;
+      player.threat -= quarter;
     }
     // if (player.threat < 0) {
     //   player.threat = 0;
     // }
+    console.log("Player", player.index, "threat:", player.threat);
     if (player.threat >= highest) {
       highest = player.threat;
       game.enemyTarget = player.index;

@@ -177,6 +177,10 @@ main {
   align-items: center;
 }
 
+.column > .tile-container {
+  padding: .25rem;
+}
+
 .tile {
   position: relative;
   width: 90%;
@@ -194,6 +198,13 @@ main {
   padding: .125rem .5rem;
   user-select: none;
   -webkit-user-select: none;
+}
+
+.column > .tile-container > .tile {
+  width: 100%;
+  max-width: none;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .tile.animating {
@@ -290,12 +301,21 @@ main {
   white-space: nowrap;
 }
 
+.column > .tile-container > .tile > .class {
+  flex: 0 0 auto;
+  width: auto;
+  text-align: left;
+}
+
 .tile.active > .class {
   color: #202124;
 }
 
 .tile > .portrait {
   flex: 1 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tile > .portrait > img {
@@ -303,6 +323,16 @@ main {
   height: 32px;
   transition: opacity 200ms ease-out;
   opacity: 1;
+}
+
+.column > .tile-container > .tile > .portrait {
+  padding: 0 .25rem;
+  flex: 0 0 auto;
+}
+
+.column > .tile-container > .tile > .portrait > img {
+  width: 16px;
+  height: 16px;
 }
 
 .tile.enemy > .portrait > img {
@@ -355,6 +385,11 @@ main {
   justify-content: center;
 }
 
+.column > .tile-container > .tile > .effect-anchor {
+  flex: 1 1 0;
+  justify-content: flex-end;
+}
+
 .tile > .effect-anchor * {
   user-select: none;
   -webkit-user-select: none;
@@ -379,7 +414,29 @@ main {
   }
   50% {
     opacity: 0.75;
-    transform: translateY(-16px);
+    transform: translateY(-50%);
+  }
+}
+
+.column > .tile-container > .tile > .effect-anchor > .shield {
+  width: 32px;
+  height: 32px;
+  animation: pulseOpacityHalfwayCompact 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulseOpacityHalfwayCompact {
+  0%, 50%, 100% {
+    opacity: 0.25;
+    transform: none;
+  }
+  25% {
+    opacity: 0.75;
+    transform: translateX(-200%);
+  }
+  75% {
+    opacity: 0.75;
+    transform: translateX(200%);
   }
 }
 
@@ -407,6 +464,13 @@ main {
   }
 }
 
+.column > .tile-container > .tile > .effect-anchor > .stunned {
+  position: static;
+  opacity: 1;
+  transform-origin: center;
+}
+
+.column > .tile-container > .tile > .effect-anchor > .stunned,
 .tile > .effect-anchor > .poison,
 .tile > .effect-anchor > .healing,
 .tile > .effect-anchor > .invulnerable,
@@ -458,6 +522,15 @@ main {
   justify-content: flex-start;
 }
 
+.column > .tile-container > .tile > .stats {
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.column > .tile-container > .tile > .stats > .power {
+  justify-content: flex-end;
+}
+
 .stats > .health {
   justify-content: flex-end;
 }
@@ -482,6 +555,11 @@ main {
   height: 64px;
 }
 
+.column > .tile-container > .tile > .overlay > .icon {
+  width: 32px;
+  height: 32px;
+}
+
 .tile > .overlay > .particles {
   position: absolute;
   display: flex;
@@ -493,6 +571,11 @@ main {
   position: relative;
   width: 32px;
   height: 32px;
+}
+
+.column > .tile-container > .tile > .overlay > .particles > .icon {
+  width: 16px;
+  height: 16px;
 }
 
 .overlay.fade-enter-active,

@@ -59,6 +59,11 @@ const Skills = {
     icon: "battle",
     description: "Attack an enemy."
   },
+  mockAttack: {
+    name: "Mocking Attack",
+    icon: "battle",
+    description: "Attack an enemy."
+  },
   rangedAttack: {
     name: "Ranged Attack",
     icon: "ranger",

@@ -94,6 +94,7 @@ const app = createApp({
       history: [null, null, null, null],
       ui: {
         state: UIState.INIT,
+        compact: false,
         targetMode: null,
         selectedEnemy: null,
         selectedPlayer: null,
@@ -191,6 +192,7 @@ const app = createApp({
       for (let i = 0; i < players.length; ++i) {
         this.players.push(newClientPlayer(players[i], i));
       }
+      this.ui.compact = this.players.length > 2;
     },
 
     resetCharacterMap() {

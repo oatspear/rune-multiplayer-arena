@@ -19,7 +19,8 @@ const BattleBoard = {
     selectedEnemy: Number,
     selectedPlayer: Number,
     actingCharacter: Number,
-    globalAnimation: String
+    globalAnimation: String,
+    compact: Boolean
   },
   data() {},
   methods: {
@@ -54,7 +55,8 @@ const BattleScene = {
     highlightPlayers: Boolean,
     selectedEnemy: Number,
     selectedPlayer: Number,
-    actingCharacter: Number
+    actingCharacter: Number,
+    compact: Boolean
   },
 
   data() {

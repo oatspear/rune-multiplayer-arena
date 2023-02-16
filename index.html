@@ -35,6 +35,7 @@
         :selected-player="ui.selectedPlayer"
         :acting-character="ui.actingCharacter"
         :global-animation="ui.globalAnimation"
+        :compact="ui.compact"
         @selected-enemy="onEnemySelected"
         @selected-player="onPlayerSelected"
       >
@@ -98,6 +99,7 @@
             :selected-enemy="selectedEnemy"
             :selected-player="selectedPlayer"
             :acting-character="actingCharacter"
+            :compact="compact"
             @selected-enemy="onEnemySelected"
             @selected-player="onPlayerSelected"
           >
@@ -125,7 +127,7 @@
           >
           </battle-character>
         </div>
-        <div class="row">
+        <div :class="compact ? 'column' : 'row'">
           <battle-character
             v-for="(player, i) in players"
             :tile-index="i"
@@ -174,13 +176,6 @@
           <div class="stats">
             <battle-icon-label name="power" :value="power" :size="16"></battle-icon-label>
             <battle-icon-label name="health" :value="currentHealth" :max-value="health" :size="16"></battle-icon-label>
-            <!-- <div class="power">
-              <span>{{ power }}</span>
-            </div>
-            /
-            <div class="health" :class="{'text-red': isDamaged}">
-              <span>{{ currentHealth }}</span>
-            </div> -->
           </div>
           <Transition name="fade">
             <div v-if="overlay.display" class="overlay">
