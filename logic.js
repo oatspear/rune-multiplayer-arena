@@ -614,8 +614,7 @@ function processPlayerSkill(game, player, skill, args) {
   doEnemyReaction(game, player, skill);
 
   doEndOfTurnEffects(game);
-  game.turns++;
-  game.currentTurn = (game.currentTurn + 1) % game.players.length;
+  advanceTurns(game);
 }
 
 
@@ -1098,6 +1097,20 @@ function enterBattleState(game) {
   //   game.enemyTarget = character.index;
   // }
   applyEnemyBoosts(game.enemy, game.players.length)
+}
+
+
+function advanceTurns(game) {
+  game.turns++;
+  const t = game.currentTurn;
+  const n = game.players.length;
+  for (let i = 1; i <= n; ++i) {
+    const k = (t + i) % n;
+    if (game.players[k].currentHealth > 0) {
+      game.currentTurn = k;
+      break;
+    }
+  }
 }
 
 
