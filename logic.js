@@ -607,6 +607,12 @@ function processPlayerSkill(game, player, skill, args) {
   if (player.effects.stunned <= 0) {
     // Resolve the skill
     resolveSkill(game, player, skill, args);
+
+    // Determine if game has ended
+    if (isGameOver(game)) {
+      Rune.gameOver();
+    }
+
     updateThreatLevel(game, player.index, skill.data.threat);
   }
 
@@ -675,11 +681,6 @@ function resolveSkill(game, user, skill, args) {
     default:
       throw Rune.invalidAction();
   }
-
-  // Determine if game has ended
-  if (isGameOver(game)) {
-    Rune.gameOver();
-  }
 }
 
 
@@ -697,10 +698,18 @@ function getTarget(game, user, targetMode, targetIndex) {
     return user;
   }
   if (targetMode === targetModeAlly()) {
-    return user.playerId != null ? game.players[targetIndex] : user;
+    const character = user.playerId != null ? game.players[targetIndex] : user;
+    if (character.currentHealth <= 0) {
+      throw Rune.invalidAction();
+    }
+    return character;
   }
   if (targetMode === targetModeEnemy()) {
-    return user.playerId != null ? game.enemy : game.players[targetIndex];
+    const character = user.playerId != null ? game.enemy : game.players[targetIndex];
+    if (character.currentHealth <= 0) {
+      throw Rune.invalidAction();
+    }
+    return character;
   }
   const targets = [];
   if (targetMode !== targetModeAllAllies()) {
@@ -708,13 +717,21 @@ function getTarget(game, user, targetMode, targetIndex) {
     if (user.playerId != null) {
       targets.push(game.enemy);
     } else {
-      targets.push.apply(targets, game.players);
+      for (const character of game.players) {
+        if (character.currentHealth > 0) {
+          targets.push(character);
+        }
+      }
     }
   }
   if (targetMode !== targetModeAllEnemies()) {
     // all allies or all characters
     if (user.playerId != null) {
-      targets.push.apply(targets, game.players);
+      for (const character of game.players) {
+        if (character.currentHealth > 0) {
+          targets.push(character);
+        }
+      }
     } else {
       targets.push(game.enemy);
     }
@@ -1030,6 +1047,11 @@ function doEnemyReaction(game, player, usedSkill) {
 
   // Resolve the skill
   resolveSkill(game, enemy, skill, { target: game.enemyTarget });
+
+  // Determine if game has ended
+  if (isGameOver(game)) {
+    Rune.gameOver();
+  }
 }
 
 
@@ -1131,7 +1153,7 @@ function isGameOver(game) {
 *******************************************************************************/
 
 Rune.initLogic({
-  minPlayers: 1,
+  minPlayers: 4,
   maxPlayers: 4,
 
   setup(players) {
