@@ -1014,7 +1014,7 @@ function updateThreatLevel(game, index, value) {
     // if (player.threat < 0) {
     //   player.threat = 0;
     // }
-    console.log("Player", player.index, "threat:", player.threat);
+    // console.log("Player", player.index, "threat:", player.threat);
     if (player.threat >= highest) {
       highest = player.threat;
       game.enemyTarget = player.index;
