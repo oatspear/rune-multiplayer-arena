@@ -582,7 +582,7 @@ function newEnemyCharacter() {
 
 function applyEnemyBoosts(enemy, numberOfPlayers) {
   numberOfPlayers--;
-  enemy.power += numberOfPlayers;
+  // enemy.power += numberOfPlayers;
   enemy.health += 100 * numberOfPlayers;
   enemy.currentHealth += 100 * numberOfPlayers;
 }
