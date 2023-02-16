@@ -554,11 +554,11 @@ function newPlayerCharacter(playerId, index, name) {
 
 function newEnemyCharacter() {
   const options = shuffle([
-    bossDataBlackDragon,
-    bossDataStormDragon,
-    bossDataGargoyle,
+    bossDataBlackDragon(),
+    bossDataStormDragon(),
+    bossDataGargoyle(),
   ]);
-  const data = options[0]();
+  const data = options.pop();
   data.id = -1;
   data.index = 0;
   data.currentHealth = data.health;
@@ -1148,18 +1148,18 @@ Rune.initLogic({
     };
 
     game.availableHeroes = shuffle([
-      classDataAssassin,
+      classDataAssassin(),
       // classDataRogue,
-      classDataBerserker,
-      classDataRanger,
-      classDataCleric,
-      classDataDruid
+      classDataBerserker(),
+      classDataRanger(),
+      classDataCleric(),
+      classDataDruid()
     ]);
 
     for (const playerId of players) {
       const player = newPlayerCharacter(playerId, game.players.length);
       const classData = game.availableHeroes.pop();
-      Object.assign(player, classData());
+      Object.assign(player, classData;
       player.currentHealth = player.health;
       game.players.push(player);
     }
