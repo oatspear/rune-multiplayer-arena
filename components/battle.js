@@ -98,7 +98,8 @@ const BattleCharacter = {
       power: this.character.power,
       health: this.character.health,
       currentHealth: this.character.currentHealth,
-      order: 0,
+      // shield: 0,
+      // stunned: 0,
       animation: "",
       overlay: {
         display: false,
@@ -132,6 +133,9 @@ const BattleCharacter = {
         this.overlay.particleAnimation = null;
         if (oldValue.finalHealth != null) {
           this.currentHealth = oldValue.finalHealth;
+          if (oldValue.finalShield != null) {
+            this.shield = oldValue.finalShield;
+          }
         }
         if (oldValue.finalMaxHealth != null) {
           this.health = oldValue.finalMaxHealth;
@@ -139,7 +143,13 @@ const BattleCharacter = {
         if (oldValue.finalPower != null) {
           this.power = oldValue.finalPower;
         }
+        // if (oldValue.type === "shield") {
+        //   this.shield = oldValue.value;
+        // } else if (oldValue.type === "stun") {
+        //   this.stunned = oldValue.duration;
+        // }
       } else {
+        // this.stunned = this.character.effects.stunned;
         this.animateEvent(newValue);
       }
     }
@@ -225,6 +235,10 @@ const BattleHeader = {
   props: {
     history: {
       type: Array,
+      required: true
+    },
+    playerId: {
+      type: String,
       required: true
     }
   }
@@ -375,6 +389,7 @@ const BattleActionBar = {
 
 const BattleIconLabel = {
   template: "#vue-battle-icon-label",
+
   props: {
     name: {
       type: String,
@@ -384,9 +399,16 @@ const BattleIconLabel = {
       type: Number,
       required: true
     },
+    maxValue: Number,
     size: {
       type: Number,
       default: 32
+    }
+  },
+
+  computed: {
+    isBelowMax() {
+      return this.maxValue != null && this.maxValue > this.value;
     }
   }
 };

@@ -59,7 +59,7 @@ body {
 }
 
 .text-red {
-  color: red;
+  color: salmon;
 }
 
 
@@ -204,8 +204,13 @@ main {
   border: 2px solid royalblue;
 }
 
+.tile.enemy {
+  border: 2px solid crimson;
+}
+
 .tile.acting,
-.tile.owned.acting {
+.tile.owned.acting,
+.tile.enemy.acting {
   border: 2px solid gold;
 }
 
@@ -348,6 +353,90 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.tile > .effect-anchor * {
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  pointer-events: none;
+}
+
+.tile > .effect-anchor > .shield {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  background-image: url("assets/shield.png");
+  background-size: cover;
+  animation: pulseOpacityHalfway 5s;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pulseOpacityHalfway {
+  0%, 20%, 80%, 100% {
+    opacity: 0.25;
+    transform: none;
+  }
+  50% {
+    opacity: 0.75;
+    transform: translateY(-16px);
+  }
+}
+
+.tile > .effect-anchor > .stunned {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background-image: url("assets/stun.png");
+  background-size: cover;
+  animation: rotateBounce 4s;
+  animation-iteration-count: infinite;
+  opacity: 0.75;
+  transform-origin: bottom;
+}
+
+@keyframes rotateBounce {
+  0%, 50%, 100% {
+    transform: translateY(-48px);
+  }
+  25% {
+    transform: translateY(-40px) rotate(-0.16turn);
+  }
+  75% {
+    transform: translateY(-40px) rotate(0.16turn);
+  }
+}
+
+.tile > .effect-anchor > .poison,
+.tile > .effect-anchor > .healing,
+.tile > .effect-anchor > .invulnerable,
+.tile > .effect-anchor > .armor-boost,
+.tile > .effect-anchor > .armor-break {
+  width: 16px;
+  height: 16px;
+  background-size: cover;
+  animation: pulseOpacityHalfway 3s;
+  animation-iteration-count: infinite;
+}
+
+.tile > .effect-anchor > .poison {
+  background-image: url("assets/skull-green.png");
+}
+
+.tile > .effect-anchor > .healing {
+  background-image: url("assets/healing.png");
+}
+
+.tile > .effect-anchor > .invulnerable {
+  background-image: url("assets/invulnerable.png");
+}
+
+.tile > .effect-anchor > .armor-boost {
+  background-image: url("assets/shield.png");
+}
+
+.tile > .effect-anchor > .armor-break {
+  background-image: url("assets/break-armor.png");
 }
 
 .tile > .stats {
@@ -710,8 +799,9 @@ footer > .description {
   user-select: none;
   -webkit-user-select: none;
   touch-action: none;
-  animation: pulseBackgroundOlive 3s;
-  animation-iteration-count: infinite;
+  /* animation: pulseBackgroundOlive 3s;
+  animation-iteration-count: infinite; */
+
   /* touch-action: manipulation; */
   /* width: 100%; */
   /* will-change: transform; */

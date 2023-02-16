@@ -71,7 +71,14 @@ function newClientPlayer(data, index) {
     health: data.health,
     currentHealth: data.currentHealth,
     skills: skills,
-    animation: null
+    animation: null,
+    stunned: data.effects.stunned,
+    shield: data.effects.shield,
+    poison: data.effects.poison,
+    healing: data.effects.healing,
+    invulnerable: data.effects.invulnerable,
+    healingModifier: data.effects.healingModifier,
+    armorModifier: data.effects.armorModifier
   };
 }
 

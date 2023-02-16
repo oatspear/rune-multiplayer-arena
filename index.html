@@ -162,10 +162,18 @@
           <div class="portrait">
             <img :src="`assets/${character.classData.icon}.png`" alt="?">
           </div>
-          <div class="effect-anchor"></div>
+          <div class="effect-anchor">
+            <div class="stunned" v-if="character.stunned > 0"></div>
+            <div class="shield" v-if="character.shield > 0"></div>
+            <div class="poison" v-if="character.poison > 0"></div>
+            <div class="healing" v-if="character.healing > 0"></div>
+            <div class="invulnerable" v-if="character.invulnerable > 0"></div>
+            <div class="armor-boost" v-if="character.armorModifier > 0"></div>
+            <div class="armor-break" v-else-if="character.armorModifier < 0"></div>
+          </div>
           <div class="stats">
             <battle-icon-label name="power" :value="power" :size="16"></battle-icon-label>
-            <battle-icon-label name="health" :value="currentHealth" :size="16"></battle-icon-label>
+            <battle-icon-label name="health" :value="currentHealth" :max-value="health" :size="16"></battle-icon-label>
             <!-- <div class="power">
               <span>{{ power }}</span>
             </div>
@@ -280,7 +288,7 @@
     <template id="vue-battle-icon-label">
       <div class="icon-label" :class="name">
         <img :src="`assets/${name}.png`" alt="Icon" :width="size" :height="size">
-        <span class="label">{{ value }}</span>
+        <span class="label" :class="{'text-red': isBelowMax}">{{ value }}</span>
       </div>
     </template>
 

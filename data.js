@@ -121,7 +121,7 @@ const Skills = {
   },
   regrowth: {
     name: "Regrowth",
-    icon: "heal",
+    icon: "regrowth",
     description: "Heal target over time."
   },
   massBarkskin: {
@@ -133,6 +133,11 @@ const Skills = {
     name: "Fire Breath",
     icon: "fire",
     description: "Damage all enemies."
+  },
+  powerBoost: {
+    name: "Power Boost",
+    icon: "power",
+    description: "Boost ally power."
   }
 };
 
@@ -186,6 +191,11 @@ const Classes = {
     id: "stormDragon",
     name: "Dragon",
     icon: "dragon-blue"
+  },
+  gargoyle: {
+    id: "gargoyle",
+    name: "Gargoyle",
+    icon: "gargoyle"
   }
 };
 
@@ -250,7 +260,7 @@ const BattleEvents = {
     icon: "heal",
     animation: {
       icon: {
-        name: "heal",
+        name: "regrowth",
         animation: "fading"
       }
     }

@@ -303,6 +303,19 @@ function skillDataFireBreath() {
 }
 
 
+function skillDataPowerBoost() {
+  return {
+    id: "powerBoost",
+    // speed: 3,
+    cooldown: 2,
+    target: targetModeAlly(),
+    threat: 3,
+    mechanic: constPowerBoost(),
+    value: 2
+  };
+}
+
+
 /*******************************************************************************
   Class Data
 *******************************************************************************/
@@ -418,10 +431,10 @@ function classDataCleric() {
     health: 80,
     speed: 3,
     skills: [
-      newSkillInstance(skillDataGreaterHeal()),
+      newSkillInstance(skillDataPowerBoost()),
       newSkillInstance(skillDataAttack()),
       newSkillInstance(skillDataDivineProtection()),
-      newSkillInstance(skillDataRest())
+      newSkillInstance(skillDataGreaterHeal())
     ]
   };
 }
@@ -437,7 +450,7 @@ function classDataDruid() {
       newSkillInstance(skillDataRegrowth()),
       newSkillInstance(skillDataAttack()),
       newSkillInstance(skillDataMassBarkskin()),
-      newSkillInstance(skillDataRest())
+      newSkillInstance(skillDataGreaterHeal())
     ]
   };
 }
@@ -487,6 +500,21 @@ function bossDataStormDragon() {
 }
 
 
+function bossDataGargoyle() {
+  return {
+    classId: "gargoyle",
+    power: 8,
+    health: 200,
+    speed: 5,
+    basicAttack: newSkillInstance(skillDataPoisonAttack()),
+    rest: newSkillInstance(skillDataRest()),
+    skills: [
+      newSkillInstance(skillDataPowerBoost()),
+    ]
+  };
+}
+
+
 /*******************************************************************************
   Player Character Data
 *******************************************************************************/
@@ -527,7 +555,8 @@ function newPlayerCharacter(playerId, index, name) {
 function newEnemyCharacter() {
   const options = shuffle([
     bossDataBlackDragon,
-    bossDataStormDragon
+    bossDataStormDragon,
+    bossDataGargoyle,
   ]);
   const data = options[0]();
   data.id = -1;
@@ -537,6 +566,14 @@ function newEnemyCharacter() {
   data.lastHealed = 0;
   data.lastSpecial = 0;
   return data;
+}
+
+
+function applyEnemyBoosts(enemy, numberOfPlayers) {
+  numberOfPlayers--;
+  enemy.power += numberOfPlayers;
+  enemy.health += 100 * numberOfPlayers;
+  enemy.currentHealth += 100 * numberOfPlayers;
 }
 
 
@@ -567,10 +604,11 @@ function processPlayerSkill(game, player, skill, args) {
   // Clear the event queue
   game.events = [];
 
-  // Resolve the skill
-  // console.log(playerId, "used a skill:", skill.data.id, args.target);
-  resolveSkill(game, player, skill, args);
-  updateThreatLevel(game, player.index, skill.data.threat);
+  if (player.effects.stunned <= 0) {
+    // Resolve the skill
+    resolveSkill(game, player, skill, args);
+    updateThreatLevel(game, player.index, skill.data.threat);
+  }
 
   // Determine enemy reaction
   doEnemyReaction(game, player, skill);
@@ -578,7 +616,6 @@ function processPlayerSkill(game, player, skill, args) {
   doEndOfTurnEffects(game);
   game.turns++;
   game.currentTurn = (game.currentTurn + 1) % game.players.length;
-  // console.log("game state:", game);
 }
 
 
@@ -838,7 +875,8 @@ function dealDamageToTarget(game, target, damage, type) {
     target: target.id,
     value: damage,
     startingHealth: hp,
-    finalHealth: target.currentHealth
+    finalHealth: target.currentHealth,
+    finalShield: target.effects.shield
   };
 }
 
@@ -977,7 +1015,7 @@ function doEnemyReaction(game, player, usedSkill) {
 
   // Select a skill
   let skill = enemy.basicAttack;
-  if (((enemy.currentHealth / enemy.health) <= 0.25) && ((game.turns - enemy.lastHealed) > 3)) {
+  if (((enemy.currentHealth / enemy.health) <= 0.25) && ((game.turns - enemy.lastHealed) > 7)) {
     skill = enemy.rest;
     enemy.lastHealed = game.turns;
   } else {
@@ -1059,6 +1097,7 @@ function enterBattleState(game) {
   //   }
   //   game.enemyTarget = character.index;
   // }
+  applyEnemyBoosts(game.enemy, game.players.length)
 }
 
 
@@ -1097,7 +1136,7 @@ Rune.initLogic({
 
     game.availableHeroes = shuffle([
       classDataAssassin,
-      classDataRogue,
+      // classDataRogue,
       classDataBerserker,
       classDataRanger,
       classDataCleric,
