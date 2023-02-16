@@ -1,18 +1,38 @@
 // SPDX-License-Identifier: MIT
 // Copyright © 2023 André "Oatspear" Santos
 
-const RANDOM_PLAYER_ID = "randomPlayerId1";
+const RANDOM_PLAYER_ID1 = "randomPlayerId1";
+const RANDOM_PLAYER_ID2 = "randomPlayerId2";
+const RANDOM_PLAYER_ID3 = "randomPlayerId3";
+const RANDOM_PLAYER_ID4 = "randomPlayerId4";
 
 const Rune = {
   players: {
     "randomPlayerId1": {
       displayName: "Oatspear",
-      playerId: RANDOM_PLAYER_ID
+      playerId: RANDOM_PLAYER_ID1
+    },
+    "randomPlayerId2": {
+      displayName: "Oatspear",
+      playerId: RANDOM_PLAYER_ID2
+    },
+    "randomPlayerId3": {
+      displayName: "Oatspear",
+      playerId: RANDOM_PLAYER_ID3
+    },
+    "randomPlayerId4": {
+      displayName: "Oatspear",
+      playerId: RANDOM_PLAYER_ID4
     }
   },
   game: {},
   actions: {},
   visualUpdate: null,
+
+  internal: {
+    order: null,
+    currentTurn: null
+  },
 
   initLogic(params) {
     console.log("Rune.initLogic()");
@@ -21,7 +41,9 @@ const Rune = {
     console.log("setup:", params.setup);
     console.log("actions:", params.actions);
 
-    this.game = params.setup(Object.keys(this.players));
+    this.internal.order = Object.keys(this.players).slice(0, params.minPlayers);
+    this.internal.currentTurn = this.internal.order[0];
+    this.game = params.setup(this.internal.order);
 
     const self = this;
     for (const key of Object.keys(params.actions)) {
@@ -31,7 +53,7 @@ const Rune = {
           const players = self.players;
           const oldGame = self.game;
           const newGame = JSON.parse(JSON.stringify(oldGame));
-          const context = { game: newGame, playerId: RANDOM_PLAYER_ID };
+          const context = { game: newGame, playerId: self.internal.currentTurn };
           console.time("action");
           cb(payload, context);
           console.timeEnd("action");
@@ -41,17 +63,18 @@ const Rune = {
             self.visualUpdate({
               newGame: newGame,
               oldGame: oldGame,
-              yourPlayerId: RANDOM_PLAYER_ID,
+              yourPlayerId: self.internal.currentTurn,
               players: players,
               action: {
                 action: k,
                 params: payload,
-                playerId: RANDOM_PLAYER_ID
+                playerId: self.internal.currentTurn
               },
               event: undefined,
               rollbacks: []
             });
             console.timeEnd("visualUpdate");
+            self.internal.currentTurn = self.game.players[self.game.currentTurn].playerId;
           }, 0);
         };
       })(key);
@@ -63,7 +86,7 @@ const Rune = {
       self.visualUpdate({
         newGame: self.game,
         oldGame: self.game,
-        yourPlayerId: RANDOM_PLAYER_ID,
+        yourPlayerId: self.internal.currentTurn,
         players: self.players,
         action: undefined,
         event: {event: "stateSync"},
