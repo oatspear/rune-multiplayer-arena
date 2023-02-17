@@ -598,10 +598,27 @@ function newEnemyCharacter() {
 
 
 function applyEnemyBoosts(enemy, numberOfPlayers) {
-  numberOfPlayers--;
-  // enemy.power += numberOfPlayers;
-  enemy.health += 100 * numberOfPlayers;
-  enemy.currentHealth += 100 * numberOfPlayers;
+  while (--numberOfPlayers) {
+    grantEnemyBoost(enemy);
+  }
+}
+
+
+function grantEnemyBoost(enemy) {
+  // enemy.power++;
+  enemy.health += 100;
+  enemy.currentHealth += 100;
+}
+
+
+function takeEnemyBoost(enemy) {
+  // enemy.power--;
+  if (enemy.health > 100) {
+    enemy.health -= 100;
+    if (enemy.currentHealth > enemy.health) {
+      enemy.currentHealth = enemy.health;
+    }
+  }
 }
 
 
@@ -1213,7 +1230,7 @@ function killPlayerCharacter(game, player) {
   player.dead = true;
   player.currentHealth = 0;
   player.effects = newCharacterEffectsMap();
-  updateThreatLevel(game, player.index, 0);
+  updateThreatLevel(game, -1, 0);
   player.threat = -1;
 }
 
@@ -1274,13 +1291,43 @@ Rune.initLogic({
   },
 
   events: {
-    // playerJoined(playerId, { game }) {
-    //   const player = newPlayerCharacter(playerId, game.players.length);
-    //   const classData = game.availableHeroes.pop();
-    //   Object.assign(player, classData);
-    //   player.currentHealth = player.health;
-    //   game.players.push(player);
-    // }
+    playerJoined(playerId, { game }) {
+      const player = newPlayerCharacter(playerId, game.players.length);
+      const classData = game.availableHeroes.pop();
+      Object.assign(player, classData);
+      player.currentHealth = player.health;
+      game.players.push(player);
+      grantEnemyBoost(game.enemy);
+    },
+
+    playerLeft(playerId, { game }) {
+      for (let i = game.players.length - 1; i >= 0; i--) {
+        const player = game.players[i];
+        if (player.playerId != playerId) { continue; }
+
+        // Add the hero class back into the pool
+        const classData = getClassById(player.classId);
+        if (classData != null) { game.availableHeroes.push(classData); }
+
+        // Kill the character
+        killPlayerCharacter(game, player);
+
+        // Determine if game has ended
+        if (isGameOver(game)) {
+          Rune.gameOver();
+        }
+
+        // Remove the player from the game
+        game.players.splice(i, 1);
+        takeEnemyBoost(game.enemy);
+
+        // End the current turn if it belongs to this player
+        if (game.currentTurn === player.id) {
+          doEndOfTurnEffects(game);
+          advanceTurns(game);
+        }
+      }
+    }
   },
 
   actions: {
