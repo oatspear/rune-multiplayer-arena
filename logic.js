@@ -1320,7 +1320,7 @@ Rune.initLogic({
         // Remove the player from the game
         takeEnemyBoost(game.enemy);
         game.players.splice(i, 1);
-        for (let j = i + 1; j < game.players.length; ++j) {
+        for (let j = i; j < game.players.length; ++j) {
           game.players[j].id = j;
           game.players[j].index = j;
         }
