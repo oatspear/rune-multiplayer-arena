@@ -199,7 +199,7 @@ const Classes = {
   },
   stormDragon: {
     id: "stormDragon",
-    name: "Dragon",
+    name: "Wyvern",
     icon: "dragon-blue"
   },
   gargoyle: {
