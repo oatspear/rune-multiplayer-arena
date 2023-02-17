@@ -125,6 +125,12 @@ const BattleCharacter = {
   },
 
   watch: {
+    character(newValue, oldValue) {
+      this.power = newValue.power;
+      this.health = newValue.health;
+      this.currentHealth = newValue.currentHealth;
+    },
+
     'character.animation'(newValue, oldValue) {
       if (newValue == null) {
         this.animation = "";
