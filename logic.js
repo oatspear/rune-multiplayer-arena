@@ -1318,8 +1318,13 @@ Rune.initLogic({
         }
 
         // Remove the player from the game
-        game.players.splice(i, 1);
         takeEnemyBoost(game.enemy);
+        game.players.splice(i, 1);
+        for (let j = i + 1; j < game.players.length; ++j) {
+          game.players[j].id = j;
+          game.players[j].index = j;
+        }
+
 
         // End the current turn if it belongs to this player
         if (game.currentTurn === player.id) {
