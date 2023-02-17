@@ -121,7 +121,7 @@
             :character="enemy"
             :is-enemy
             :is-active="selectedEnemy === i"
-            :is-highlighted="highlightEnemies"
+            :is-highlighted="highlightEnemies && enemy.currentHealth > 0"
             :is-acting="actingCharacter === enemy.id"
             @selected="onEnemySelected"
           >
@@ -134,7 +134,7 @@
             :character="player"
             :is-enemy="false"
             :is-active="selectedPlayer === i"
-            :is-highlighted="highlightPlayers"
+            :is-highlighted="highlightPlayers && player.currentHealth > 0"
             :is-acting="actingCharacter === player.id"
             :is-owned="player.playerId === playerId"
             @selected="onPlayerSelected"
@@ -170,8 +170,7 @@
             <div class="poison" v-if="character.poison > 0"></div>
             <div class="healing" v-if="character.healing > 0"></div>
             <div class="invulnerable" v-if="character.invulnerable > 0"></div>
-            <div class="armor-boost" v-if="character.armorModifier > 0"></div>
-            <div class="armor-break" v-else-if="character.armorModifier < 0"></div>
+            <div class="armor-break" v-if="character.armorModifier > 0"></div>
           </div>
           <div class="stats">
             <battle-icon-label name="power" :value="power" :size="16"></battle-icon-label>

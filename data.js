@@ -129,10 +129,10 @@ const Skills = {
     icon: "regrowth",
     description: "Heal target over time."
   },
-  massBarkskin: {
-    name: "Mass Barkskin",
-    icon: "shield",
-    description: "+Armor to all allies."
+  wildBlossom: {
+    name: "Wild Blossom",
+    icon: "flowers",
+    description: "Consume Regrowth from allies."
   },
   fireBreath: {
     name: "Fire Breath",

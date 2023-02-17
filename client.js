@@ -311,6 +311,7 @@ const app = createApp({
 
     onEnemySelected(character) {
       if (this.ui.state === UIState.ANIMATION) { return; }
+      if (character.currentHealth <= 0) { return; }
       const i = character.index;
       // if (this.ui.footer.selectedSkill != null)
       if (this.ui.state === UIState.CHOOSE_TARGET) {
@@ -336,6 +337,7 @@ const app = createApp({
 
     onPlayerSelected(character) {
       if (this.ui.state === UIState.ANIMATION) { return; }
+      if (character.currentHealth <= 0) { return; }
       const i = character.index;
       // if (this.ui.footer.selectedSkill != null)
       if (this.ui.state === UIState.CHOOSE_TARGET) {

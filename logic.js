@@ -53,6 +53,7 @@ function constDamagePoisonTarget() { return 11; }
 function constArmorModifier() { return 12; }
 function constShieldTarget() { return 13; }
 function constHealTargetOverTime() { return 14; }
+function constConsumeHealOverTime() { return 15; }
 
 
 /*******************************************************************************
@@ -127,7 +128,7 @@ function skillDataGreaterHeal() {
     target: targetModeAlly(),
     threat: 6,
     mechanic: constHealTarget(),
-    powerFactor: 2
+    powerFactor: 2.5
   };
 }
 
@@ -252,11 +253,11 @@ function skillDataBreakArmor() {
   return {
     id: "breakArmor",
     // speed: 5,
-    cooldown: 2,
+    cooldown: 5,
     target: targetModeEnemy(),
     threat: 7,
     mechanic: constArmorModifier(),
-    value: -2
+    duration: 3
   };
 }
 
@@ -287,15 +288,15 @@ function skillDataRegrowth() {
 }
 
 
-function skillDataMassBarkskin() {
+function skillDataWildBlossom() {
   return {
-    id: "massBarkskin",
+    id: "wildBlossom",
     // speed: 10,
-    cooldown: 3,
+    cooldown: 5,
     target: targetModeAllAllies(),
     threat: 8,
-    mechanic: constArmorModifier(),
-    value: 1
+    mechanic: constConsumeHealOverTime(),
+    factor: 3
   };
 }
 
@@ -322,7 +323,7 @@ function skillDataPowerBoost() {
     target: targetModeAlly(),
     threat: 3,
     mechanic: constPowerBoost(),
-    value: 2
+    value: 4
   };
 }
 
@@ -331,7 +332,7 @@ function skillDataBossEnrage() {
   return {
     id: "bossEnrage",
     // speed: 3,
-    cooldown: 15,
+    cooldown: 12,
     target: targetModeSelf(),
     threat: 3,
     mechanic: constPowerBoost(),
@@ -473,7 +474,7 @@ function classDataDruid() {
     skills: [
       newSkillInstance(skillDataRegrowth()),
       newSkillInstance(skillDataAttack()),
-      newSkillInstance(skillDataMassBarkskin()),
+      newSkillInstance(skillDataWildBlossom()),
       newSkillInstance(skillDataGreaterHeal())
     ]
   };
@@ -554,8 +555,8 @@ function newCharacterEffectsMap() {
     healing: 0,  // damage
     invulnerable: 0,  // duration
     stunned: 0,  // duration
-    healingModifier: 0,
-    armorModifier: 0,
+    healingModifier: 0,  // duration
+    armorModifier: 0,  // duration
   };
 }
 
@@ -713,6 +714,9 @@ function resolveSkill(game, user, skill, args) {
     case constHealTargetOverTime():
       return handleHealTargetOverTime(game, user, target, skill);
 
+    case constConsumeHealOverTime():
+      return handleConsumeHealOverTime(game, user, target, skill);
+
     default:
       throw Rune.invalidAction();
   }
@@ -851,6 +855,21 @@ function handleHealTargetOverTime(game, user, target, skill) {
 }
 
 
+function handleConsumeHealOverTime(game, user, target, skill) {
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const damage = ((character.effects.healing * skill.data.factor) | 0) || 1;
+    if (damage > 0) {
+      character.effects.healing = 0;
+      const e = healTarget(game, character, damage);
+      game.events.push(e);
+    }
+  }
+}
+
+
 function handlePowerBoostTarget(game, user, target, skill) {
   const e = boostTargetPower(game, target, skill.data.value);
   game.events.push(e);
@@ -893,7 +912,7 @@ function handleTargetArmorModifier(game, user, target, skill) {
     target = [target];
   }
   for (const character of target) {
-    const e = applyTargetArmorModifier(game, character, skill.data.value);
+    const e = applyTargetArmorModifier(game, character, skill.data.duration);
     game.events.push(e);
   }
 }
@@ -912,10 +931,12 @@ function userAttackTarget(game, user, target) {
 
 function dealDamageToTarget(game, target, damage, type) {
   const hp = target.currentHealth;
-  if (target.effects.invulnerable || target.effects.armorModifier >= damage) {
+  if (target.effects.invulnerable) {
     damage = 0;
   } else {
-    damage -= target.effects.armorModifier;
+    if (target.effects.armorModifier > 0) {
+      damage = (damage * 1.5) | 0;
+    }
     const shield = target.effects.shield;
     if (shield >= damage) {
       target.effects.shield = shield - damage;
@@ -942,7 +963,9 @@ function dealDamageToTarget(game, target, damage, type) {
 
 function healTarget(game, target, damage) {
   const hp = target.currentHealth;
-  damage += target.effects.healingModifier;
+  if (target.effects.healingModifier > 0) {
+    damage = (damage * 2 / 3) | 0;
+  }
   if (damage < 0) {
     damage = 0;
   } else {
@@ -1014,12 +1037,12 @@ function stunTarget(game, target, duration) {
 }
 
 
-function applyTargetArmorModifier(game, target, value) {
-  target.effects.armorModifier += value;
+function applyTargetArmorModifier(game, target, duration) {
+  target.effects.armorModifier = duration;
   return {
     type: "armor",
     target: target.id,
-    value: value
+    duration: duration
   };
 }
 
@@ -1114,8 +1137,8 @@ function doEndOfTurnEffectsForCharacter(game, character) {
   // healing: damage
   // invulnerable: duration
   // stunned: duration
-  // healingModifier: 0,
-  // armorModifier: 0,
+  // healingModifier: duration,
+  // armorModifier: duration,
 
   // apply healing over time effects
   let value = effects.healing;
@@ -1137,6 +1160,12 @@ function doEndOfTurnEffectsForCharacter(game, character) {
   }
   if (effects.stunned > 0) {
     effects.stunned--;
+  }
+  if (effects.armorModifier > 0) {
+    effects.armorModifier--;
+  }
+  if (effects.healingModifier > 0) {
+    effects.healingModifier--;
   }
 
   // update skill cooldowns

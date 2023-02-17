@@ -418,14 +418,7 @@ main {
   }
 }
 
-.column > .tile-container > .tile > .effect-anchor > .shield {
-  width: 32px;
-  height: 32px;
-  animation: pulseOpacityHalfwayCompact 5s;
-  animation-iteration-count: infinite;
-}
-
-@keyframes pulseOpacityHalfwayCompact {
+/* @keyframes pulseOpacityHalfwayCompact {
   0%, 50%, 100% {
     opacity: 0.25;
     transform: none;
@@ -438,7 +431,7 @@ main {
     opacity: 0.75;
     transform: translateX(200%);
   }
-}
+} */
 
 .tile > .effect-anchor > .stunned {
   position: absolute;
@@ -464,17 +457,21 @@ main {
   }
 }
 
+.column > .tile-container > .tile > .effect-anchor > .shield {
+  position: static;
+}
+
 .column > .tile-container > .tile > .effect-anchor > .stunned {
   position: static;
   opacity: 1;
   transform-origin: center;
 }
 
+.column > .tile-container > .tile > .effect-anchor > .shield,
 .column > .tile-container > .tile > .effect-anchor > .stunned,
 .tile > .effect-anchor > .poison,
 .tile > .effect-anchor > .healing,
 .tile > .effect-anchor > .invulnerable,
-.tile > .effect-anchor > .armor-boost,
 .tile > .effect-anchor > .armor-break {
   width: 16px;
   height: 16px;
@@ -493,10 +490,6 @@ main {
 
 .tile > .effect-anchor > .invulnerable {
   background-image: url("assets/invulnerable.png");
-}
-
-.tile > .effect-anchor > .armor-boost {
-  background-image: url("assets/shield.png");
 }
 
 .tile > .effect-anchor > .armor-break {
