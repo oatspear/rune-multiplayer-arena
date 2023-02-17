@@ -158,7 +158,7 @@ const app = createApp({
 
   methods: {
     onSetupDone(game, playerId) {
-      assert(this.ui.state === UIState.INIT, `UI state: ${this.ui.state}`);
+      // assert(this.ui.state === UIState.INIT, `UI state: ${this.ui.state}`);
       this.setGameState(game, playerId);
       this.ui.globalAnimation = "anim-battle-start";
       window.setTimeout(() => { this.setActionUIState(); }, 2000);
@@ -544,6 +544,9 @@ function initRuneClient(vueApp) {
       // console.log("rollbacks:", rollbacks);
       if (action == null) {
         // Not a partial update. Might be a post-setup call, for example.
+        // if (event != null) {
+        //   if (event.event === "playerJoined" || event.event === "playerLeft") {}
+        // }
         vueApp.onSetupDone(newGame, yourPlayerId);
       } else {
         vueApp.animateNewGameState(newGame, yourPlayerId);
