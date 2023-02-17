@@ -327,6 +327,19 @@ function skillDataPowerBoost() {
 }
 
 
+function skillDataBossEnrage() {
+  return {
+    id: "bossEnrage",
+    // speed: 3,
+    cooldown: 15,
+    target: targetModeSelf(),
+    threat: 3,
+    mechanic: constPowerBoost(),
+    value: 4
+  };
+}
+
+
 /*******************************************************************************
   Class Data
 *******************************************************************************/
@@ -489,6 +502,7 @@ function bossDataBlackDragon() {
     basicAttack: newSkillInstance(skillDataAttack()),
     rest: newSkillInstance(skillDataRest()),
     skills: [
+      newSkillInstance(skillDataBossEnrage()),
       newSkillInstance(skillDataFireBreath()),
       newSkillInstance(skillDataStunAttack()),
     ]
@@ -505,6 +519,7 @@ function bossDataStormDragon() {
     basicAttack: newSkillInstance(skillDataAttack()),
     rest: newSkillInstance(skillDataRegrowth()),
     skills: [
+      newSkillInstance(skillDataBossEnrage()),
       newSkillInstance(skillDataFireBreath()),
     ]
   };

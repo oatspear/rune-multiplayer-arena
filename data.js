@@ -143,6 +143,11 @@ const Skills = {
     name: "Power Boost",
     icon: "power",
     description: "Boost ally power."
+  },
+  bossEnrage: {
+    name: "Enrage",
+    icon: "power",
+    description: "Boosts power."
   }
 };
 
