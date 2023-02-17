@@ -312,10 +312,10 @@ const BattleEvents = {
     }
   },
   armor: {
-    icon: "shield",
+    icon: "break-armor",
     animation: {
       icon: {
-        name: "shield",
+        name: "break-armor",
         animation: "shaking"
       }
     }
