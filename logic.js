@@ -315,6 +315,19 @@ function skillDataFireBreath() {
 }
 
 
+function skillDataPowerRitual() {
+  return {
+    id: "powerRitual",
+    // speed: 10,
+    cooldown: 3,
+    target: targetModeAllAllies(),
+    threat: 4,
+    mechanic: constPowerBoost(),
+    value: 2
+  };
+}
+
+
 function skillDataPowerBoost() {
   return {
     id: "powerBoost",
@@ -324,6 +337,19 @@ function skillDataPowerBoost() {
     threat: 3,
     mechanic: constPowerBoost(),
     value: 4
+  };
+}
+
+
+function skillDataHealingWave() {
+  return {
+    id: "healingWave",
+    // speed: 10,
+    cooldown: 1,
+    target: targetModeAllAllies(),
+    threat: 7,
+    mechanic: constHealTarget(),
+    powerFactor: 1.5
   };
 }
 

@@ -74,6 +74,11 @@ const Skills = {
     icon: "heal",
     description: "Heal an ally."
   },
+  healingWave: {
+    name: "Healing Wave",
+    icon: "heal",
+    description: "Heal all allies."
+  },
   poisonAttack: {
     name: "Poison Strike",
     icon: "poison",
@@ -138,6 +143,11 @@ const Skills = {
     name: "Fire Breath",
     icon: "fire",
     description: "Damage all enemies."
+  },
+  powerRitual: {
+    name: "Power Ritual",
+    icon: "power",
+    description: "Boost allies' power."
   },
   powerBoost: {
     name: "Power Boost",
