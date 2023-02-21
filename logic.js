@@ -120,6 +120,19 @@ function skillDataRangedAttack() {
 }
 
 
+function skillDataSpellDamage() {
+  return {
+    id: "spellDamage",
+    // speed: 7,
+    cooldown: 3,
+    target: targetModeEnemy(),
+    threat: 6,
+    mechanic: constDamageTarget(),
+    powerFactor: 3
+  };
+}
+
+
 function skillDataGreaterHeal() {
   return {
     id: "greaterHeal",
@@ -507,6 +520,22 @@ function classDataDruid() {
 }
 
 
+function classDataShaman() {
+  return {
+    classId: "shaman",
+    power: 6,
+    health: 85,
+    speed: 4,
+    skills: [
+      newSkillInstance(skillDataPowerRitual()),
+      newSkillInstance(skillDataAttack()),
+      newSkillInstance(skillDataSpellDamage()),
+      newSkillInstance(skillDataHealingWave())
+    ]
+  };
+}
+
+
 function bossDataDummy() {
   return {
     classId: "boss",
@@ -881,8 +910,13 @@ function handleHealTargetByPercent(game, user, target, skill) {
 
 function handleHealTargetByFactor(game, user, target, skill) {
   const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  const e = healTarget(game, target, damage);
-  game.events.push(e);
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const e = healTarget(game, character, damage);
+    game.events.push(e);
+  }
 }
 
 
@@ -914,8 +948,14 @@ function handleConsumeHealOverTime(game, user, target, skill) {
 
 
 function handlePowerBoostTarget(game, user, target, skill) {
-  const e = boostTargetPower(game, target, skill.data.value);
-  game.events.push(e);
+  const value = skill.data.value;
+  if (target.length == null) {
+    target = [target];
+  }
+  for (const character of target) {
+    const e = boostTargetPower(game, character, value);
+    game.events.push(e);
+  }
 }
 
 
@@ -1300,7 +1340,8 @@ Rune.initLogic({
       classDataBerserker(),
       classDataRanger(),
       classDataCleric(),
-      classDataDruid()
+      classDataDruid(),
+      classDataShaman()
     ]);
 
     for (const playerId of players) {

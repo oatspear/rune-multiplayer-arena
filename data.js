@@ -69,6 +69,11 @@ const Skills = {
     icon: "ranger",
     description: "Deal damage to an enemy."
   },
+  spellDamage: {
+    name: "Spell Damage",
+    icon: "skill",
+    description: "Deal damage to an enemy."
+  },
   greaterHeal: {
     name: "Greater Heal",
     icon: "heal",
@@ -196,6 +201,11 @@ const Classes = {
     id: "druid",
     name: "Druid",
     icon: "mage"
+  },
+  shaman: {
+    id: "shaman",
+    name: "Shaman",
+    icon: "shaman"
   },
   boss: {
     id: "boss",
