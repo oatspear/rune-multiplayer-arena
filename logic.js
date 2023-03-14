@@ -1318,7 +1318,7 @@ function isGameOver(game) {
 *******************************************************************************/
 
 Rune.initLogic({
-  minPlayers: 4,
+  minPlayers: 1,
   maxPlayers: 4,
 
   setup(players) {
