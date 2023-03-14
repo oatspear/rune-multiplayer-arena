@@ -718,7 +718,11 @@ function processPlayerSkill(game, player, skill, args) {
 
     // Determine if game has ended
     if (isGameOver(game)) {
-      Rune.gameOver();
+      if (game.enemy.currentHealth <= 0) {
+        Rune.gameOver(gameOverOptionsWon(game, false));
+      } else {
+        Rune.gameOver(gameOverOptionsLost(game, false));
+      }
     }
 
     updateThreatLevel(game, player.index, skill.data.threat);
@@ -1200,7 +1204,11 @@ function doEnemyReaction(game, player, usedSkill) {
 
   // Determine if game has ended
   if (isGameOver(game)) {
-    Rune.gameOver();
+    if (game.enemy.currentHealth <= 0) {
+      Rune.gameOver(gameOverOptionsWon(game, false));
+    } else {
+      Rune.gameOver(gameOverOptionsLost(game, false));
+    }
   }
 }
 
@@ -1313,6 +1321,25 @@ function isGameOver(game) {
   return true;
 }
 
+function gameOverOptionsLost(game, delayPopUp) {
+  return gameOverOptions(game, "LOST", delayPopUp);
+}
+
+function gameOverOptionsWon(game, delayPopUp) {
+  return gameOverOptions(game, "WON", delayPopUp);
+}
+
+function gameOverOptions(game, result, delayPopUp) {
+  let players = {};
+  for (const player of game.players) {
+    players[player.playerId] = result;
+  }
+  return {
+    players: players,
+    delayPopUp: (delayPopUp || false)
+  };
+}
+
 /*******************************************************************************
   Rune Setup
 *******************************************************************************/
@@ -1381,7 +1408,7 @@ Rune.initLogic({
 
         // Determine if game has ended
         if (isGameOver(game)) {
-          Rune.gameOver();
+          Rune.gameOver(gameOverOptionsLost(game, false));
         }
 
         // Remove the player from the game
