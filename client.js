@@ -60,15 +60,16 @@ function newClientPlayer(data, index, uiInfo) {
   //   // skills.push(newClientSkill(s.id));
   //   skills.push(newClientSkill(skill));
   // }
-  // const portrait = uiInfo != null
-  //   ? uiInfo.avatarUrl
-  //   : `assets/${cls.icon}.png`;
+  const portrait = uiInfo != null
+    ? uiInfo.avatarUrl
+    : `assets/${cls.icon}.png`;
+  // uiInfo != null ? uiInfo.avatarUrl : "assets/avatar-placeholder.png"
   return {
     id: data.id,
     index: index,
     playerId: data.playerId,
     name: data.name,
-    portrait: uiInfo != null ? uiInfo.avatarUrl : "assets/avatar-placeholder.png",
+    portrait: portrait,
     classData: cls,
     // speed: data.speed,
     power: data.power,
