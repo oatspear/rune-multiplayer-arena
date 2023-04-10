@@ -162,7 +162,7 @@
         >
           <span class="class" :class="character.classData.id">{{ character.classData.name }}</span>
           <div class="portrait">
-            <img :src="`assets/${character.classData.icon}.png`" alt="?">
+            <img :src="character.portrait" alt="?">
           </div>
           <div class="effect-anchor">
             <div class="stunned" v-if="character.stunned > 0"></div>
