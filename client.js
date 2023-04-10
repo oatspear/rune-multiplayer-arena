@@ -483,8 +483,8 @@ const app = createApp({
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.ui.footer.skills = [];
-      this.ui.footer.itemName = character.classData.name;
-      this.ui.footer.itemDescription = `(${character.name}) is thinking...`;
+      this.ui.footer.itemName = character.name;
+      this.ui.footer.itemDescription = `(${character.classData.name}) is thinking...`;
     },
 
     enterAnimationState() {
