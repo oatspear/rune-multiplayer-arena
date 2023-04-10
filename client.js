@@ -60,7 +60,7 @@ function newClientPlayer(data, index, uiInfo) {
   //   // skills.push(newClientSkill(s.id));
   //   skills.push(newClientSkill(skill));
   // }
-  let displayName = data.name;
+  let displayName = cls.name;
   let portrait = `assets/${cls.icon}.png`;
   if (uiInfo != null) {
     displayName = uiInfo.displayName || displayName;
@@ -103,6 +103,7 @@ const app = createApp({
       history: [null, null, null, null],
       ui: {
         state: UIState.INIT,
+        playerData: {},
         compact: false,
         targetMode: null,
         selectedEnemy: null,
@@ -168,7 +169,8 @@ const app = createApp({
   methods: {
     onSetupDone(game, playerId, players) {
       // assert(this.ui.state === UIState.INIT, `UI state: ${this.ui.state}`);
-      this.setGameState(game, playerId, players);
+      this.ui.playerData = players;
+      this.setGameState(game, playerId);
       this.ui.globalAnimation = "anim-battle-start";
       window.setTimeout(() => { this.setActionUIState(); }, 2000);
       // this.enterChooseCharacterUIState();
@@ -184,23 +186,22 @@ const app = createApp({
       this.ui.globalAnimation = "";
     },
 
-    setGameState(game, playerId, players) {
+    setGameState(game, playerId) {
       // Hard reset of the current game state
       console.log("setGameState()");
       this.playerId = playerId;
       this.ui.state = "battle";
       this.enemies = [newClientEnemy(game.enemy, 0)];
-      this.setPlayerStates(game.players, players);
+      this.setPlayerStates(game.players);
       this.resetCharacterMap();
       this.currentTurn = game.currentTurn;
       this.eventQueue = game.events;
     },
 
-    setPlayerStates(players, uiPlayers) {
-      if (uiPlayers == null) { uiPlayers = {}; }
+    setPlayerStates(players) {
       this.players = [];
       for (let i = 0; i < players.length; ++i) {
-        const uiInfo = uiPlayers[players[i].playerId];
+        const ui = this.ui.playerData[players[i].playerId];
         this.players.push(newClientPlayer(players[i], i, uiInfo));
       }
       this.ui.compact = this.players.length > 2;
@@ -239,7 +240,7 @@ const app = createApp({
       if (sequence.events.length === 0) {
         // Reached the end of this animation sequence
         this.ui.animationQueue.splice(0, 1);
-        this.setGameState(sequence.finalState, sequence.playerId, null);
+        this.setGameState(sequence.finalState, sequence.playerId);
         window.setTimeout(() => { this.doNextAnimation(); }, 0);
       } else {
         // Animate the next event
