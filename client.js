@@ -194,6 +194,7 @@ const app = createApp({
     },
 
     setPlayerStates(players, uiPlayers) {
+      if (uiPlayers == null) { uiPlayers = {}; }
       this.players = [];
       for (let i = 0; i < players.length; ++i) {
         const uiInfo = uiPlayers[players[i].playerId];
