@@ -70,6 +70,7 @@ function newClientPlayer(data, index, uiInfo) {
     playerId: data.playerId,
     name: data.name,
     portrait: portrait,
+    hasUIData: uiInfo != null,
     classData: cls,
     // speed: data.speed,
     power: data.power,

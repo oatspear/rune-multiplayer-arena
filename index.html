@@ -161,7 +161,7 @@
           @click="onTileClick"
         >
           <span class="class" :class="character.classData.id">{{ character.classData.name }}</span>
-          <div class="portrait">
+          <div class="portrait" :class="{placeholder: character.hasUIData}">
             <img :src="character.portrait" alt="?">
           </div>
           <div class="effect-anchor">
