@@ -732,6 +732,16 @@ function processPlayerSkill(game, player, skill, args) {
   doEnemyReaction(game, player, skill);
 
   doEndOfTurnEffects(game);
+
+  // Determine if game has ended
+  if (isGameOver(game)) {
+    if (game.enemy.currentHealth <= 0) {
+      Rune.gameOver(gameOverOptionsWon(game, false));
+    } else {
+      Rune.gameOver(gameOverOptionsLost(game, false));
+    }
+  }
+
   advanceTurns(game);
 }
 
