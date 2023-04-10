@@ -316,9 +316,9 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-repeat: no-repeat;
+  /* background-repeat: no-repeat;
   background-size: contain;
-  background-image: url("assets/avatar-placeholder.png");
+  background-image: url("assets/avatar-placeholder.png"); */
 }
 
 .tile > .portrait > img {
