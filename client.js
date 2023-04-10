@@ -202,7 +202,7 @@ const app = createApp({
       this.players = [];
       for (let i = 0; i < players.length; ++i) {
         const ui = this.ui.playerData[players[i].playerId];
-        this.players.push(newClientPlayer(players[i], i, uiInfo));
+        this.players.push(newClientPlayer(players[i], i, ui));
       }
       this.ui.compact = this.players.length > 2;
     },
