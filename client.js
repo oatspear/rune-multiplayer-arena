@@ -71,8 +71,7 @@ function newClientPlayer(data, index, uiInfo) {
     id: data.id,
     index: index,
     playerId: data.playerId,
-    name: data.name,
-    displayName: displayName,
+    name: displayName,
     portrait: portrait,
     hasUIData: uiInfo != null,
     classData: cls,
@@ -483,8 +482,8 @@ const app = createApp({
       this.ui.footer.selectedSkill = null;
       this.ui.footer.selectedTarget = null;
       this.ui.footer.skills = [];
-      this.ui.footer.itemName = character.name;
-      this.ui.footer.itemDescription = `(${character.displayName}) is thinking...`;
+      this.ui.footer.itemName = character.classData.name;
+      this.ui.footer.itemDescription = `(${character.name}) is thinking...`;
     },
 
     enterAnimationState() {
