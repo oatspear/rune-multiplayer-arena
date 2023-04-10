@@ -60,15 +60,19 @@ function newClientPlayer(data, index, uiInfo) {
   //   // skills.push(newClientSkill(s.id));
   //   skills.push(newClientSkill(skill));
   // }
-  const portrait = uiInfo != null
-    ? uiInfo.avatarUrl
-    : `assets/${cls.icon}.png`;
+  let displayName = data.name;
+  let portrait = `assets/${cls.icon}.png`;
+  if (uiInfo != null) {
+    displayName = uiInfo.displayName || displayName;
+    portrait = uiInfo.avatarUrl || portrait;
+  }
   // uiInfo != null ? uiInfo.avatarUrl : "assets/avatar-placeholder.png"
   return {
     id: data.id,
     index: index,
     playerId: data.playerId,
     name: data.name,
+    displayName: displayName,
     portrait: portrait,
     hasUIData: uiInfo != null,
     classData: cls,
@@ -480,7 +484,7 @@ const app = createApp({
       this.ui.footer.selectedTarget = null;
       this.ui.footer.skills = [];
       this.ui.footer.itemName = character.name;
-      this.ui.footer.itemDescription = "is thinking...";
+      this.ui.footer.itemDescription = `(${character.displayName}) is thinking...`;
     },
 
     enterAnimationState() {
