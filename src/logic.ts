@@ -28,32 +28,44 @@ function shuffle(array: any[]): any[] {
 // Data Constants
 // -----------------------------------------------------------------------------
 
-function constStateSetup() { return 0; }
-function constStateBattle() { return 1; }
 
-function targetModeSelf() { return 0; }
-function targetModeAlly() { return 1; }
-function targetModeEnemy() { return 2; }
-function targetModeAllAllies() { return 3; }
-function targetModeAllEnemies() { return 4; }
-function targetModeAllCharacters() { return 5; }
+export type GameMode = 0 | 1;
 
-function constHealTargetPercent () { return 0; }
-function constAttackTarget() { return 1; }
-function constDamageTarget() { return 2; }
-function constHealTarget() { return 3; }
-function constAttackPoisonTarget() { return 4; }
-function constAttackTargetBoostIfPoisoned() { return 5; }
-function constInvulnerability() { return 6; }
-function constStunTarget() { return 7; }
-function constAttackStunTarget() { return 8; }
-function constPowerBoost() { return 9; }
-function constPoisonTarget() { return 10; }
-function constDamagePoisonTarget() { return 11; }
-function constArmorModifier() { return 12; }
-function constShieldTarget() { return 13; }
-function constHealTargetOverTime() { return 14; }
-function constConsumeHealOverTime() { return 15; }
+
+export const STATE_SETUP: GameMode = 0;
+export const STATE_BATTLE: GameMode = 1;
+
+
+export type TargetMode = 0 | 1 | 2 | 3 | 4 | 5;
+
+
+export const TARGET_MODE_SELF: TargetMode = 0;
+export const TARGET_MODE_ALLY: TargetMode = 1;
+export const TARGET_MODE_ENEMY: TargetMode = 2;
+export const TARGET_MODE_ALL_ALLIES: TargetMode = 3;
+export const TARGET_MODE_ALL_ENEMIES: TargetMode = 4;
+export const TARGET_MODE_ALL_CHARACTERS: TargetMode = 5;
+
+
+export type EffectType = number;
+
+
+const EFFECT_HEAL_TARGET_PERCENT: EffectType = 0;
+const EFFECT_ATTACK_TARGET: EffectType = 1;
+const EFFECT_DAMAGE_TARGET: EffectType = 2;
+const EFFECT_HEAL_TARGET: EffectType = 3;
+const EFFECT_ATTACK_POISON_TARGET: EffectType = 4;
+const EFFECT_ATTACK_TARGET_BOOST_IF_POISONED: EffectType = 5;
+const EFFECT_INVULNERABLE: EffectType = 6;
+const EFFECT_STUN_TARGET: EffectType = 7;
+const EFFECT_ATTACK_STUN_TARGET: EffectType = 8;
+const EFFECT_BUFF_POWER: EffectType = 9;
+const EFFECT_POISON_TARGET: EffectType = 10;
+const EFFECT_DAMAGE_POISON_TARGET: EffectType = 11;
+const EFFECT_ARMOR_MODIFIER: EffectType = 12;
+const EFFECT_SHIELD_TARGET: EffectType = 13;
+const EFFECT_HEAL_TARGET_OVER_TIME: EffectType = 14;
+const EFFECT_CONSUME_HEAL_OVER_TIME: EffectType = 15;
 
 
 // -----------------------------------------------------------------------------
@@ -61,7 +73,22 @@ function constConsumeHealOverTime() { return 15; }
 // -----------------------------------------------------------------------------
 
 
-function newSkillInstance(data) {
+interface SkillData {
+  id: string;
+  cooldown: number;
+  target: TargetMode;
+  mechanic: EffectType;
+}
+
+
+interface SkillInstance {
+  data: SkillData;
+  cooldown: number;
+  wait: number;
+}
+
+
+function newSkillInstance(data: SkillData): SkillInstance {
   return {
     data: data,
     // speed: data.speed,
@@ -76,9 +103,9 @@ function skillDataRest() {
     id: "rest",
     // speed: 1,
     cooldown: 0,
-    target: targetModeSelf(),
+    target: TARGET_MODE_SELF,
     threat: -2,
-    mechanic: constHealTargetPercent(),
+    mechanic: EFFECT_HEAL_TARGET_PERCENT,
     healingPercent: 0.075
   };
 }
@@ -89,9 +116,9 @@ function skillDataAttack() {
     id: "attack",
     // speed: 5,
     cooldown: 0,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 5,
-    mechanic: constAttackTarget()
+    mechanic: EFFECT_ATTACK_TARGET
   };
 }
 
@@ -100,9 +127,9 @@ function skillDataMockingAttack() {
     id: "mockAttack",
     // speed: 5,
     cooldown: 0,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 10,
-    mechanic: constAttackTarget()
+    mechanic: EFFECT_ATTACK_TARGET
   };
 }
 
@@ -112,9 +139,9 @@ function skillDataRangedAttack() {
     id: "rangedAttack",
     // speed: 7,
     cooldown: 0,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 6,
-    mechanic: constDamageTarget(),
+    mechanic: EFFECT_DAMAGE_TARGET,
     powerFactor: 1.5
   };
 }
@@ -125,9 +152,9 @@ function skillDataSpellDamage() {
     id: "spellDamage",
     // speed: 7,
     cooldown: 3,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 6,
-    mechanic: constDamageTarget(),
+    mechanic: EFFECT_DAMAGE_TARGET,
     powerFactor: 3
   };
 }
@@ -138,9 +165,9 @@ function skillDataGreaterHeal() {
     id: "greaterHeal",
     // speed: 8,
     cooldown: 0,
-    target: targetModeAlly(),
+    target: TARGET_MODE_ALLY,
     threat: 6,
-    mechanic: constHealTarget(),
+    mechanic: EFFECT_HEAL_TARGET,
     powerFactor: 2.5
   };
 }
@@ -151,9 +178,9 @@ function skillDataPoisonTarget() {
     id: "poison",
     // speed: 6,
     cooldown: 1,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 4,
-    mechanic: constPoisonTarget(),
+    mechanic: EFFECT_POISON_TARGET,
     powerFactor: 1
   };
 }
@@ -164,9 +191,9 @@ function skillDataPoisonAttack() {
     id: "poisonAttack",
     // speed: 4,
     cooldown: 0,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 7,
-    mechanic: constAttackPoisonTarget(),
+    mechanic: EFFECT_ATTACK_POISON_TARGET,
     powerFactor: 1
   };
 }
@@ -177,9 +204,9 @@ function skillDataPoisonArrow() {
     id: "poisonArrow",
     // speed: 7,
     cooldown: 1,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 7,
-    mechanic: constDamagePoisonTarget(),
+    mechanic: EFFECT_DAMAGE_POISON_TARGET,
     powerFactor: 1
   };
 }
@@ -190,9 +217,9 @@ function skillDataEnvenom() {
     id: "envenom",
     // speed: 7,
     cooldown: 2,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 8,
-    mechanic: constAttackTargetBoostIfPoisoned(),
+    mechanic: EFFECT_ATTACK_TARGET_BOOST_IF_POISONED,
     powerFactor: 3
   };
 }
@@ -203,9 +230,9 @@ function skillDataEvasion() {
     id: "evasion",
     // speed: 2,
     cooldown: 3,
-    target: targetModeSelf(),
+    target: TARGET_MODE_SELF,
     threat: 4,
-    mechanic: constInvulnerability(),
+    mechanic: EFFECT_INVULNERABLE,
     duration: 1
   };
 }
@@ -216,9 +243,9 @@ function skillDataStunTarget() {
     id: "stun",
     // speed: 4,
     cooldown: 2,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 7,
-    mechanic: constStunTarget(),
+    mechanic: EFFECT_STUN_TARGET,
     duration: 1
   };
 }
@@ -229,9 +256,9 @@ function skillDataStunAttack() {
     id: "stunAttack",
     // speed: 8,
     cooldown: 5,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 8,
-    mechanic: constAttackStunTarget(),
+    mechanic: EFFECT_ATTACK_STUN_TARGET,
     duration: 2
   };
 }
@@ -242,9 +269,9 @@ function skillDataAdrenalineRush() {
     id: "adrenaline",
     // speed: 3,
     cooldown: 1,
-    target: targetModeSelf(),
+    target: TARGET_MODE_SELF,
     threat: 3,
-    mechanic: constPowerBoost(),
+    mechanic: EFFECT_BUFF_POWER,
     value: 3
   };
 }
@@ -255,9 +282,9 @@ function skillDataQuickAttack() {
     id: "quickAttack",
     // speed: 3,
     cooldown: 0,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 6,
-    mechanic: constAttackTarget()
+    mechanic: EFFECT_ATTACK_TARGET
   };
 }
 
@@ -267,9 +294,9 @@ function skillDataBreakArmor() {
     id: "breakArmor",
     // speed: 5,
     cooldown: 5,
-    target: targetModeEnemy(),
+    target: TARGET_MODE_ENEMY,
     threat: 7,
-    mechanic: constArmorModifier(),
+    mechanic: EFFECT_ARMOR_MODIFIER,
     duration: 3
   };
 }
@@ -280,9 +307,9 @@ function skillDataDivineProtection() {
     id: "divineProtection",
     // speed: 10,
     cooldown: 3,
-    target: targetModeAllAllies(),
+    target: TARGET_MODE_ALL_ALLIES,
     threat: 7,
-    mechanic: constShieldTarget(),
+    mechanic: EFFECT_SHIELD_TARGET,
     powerFactor: 2.5
   };
 }
@@ -293,9 +320,9 @@ function skillDataRegrowth() {
     id: "regrowth",
     // speed: 6,
     cooldown: 2,
-    target: targetModeAllAllies(),
+    target: TARGET_MODE_ALL_ALLIES,
     threat: 7,
-    mechanic: constHealTargetOverTime(),
+    mechanic: EFFECT_HEAL_TARGET_OVER_TIME,
     powerFactor: 0.5
   };
 }
@@ -306,9 +333,9 @@ function skillDataWildBlossom() {
     id: "wildBlossom",
     // speed: 10,
     cooldown: 5,
-    target: targetModeAllAllies(),
+    target: TARGET_MODE_ALL_ALLIES,
     threat: 8,
-    mechanic: constConsumeHealOverTime(),
+    mechanic: EFFECT_CONSUME_HEAL_OVER_TIME,
     factor: 3
   };
 }
@@ -319,9 +346,9 @@ function skillDataFireBreath() {
     id: "fireBreath",
     // speed: 10,
     cooldown: 3,
-    target: targetModeAllEnemies(),
+    target: TARGET_MODE_ALL_ENEMIES,
     threat: 8,
-    mechanic: constDamageTarget(),
+    mechanic: EFFECT_DAMAGE_TARGET,
     damageType: "fire",
     powerFactor: 2
   };
@@ -333,9 +360,9 @@ function skillDataPowerRitual() {
     id: "powerRitual",
     // speed: 10,
     cooldown: 3,
-    target: targetModeAllAllies(),
+    target: TARGET_MODE_ALL_ALLIES,
     threat: 4,
-    mechanic: constPowerBoost(),
+    mechanic: EFFECT_BUFF_POWER,
     value: 2
   };
 }
@@ -346,9 +373,9 @@ function skillDataPowerBoost() {
     id: "powerBoost",
     // speed: 3,
     cooldown: 2,
-    target: targetModeAlly(),
+    target: TARGET_MODE_ALLY,
     threat: 3,
-    mechanic: constPowerBoost(),
+    mechanic: EFFECT_BUFF_POWER,
     value: 4
   };
 }
@@ -359,9 +386,9 @@ function skillDataHealingWave() {
     id: "healingWave",
     // speed: 10,
     cooldown: 1,
-    target: targetModeAllAllies(),
+    target: TARGET_MODE_ALL_ALLIES,
     threat: 7,
-    mechanic: constHealTarget(),
+    mechanic: EFFECT_HEAL_TARGET,
     powerFactor: 1.5
   };
 }
@@ -372,9 +399,9 @@ function skillDataBossEnrage() {
     id: "bossEnrage",
     // speed: 3,
     cooldown: 12,
-    target: targetModeSelf(),
+    target: TARGET_MODE_SELF,
     threat: 3,
-    mechanic: constPowerBoost(),
+    mechanic: EFFECT_BUFF_POWER,
     value: 4
   };
 }
@@ -755,52 +782,52 @@ function resolveSkill(game, user, skill, args) {
   skill.wait = skill.cooldown + 1;
 
   switch (skill.data.mechanic) {
-    case constHealTargetPercent():
+    case EFFECT_HEAL_TARGET_PERCENT:
       return handleHealTargetByPercent(game, user, target, skill);
 
-    case constAttackTarget():
+    case EFFECT_ATTACK_TARGET:
       return handleAttackTarget(game, user, target, skill);
 
-    case constDamageTarget():
+    case EFFECT_DAMAGE_TARGET:
       return handleDamageTargetByFactor(game, user, target, skill);
 
-    case constHealTarget():
+    case EFFECT_HEAL_TARGET:
       return handleHealTargetByFactor(game, user, target, skill);
 
-    case constAttackPoisonTarget():
+    case EFFECT_ATTACK_POISON_TARGET:
       return handleAttackPoisonTarget(game, user, target, skill);
 
-    case constAttackTargetBoostIfPoisoned():
+    case EFFECT_ATTACK_TARGET_BOOST_IF_POISONED:
       return handleAttackTargetBoostIfPoisoned(game, user, target, skill);
 
-    case constInvulnerability():
+    case EFFECT_INVULNERABLE:
       return handleMakeTargetInvulnerable(game, user, target, skill);
 
-    case constStunTarget():
+    case EFFECT_STUN_TARGET:
       return handleStunTarget(game, user, target, skill);
 
-    case constAttackStunTarget():
+    case EFFECT_ATTACK_STUN_TARGET:
       return handleAttackStunTarget(game, user, target, skill);
 
-    case constPowerBoost():
+    case EFFECT_BUFF_POWER:
       return handlePowerBoostTarget(game, user, target, skill);
 
-    case constPoisonTarget():
+    case EFFECT_POISON_TARGET:
       return handlePoisonTarget(game, user, target, skill);
 
-    case constDamagePoisonTarget():
+    case EFFECT_DAMAGE_POISON_TARGET:
       return handleDamagePoisonTarget(game, user, target, skill);
 
-    case constArmorModifier():
+    case EFFECT_ARMOR_MODIFIER:
       return handleTargetArmorModifier(game, user, target, skill);
 
-    case constShieldTarget():
+    case EFFECT_SHIELD_TARGET:
       return handleShieldTarget(game, user, target, skill);
 
-    case constHealTargetOverTime():
+    case EFFECT_HEAL_TARGET_OVER_TIME:
       return handleHealTargetOverTime(game, user, target, skill);
 
-    case constConsumeHealOverTime():
+    case EFFECT_CONSUME_HEAL_OVER_TIME:
       return handleConsumeHealOverTime(game, user, target, skill);
 
     default:
@@ -822,14 +849,14 @@ function getTarget(game, user, targetMode, targetIndex) {
   if (!targetMode) {
     return user;
   }
-  if (targetMode === targetModeAlly()) {
+  if (targetMode === TARGET_MODE_ALLY) {
     const character = user.playerId != null ? game.players[targetIndex] : user;
     if (character.currentHealth <= 0) {
       throw Rune.invalidAction();
     }
     return character;
   }
-  if (targetMode === targetModeEnemy()) {
+  if (targetMode === TARGET_MODE_ENEMY) {
     const character = user.playerId != null ? game.enemy : game.players[targetIndex];
     if (character.currentHealth <= 0) {
       throw Rune.invalidAction();
@@ -837,7 +864,7 @@ function getTarget(game, user, targetMode, targetIndex) {
     return character;
   }
   const targets = [];
-  if (targetMode !== targetModeAllAllies()) {
+  if (targetMode !== TARGET_MODE_ALL_ALLIES) {
     // all enemies or all characters
     if (user.playerId != null) {
       targets.push(game.enemy);
@@ -849,7 +876,7 @@ function getTarget(game, user, targetMode, targetIndex) {
       }
     }
   }
-  if (targetMode !== targetModeAllEnemies()) {
+  if (targetMode !== TARGET_MODE_ALL_ENEMIES) {
     // all allies or all characters
     if (user.playerId != null) {
       for (const character of game.players) {
@@ -1279,7 +1306,7 @@ function doEndOfTurnEffectsForCharacter(game, character) {
 
 
 function enterBattleState(game) {
-  game.state = constStateBattle();
+  game.state = STATE_BATTLE;
   game.enemy = newEnemyCharacter();
   game.currentTurn = 0;
   game.events = [];
@@ -1362,7 +1389,7 @@ Rune.initLogic({
   setup(players) {
     // players: array of string IDs
     const game = {
-      state: constStateSetup(),
+      state: STATE_SETUP,
       enemy: null,
       players: [],
       currentTurn: null,
@@ -1442,7 +1469,7 @@ Rune.initLogic({
 
   actions: {
     // selectCharacter(payload, { game, playerId }) {
-    //   if (game.state !== constStateSetup()) {
+    //   if (game.state !== STATE_SETUP) {
     //     throw Rune.invalidAction();
     //   }
 
@@ -1466,7 +1493,7 @@ Rune.initLogic({
     // },
 
     useSkill(payload, { game, playerId }) {
-      if (game.state !== constStateBattle()) {
+      if (game.state !== STATE_BATTLE) {
         throw Rune.invalidAction();
       }
 
