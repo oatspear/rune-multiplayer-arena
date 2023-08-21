@@ -1,0 +1,32 @@
+{
+  "name": "runic-dungeon",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "build": "vue-tsc && vite build",
+    "test": "exit 0",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "rune-games-cli": "^1.1.0",
+    "rune-games-sdk": "^4.11.6",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.2.0",
+    "@typescript-eslint/parser": "^6.2.0",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "eslint": "^7.22.0",
+    "eslint-plugin-rune": "^0.1.10",
+    "eslint-plugin-vue": "^9.17.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.9",
+    "vite-plugin-rune": "0.1.0",
+    "vue-tsc": "^1.8.8"
+  }
+}
