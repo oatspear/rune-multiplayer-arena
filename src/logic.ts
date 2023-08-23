@@ -1542,7 +1542,7 @@ Rune.initLogic({
   minPlayers: 1,
   maxPlayers: 4,
 
-  setup(allPlayerIds: string[]) {
+  setup(allPlayerIds: string[]): GameState {
     // players: array of string IDs
     const game: GameState = {
       state: STATE_SETUP,

@@ -865,7 +865,7 @@ footer > .description {
   flex: 1 0 auto;
   appearance: none;
   background-color: #202124;
-  border: 2px solid #ivory;
+  border: 2px solid ivory;
   border-radius: .25rem;
   color: ivory;
   cursor: pointer;

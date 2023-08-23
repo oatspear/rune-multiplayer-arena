@@ -1,30 +1,39 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from "./components/HelloWorld.vue"
+
+Rune.initClient({
+  onChange: ({ newGame, oldGame, yourPlayerId, players }) => {
+    // unused param: action
+    // unused param: event
+    // unused param: 
+    // setMyPlayerId(yourPlayerId);
+    // setGame(newGame);
+    // update players
+    // setPlayerList(Object.keys(players).sort().map(k => players[k]));
+    // check for score
+    // if (newGame.score > oldGame.score) {
+    //   playSound("score");
+    // } else {
+    //   if (newGame.tasks.length < oldGame.tasks.length) {
+    //     playSound("fail");
+    //   } else {
+    //     if (newGame.tasks.length > 0 && oldGame.tasks.length > 0) {
+    //       if (newGame.tasks[0].id != oldGame.tasks[0].id) {
+    //         playSound("fail");
+    //       }
+    //     }
+    //   }
+    // }
+  },
+});
 </script>
 
+
 <template>
-  <div>
-    <!--<a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>-->
-  </div>
+  <p>Hello, world!</p>
   <HelloWorld msg="Vite + Vue" />
 </template>
 
+
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
 </style>
