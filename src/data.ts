@@ -1,54 +1,19 @@
 // SPDX-License-Identifier: MIT
 // Copyright © 2023 André "Oatspear" Santos
 
-/*******************************************************************************
-  Utility
-*******************************************************************************/
+// -----------------------------------------------------------------------------
+// Skills
+// -----------------------------------------------------------------------------
 
 
-function newEnum(keys) {
-  const enumObject = {};
-  for (let i = 0; i < keys.length; ++i) {
-    enumObject[keys[i]] = i;
-  }
-  return Object.freeze(enumObject);
+export interface ClientSkillData {
+  name: string;
+  icon: string;
+  description: string;
 }
 
 
-// function checkProperty(obj, prop, type) {
-//   assert(
-//     (obj[prop] != null) && (typeof obj[prop] === type),
-//     `expected property "${prop}" of type ${type} in ${obj}`
-//   );
-// }
-
-
-/*******************************************************************************
-  Constants
-*******************************************************************************/
-
-// const TargetMode = newEnum([
-//   "SELF",
-//   "ALLY",
-//   "ENEMY",
-//   "ALL_ALLIES",
-//   "ALL_ENEMIES",
-//   "ALL_CHARACTERS"
-// ]);
-
-
-// const SkillMechanics = newEnum([
-//   "ATTACK_TARGETS",
-//   "DAMAGE_TARGETS",
-//   "HEAL_TARGETS"
-// ]);
-
-
-/*******************************************************************************
-  Skills
-*******************************************************************************/
-
-const Skills = {
+export const ClientSkillDataMap: Record<string, ClientSkillData> = {
   rest: {
     name: "Rest",
     icon: "rest",
@@ -167,11 +132,19 @@ const Skills = {
 };
 
 
-/*******************************************************************************
-  Classes
-*******************************************************************************/
+// -----------------------------------------------------------------------------
+// Classes
+// -----------------------------------------------------------------------------
 
-const Classes = {
+
+export interface ClientClassData {
+  id: string;
+  name: string;
+  icon: string;
+}
+
+
+export const ClientClasseDataMap: Record<string, ClientClassData> = {
   ranger: {
     id: "ranger",
     name: "Ranger",
@@ -230,11 +203,30 @@ const Classes = {
 };
 
 
-/*******************************************************************************
-  Events
-*******************************************************************************/
+// -----------------------------------------------------------------------------
+// Events
+// -----------------------------------------------------------------------------
 
-const BattleEvents = {
+
+export interface ClientBattleAnimationData {
+  icon?: {
+    name: string;
+    animation: string;
+  };
+  particles?: {
+    name: string;
+    animation: string;
+  };
+}
+
+
+export interface ClientBattleEventData {
+  icon: string;
+  animation: ClientBattleAnimationData;
+}
+
+
+export const ClientBattleEventDataMap: Record<string, ClientBattleEventData> = {
   attack: {
     icon: "battle",
     animation: {

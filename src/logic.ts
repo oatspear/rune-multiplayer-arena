@@ -15,13 +15,6 @@ import type { RuneClient, GameOverOptions } from "rune-games-sdk/multiplayer";
 export type Maybe<T> = T | undefined;
 
 
-export function assert(condition: boolean, message: string): void {
-    if (!condition) {
-        throw new Error(message || "Assertion failed");
-    }
-}
-
-
 function shuffle(array: any[]): any[] {
   for (let i = array.length - 1; i > 0; i--) {
     const rand = Math.floor(Math.random() * (i + 1));
@@ -97,7 +90,7 @@ interface SkillData {
 }
 
 
-interface SkillInstance {
+export interface SkillInstance {
   data: SkillData;
   cooldown: number;
   wait: number;
@@ -683,7 +676,7 @@ function newCharacterEffectsMap(): CharacterEffectsMap {
 }
 
 
-interface CharacterInstance extends CharacterClassData {
+export interface CharacterInstance extends CharacterClassData {
   id: number;
   index: number;
   playerId: string;
@@ -692,7 +685,7 @@ interface CharacterInstance extends CharacterClassData {
 }
 
 
-interface PlayerCharacterInstance extends CharacterInstance {
+export interface PlayerCharacterInstance extends CharacterInstance {
   threat: number;
   dead: boolean;
 }
@@ -773,12 +766,12 @@ function takeEnemyBoost(enemy: EnemyCharacterInstance): void {
 // -----------------------------------------------------------------------------
 
 
-interface BattleEvent {
+export interface BattleEvent {
   type: string;
 }
 
 
-interface SKillBattleEvent extends BattleEvent {
+export interface SKillBattleEvent extends BattleEvent {
   skill: string;
   user: number;
 }
@@ -812,8 +805,12 @@ interface PlayerActionBattleEvent extends BattleEvent {
 }
 
 
-interface DamageBattleEvent extends BattleEvent {
+export interface TargetedBattleEvent extends BattleEvent {
   target: number;
+}
+
+
+interface DamageBattleEvent extends TargetedBattleEvent {
   value: number;
   startingHealth: number;
   finalHealth: number;
@@ -821,24 +818,21 @@ interface DamageBattleEvent extends BattleEvent {
 }
 
 
-interface HealingBattleEvent extends BattleEvent {
-  target: number;
+interface HealingBattleEvent extends TargetedBattleEvent {
   value: number;
   startingHealth: number;
   finalHealth: number;
 }
 
 
-interface PowerChangedBattleEvent extends BattleEvent {
-  target: number;
+interface PowerChangedBattleEvent extends TargetedBattleEvent {
   value: number;
   startingPower: number;
   finalPower: number;
 }
 
 
-interface ModifierChangedBattleEvent extends BattleEvent {
-  target: number;
+interface ModifierChangedBattleEvent extends TargetedBattleEvent {
   value: number;
 }
 
@@ -850,11 +844,6 @@ interface ModifierChangedBattleEvent extends BattleEvent {
 
 interface SkillActionParams {
   target: number;
-}
-
-
-interface UseSkillActionPayload extends SkillActionParams {
-  skill: number;
 }
 
 
@@ -1449,7 +1438,7 @@ function enterBattleState(game: GameState): void {
 
 function advanceTurns(game: GameState): void {
   game.turns++;
-  const t = game.currentTurn || 0;
+  const t = game.currentTurn;
   const n = game.players.length;
   for (let i = 1; i <= n; ++i) {
     const k = (t + i) % n;
@@ -1514,7 +1503,7 @@ export interface GameState {
   state: InternalGameState;
   enemy: EnemyCharacterInstance;
   players: PlayerCharacterInstance[];
-  currentTurn: number | null;
+  currentTurn: number;
   events: BattleEvent[];
   enemyTarget: number;
   availableHeroes: CharacterClassData[];
@@ -1529,6 +1518,11 @@ export interface GameState {
 
 declare global {
   const Rune: RuneClient<GameState, GameActions>;
+}
+
+
+interface UseSkillActionPayload extends SkillActionParams {
+  skill: number;
 }
 
 
@@ -1548,7 +1542,7 @@ Rune.initLogic({
       state: STATE_SETUP,
       enemy: newEnemyCharacter(),
       players: [],
-      currentTurn: null,
+      currentTurn: -1,
       events: [],
       enemyTarget: 0,
       availableHeroes: [],
