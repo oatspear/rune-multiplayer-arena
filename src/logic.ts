@@ -2,11 +2,20 @@
 // Copyright © 2023 André "Oatspear" Santos
 
 // -----------------------------------------------------------------------------
+// Imports
+// -----------------------------------------------------------------------------
+
+import type { RuneClient, GameOverOptions } from "rune-games-sdk/multiplayer";
+
+// -----------------------------------------------------------------------------
 // Utility
 // -----------------------------------------------------------------------------
 
 
-function assert(condition: boolean, message: string): void {
+export type Maybe<T> = T | undefined;
+
+
+export function assert(condition: boolean, message: string): void {
     if (!condition) {
         throw new Error(message || "Assertion failed");
     }
@@ -29,11 +38,11 @@ function shuffle(array: any[]): any[] {
 // -----------------------------------------------------------------------------
 
 
-export type GameMode = 0 | 1;
+export type InternalGameState = 0 | 1;
 
 
-export const STATE_SETUP: GameMode = 0;
-export const STATE_BATTLE: GameMode = 1;
+export const STATE_SETUP: InternalGameState = 0;
+export const STATE_BATTLE: InternalGameState = 1;
 
 
 export type TargetMode = 0 | 1 | 2 | 3 | 4 | 5;
@@ -78,6 +87,13 @@ interface SkillData {
   cooldown: number;
   target: TargetMode;
   mechanic: EffectType;
+  threat: number;
+  powerFactor?: number;
+  healingPercent?: number;
+  duration?: number;
+  value?: number;
+  factor?: number;
+  damageType?: string;
 }
 
 
@@ -98,7 +114,7 @@ function newSkillInstance(data: SkillData): SkillInstance {
 }
 
 
-function skillDataRest() {
+function skillDataRest(): SkillData {
   return {
     id: "rest",
     // speed: 1,
@@ -111,7 +127,7 @@ function skillDataRest() {
 }
 
 
-function skillDataAttack() {
+function skillDataAttack(): SkillData {
   return {
     id: "attack",
     // speed: 5,
@@ -122,7 +138,7 @@ function skillDataAttack() {
   };
 }
 
-function skillDataMockingAttack() {
+function skillDataMockingAttack(): SkillData {
   return {
     id: "mockAttack",
     // speed: 5,
@@ -134,7 +150,7 @@ function skillDataMockingAttack() {
 }
 
 
-function skillDataRangedAttack() {
+function skillDataRangedAttack(): SkillData {
   return {
     id: "rangedAttack",
     // speed: 7,
@@ -147,7 +163,7 @@ function skillDataRangedAttack() {
 }
 
 
-function skillDataSpellDamage() {
+function skillDataSpellDamage(): SkillData {
   return {
     id: "spellDamage",
     // speed: 7,
@@ -160,7 +176,7 @@ function skillDataSpellDamage() {
 }
 
 
-function skillDataGreaterHeal() {
+function skillDataGreaterHeal(): SkillData {
   return {
     id: "greaterHeal",
     // speed: 8,
@@ -173,20 +189,20 @@ function skillDataGreaterHeal() {
 }
 
 
-function skillDataPoisonTarget() {
-  return {
-    id: "poison",
-    // speed: 6,
-    cooldown: 1,
-    target: TARGET_MODE_ENEMY,
-    threat: 4,
-    mechanic: EFFECT_POISON_TARGET,
-    powerFactor: 1
-  };
-}
+// function skillDataPoisonTarget(): SkillData {
+//   return {
+//     id: "poison",
+//     // speed: 6,
+//     cooldown: 1,
+//     target: TARGET_MODE_ENEMY,
+//     threat: 4,
+//     mechanic: EFFECT_POISON_TARGET,
+//     powerFactor: 1
+//   };
+// }
 
 
-function skillDataPoisonAttack() {
+function skillDataPoisonAttack(): SkillData {
   return {
     id: "poisonAttack",
     // speed: 4,
@@ -199,7 +215,7 @@ function skillDataPoisonAttack() {
 }
 
 
-function skillDataPoisonArrow() {
+function skillDataPoisonArrow(): SkillData {
   return {
     id: "poisonArrow",
     // speed: 7,
@@ -212,7 +228,7 @@ function skillDataPoisonArrow() {
 }
 
 
-function skillDataEnvenom() {
+function skillDataEnvenom(): SkillData {
   return {
     id: "envenom",
     // speed: 7,
@@ -225,7 +241,7 @@ function skillDataEnvenom() {
 }
 
 
-function skillDataEvasion() {
+function skillDataEvasion(): SkillData {
   return {
     id: "evasion",
     // speed: 2,
@@ -238,7 +254,7 @@ function skillDataEvasion() {
 }
 
 
-function skillDataStunTarget() {
+function skillDataStunTarget(): SkillData {
   return {
     id: "stun",
     // speed: 4,
@@ -251,7 +267,7 @@ function skillDataStunTarget() {
 }
 
 
-function skillDataStunAttack() {
+function skillDataStunAttack(): SkillData {
   return {
     id: "stunAttack",
     // speed: 8,
@@ -264,7 +280,7 @@ function skillDataStunAttack() {
 }
 
 
-function skillDataAdrenalineRush() {
+function skillDataAdrenalineRush(): SkillData {
   return {
     id: "adrenaline",
     // speed: 3,
@@ -277,7 +293,7 @@ function skillDataAdrenalineRush() {
 }
 
 
-function skillDataQuickAttack() {
+function skillDataQuickAttack(): SkillData {
   return {
     id: "quickAttack",
     // speed: 3,
@@ -289,7 +305,7 @@ function skillDataQuickAttack() {
 }
 
 
-function skillDataBreakArmor() {
+function skillDataBreakArmor(): SkillData {
   return {
     id: "breakArmor",
     // speed: 5,
@@ -302,7 +318,7 @@ function skillDataBreakArmor() {
 }
 
 
-function skillDataDivineProtection() {
+function skillDataDivineProtection(): SkillData {
   return {
     id: "divineProtection",
     // speed: 10,
@@ -315,7 +331,7 @@ function skillDataDivineProtection() {
 }
 
 
-function skillDataRegrowth() {
+function skillDataRegrowth(): SkillData {
   return {
     id: "regrowth",
     // speed: 6,
@@ -328,7 +344,7 @@ function skillDataRegrowth() {
 }
 
 
-function skillDataWildBlossom() {
+function skillDataWildBlossom(): SkillData {
   return {
     id: "wildBlossom",
     // speed: 10,
@@ -341,7 +357,7 @@ function skillDataWildBlossom() {
 }
 
 
-function skillDataFireBreath() {
+function skillDataFireBreath(): SkillData {
   return {
     id: "fireBreath",
     // speed: 10,
@@ -355,7 +371,7 @@ function skillDataFireBreath() {
 }
 
 
-function skillDataPowerRitual() {
+function skillDataPowerRitual(): SkillData {
   return {
     id: "powerRitual",
     // speed: 10,
@@ -368,7 +384,7 @@ function skillDataPowerRitual() {
 }
 
 
-function skillDataPowerBoost() {
+function skillDataPowerBoost(): SkillData {
   return {
     id: "powerBoost",
     // speed: 3,
@@ -381,7 +397,7 @@ function skillDataPowerBoost() {
 }
 
 
-function skillDataHealingWave() {
+function skillDataHealingWave(): SkillData {
   return {
     id: "healingWave",
     // speed: 10,
@@ -394,7 +410,7 @@ function skillDataHealingWave() {
 }
 
 
-function skillDataBossEnrage() {
+function skillDataBossEnrage(): SkillData {
   return {
     id: "bossEnrage",
     // speed: 3,
@@ -412,7 +428,17 @@ function skillDataBossEnrage() {
 // -----------------------------------------------------------------------------
 
 
-function getClassById(id) {
+interface CharacterClassData {
+  classId: string;
+  power: number;
+  health: number;
+  speed: number;
+  skills: SkillInstance[];
+}
+
+
+
+function getClassById(id: string): Maybe<CharacterClassData> {
   switch (id) {
     case "assassin":
       return classDataAssassin();
@@ -431,16 +457,13 @@ function getClassById(id) {
 
     case "druid":
       return classDataDruid();
-
-    default:
-      throw Rune.invalidAction();
   }
 }
 
 
-function classDataDummy() {
+function classDataDummy(): CharacterClassData {
   return {
-    classId: null,
+    classId: "",
     power: 1,
     health: 1,
     speed: 1,
@@ -451,7 +474,7 @@ function classDataDummy() {
 }
 
 
-function classDataAssassin() {
+function classDataAssassin(): CharacterClassData {
   return {
     classId: "assassin",
     power: 12,
@@ -467,7 +490,7 @@ function classDataAssassin() {
 }
 
 
-function classDataRogue() {
+function classDataRogue(): CharacterClassData {
   return {
     classId: "rogue",
     power: 12,
@@ -483,7 +506,7 @@ function classDataRogue() {
 }
 
 
-function classDataRanger() {
+function classDataRanger(): CharacterClassData {
   return {
     classId: "ranger",
     power: 10,
@@ -499,7 +522,7 @@ function classDataRanger() {
 }
 
 
-function classDataBerserker() {
+function classDataBerserker(): CharacterClassData {
   return {
     classId: "berserker",
     power: 10,
@@ -515,7 +538,7 @@ function classDataBerserker() {
 }
 
 
-function classDataCleric() {
+function classDataCleric(): CharacterClassData {
   return {
     classId: "cleric",
     power: 6,
@@ -531,7 +554,7 @@ function classDataCleric() {
 }
 
 
-function classDataDruid() {
+function classDataDruid(): CharacterClassData {
   return {
     classId: "druid",
     power: 7,
@@ -547,7 +570,7 @@ function classDataDruid() {
 }
 
 
-function classDataShaman() {
+function classDataShaman(): CharacterClassData {
   return {
     classId: "shaman",
     power: 6,
@@ -563,20 +586,26 @@ function classDataShaman() {
 }
 
 
-function bossDataDummy() {
-  return {
-    classId: "boss",
-    power: 10,
-    health: 200,
-    speed: 5,
-    basicAttack: newSkillInstance(skillDataAttack()),
-    rest: newSkillInstance(skillDataRest()),
-    skills: []
-  };
+interface BossClassData extends CharacterClassData {
+  basicAttack: SkillInstance;
+  rest: SkillInstance;
 }
 
 
-function bossDataBlackDragon() {
+// function bossDataDummy(): BossClassData {
+//   return {
+//     classId: "boss",
+//     power: 10,
+//     health: 200,
+//     speed: 5,
+//     basicAttack: newSkillInstance(skillDataAttack()),
+//     rest: newSkillInstance(skillDataRest()),
+//     skills: []
+//   };
+// }
+
+
+function bossDataBlackDragon(): BossClassData {
   return {
     classId: "blackDragon",
     power: 7,
@@ -593,7 +622,7 @@ function bossDataBlackDragon() {
 }
 
 
-function bossDataStormDragon() {
+function bossDataStormDragon(): BossClassData {
   return {
     classId: "stormDragon",
     power: 9,
@@ -609,7 +638,7 @@ function bossDataStormDragon() {
 }
 
 
-function bossDataGargoyle() {
+function bossDataGargoyle(): BossClassData {
   return {
     classId: "gargoyle",
     power: 8,
@@ -629,7 +658,18 @@ function bossDataGargoyle() {
 // -----------------------------------------------------------------------------
 
 
-function newCharacterEffectsMap() {
+interface CharacterEffectsMap {
+  shield: number;  // damage
+  poison: number;  // damage
+  healing: number;  // damage
+  invulnerable: number;  // duration
+  stunned: number;  // duration
+  healingModifier: number;  // duration
+  armorModifier: number;  // duration
+}
+
+
+function newCharacterEffectsMap(): CharacterEffectsMap {
   // numbers are duration in turns
   return {
     shield: 0,  // damage
@@ -643,8 +683,23 @@ function newCharacterEffectsMap() {
 }
 
 
-function newPlayerCharacter(playerId, index, name) {
-  const data = classDataDummy();
+interface CharacterInstance extends CharacterClassData {
+  id: number;
+  index: number;
+  playerId: string;
+  currentHealth: number;
+  effects: CharacterEffectsMap;
+}
+
+
+interface PlayerCharacterInstance extends CharacterInstance {
+  threat: number;
+  dead: boolean;
+}
+
+
+function newPlayerCharacter(playerId: string, index: number): PlayerCharacterInstance {
+  const data = classDataDummy() as PlayerCharacterInstance;
   data.id = index;
   data.index = index;
   // data.name = name;
@@ -662,7 +717,16 @@ function newPlayerCharacter(playerId, index, name) {
 // -----------------------------------------------------------------------------
 
 
-function newEnemyCharacter() {
+interface EnemyCharacterInstance extends CharacterInstance {
+  basicAttack: SkillInstance;
+  rest: SkillInstance;
+  lastHealed: number;
+  lastSpecial: number;
+}
+
+
+
+function newEnemyCharacter(): EnemyCharacterInstance {
   const options = shuffle([
     bossDataBlackDragon(),
     bossDataStormDragon(),
@@ -679,21 +743,21 @@ function newEnemyCharacter() {
 }
 
 
-function applyEnemyBoosts(enemy, numberOfPlayers) {
+function applyEnemyBoosts(enemy: EnemyCharacterInstance, numberOfPlayers: number): void {
   while (--numberOfPlayers) {
     grantEnemyBoost(enemy);
   }
 }
 
 
-function grantEnemyBoost(enemy) {
+function grantEnemyBoost(enemy: EnemyCharacterInstance): void {
   // enemy.power++;
   enemy.health += 100;
   enemy.currentHealth += 100;
 }
 
 
-function takeEnemyBoost(enemy) {
+function takeEnemyBoost(enemy: EnemyCharacterInstance): void {
   // enemy.power--;
   if (enemy.health > 100) {
     enemy.health -= 100;
@@ -709,7 +773,18 @@ function takeEnemyBoost(enemy) {
 // -----------------------------------------------------------------------------
 
 
-function newSkillBattleEvent(character, skill) {
+interface BattleEvent {
+  type: string;
+}
+
+
+interface SKillBattleEvent extends BattleEvent {
+  skill: string;
+  user: number;
+}
+
+
+function newSkillBattleEvent(character: CharacterInstance, skill: SkillInstance): SKillBattleEvent {
   return {
     type: "skill",
     skill: skill.data.id,
@@ -718,11 +793,53 @@ function newSkillBattleEvent(character, skill) {
 }
 
 
-function newCharacterDiedBattleEvent(character) {
-  return {
-    type: "died",
-    character: character.id
-  };
+// interface DeathBattleEvent extends BattleEvent {
+//   character: number;
+// }
+
+
+// function newCharacterDiedBattleEvent(character: CharacterInstance): DeathBattleEvent {
+//   return {
+//     type: "died",
+//     character: character.id
+//   };
+// }
+
+
+interface PlayerActionBattleEvent extends BattleEvent {
+  action: BattleEvent;
+  reaction: BattleEvent;
+}
+
+
+interface DamageBattleEvent extends BattleEvent {
+  target: number;
+  value: number;
+  startingHealth: number;
+  finalHealth: number;
+  finalShield: number;
+}
+
+
+interface HealingBattleEvent extends BattleEvent {
+  target: number;
+  value: number;
+  startingHealth: number;
+  finalHealth: number;
+}
+
+
+interface PowerChangedBattleEvent extends BattleEvent {
+  target: number;
+  value: number;
+  startingPower: number;
+  finalPower: number;
+}
+
+
+interface ModifierChangedBattleEvent extends BattleEvent {
+  target: number;
+  value: number;
 }
 
 
@@ -731,7 +848,17 @@ function newCharacterDiedBattleEvent(character) {
 // -----------------------------------------------------------------------------
 
 
-function processPlayerSkill(game, player, skill, args) {
+interface SkillActionParams {
+  target: number;
+}
+
+
+interface UseSkillActionPayload extends SkillActionParams {
+  skill: number;
+}
+
+
+function processPlayerSkill(game: GameState, player: PlayerCharacterInstance, skill: SkillInstance, args: SkillActionParams): void {
   // Move the player down the queue
   // adjustTurnOrder(game, player.speed);
   // player.speed += skill.speed;
@@ -773,7 +900,7 @@ function processPlayerSkill(game, player, skill, args) {
 }
 
 
-function resolveSkill(game, user, skill, args) {
+function resolveSkill(game: GameState, user: CharacterInstance, skill: SkillInstance, args: SkillActionParams): void {
   const target = getTarget(game, user, skill.data.target, args.target);
   const event = newSkillBattleEvent(user, skill);
   game.events.push(event);
@@ -829,14 +956,11 @@ function resolveSkill(game, user, skill, args) {
 
     case EFFECT_CONSUME_HEAL_OVER_TIME:
       return handleConsumeHealOverTime(game, user, target, skill);
-
-    default:
-      throw Rune.invalidAction();
   }
 }
 
 
-function getPlayer(game, playerId) {
+function getPlayer(game: GameState, playerId: string): Maybe<PlayerCharacterInstance> {
   for (const player of game.players) {
     if (player.playerId === playerId) {
       return player;
@@ -845,23 +969,25 @@ function getPlayer(game, playerId) {
 }
 
 
-function getTarget(game, user, targetMode, targetIndex) {
+function getTarget(game: GameState, user: CharacterInstance, targetMode: TargetMode, targetIndex: number): CharacterInstance[] {
   if (!targetMode) {
-    return user;
+    return [user];
   }
   if (targetMode === TARGET_MODE_ALLY) {
     const character = user.playerId != null ? game.players[targetIndex] : user;
     if (character.currentHealth <= 0) {
-      throw Rune.invalidAction();
+      // throw Rune.invalidAction();
+      return [];
     }
-    return character;
+    return [character];
   }
   if (targetMode === TARGET_MODE_ENEMY) {
     const character = user.playerId != null ? game.enemy : game.players[targetIndex];
     if (character.currentHealth <= 0) {
-      throw Rune.invalidAction();
+      // throw Rune.invalidAction();
+      return [];
     }
-    return character;
+    return [character];
   }
   const targets = [];
   if (targetMode !== TARGET_MODE_ALL_ALLIES) {
@@ -892,49 +1018,52 @@ function getTarget(game, user, targetMode, targetIndex) {
 }
 
 
-function handleAttackTarget(game, user, target, skill) {
-  const e = userAttackTarget(game, user, target);
-  // FIXME
-  game.events.push(e.action);
-  game.events.push(e.reaction);
+function handleAttackTarget(game: GameState, user: CharacterInstance, target: CharacterInstance[], _skill: SkillInstance): void {
+  for (const character of target) {
+    const e = userAttackTarget(game, user, character);
+    // FIXME
+    game.events.push(e.action);
+    game.events.push(e.reaction);
+  }
 }
 
 
-function handleAttackPoisonTarget(game, user, target, skill) {
+function handleAttackPoisonTarget(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
   handleAttackTarget(game, user, target, skill);
   handlePoisonTarget(game, user, target, skill);
 }
 
 
-function handleDamagePoisonTarget(game, user, target, skill) {
+function handleDamagePoisonTarget(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
   handleDamageTargetByFactor(game, user, target, skill);
   handlePoisonTarget(game, user, target, skill);
 }
 
 
-function handleAttackTargetBoostIfPoisoned(game, user, target, skill) {
-  if (target.effects.poison > 0) {
-    const power = user.power;
-    user.power = (power * skill.data.powerFactor) | 0;
-    handleAttackTarget(game, user, target, skill);
-    user.power = power;
-  } else {
-    handleAttackTarget(game, user, target, skill);
+function handleAttackTargetBoostIfPoisoned(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  for (const character of target) {
+    if (character.effects.poison > 0) {
+      const power = user.power;
+      const factor = skill.data.powerFactor || 1;
+      user.power = (power * factor) | 0;
+      handleAttackTarget(game, user, target, skill);
+      user.power = power;
+    } else {
+      handleAttackTarget(game, user, target, skill);
+    }
   }
 }
 
 
-function handleAttackStunTarget(game, user, target, skill) {
+function handleAttackStunTarget(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
   handleAttackTarget(game, user, target, skill);
   handleStunTarget(game, user, target, skill);
 }
 
 
-function handleDamageTargetByFactor(game, user, target, skill) {
-  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  if (target.length == null) {
-    target = [target];
-  }
+function handleDamageTargetByFactor(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  const factor = skill.data.powerFactor || 1;
+  const damage = ((user.power * factor) | 0) || 1;
   for (const character of target) {
     const e = dealDamageToTarget(game, character, damage, skill.data.damageType);
     game.events.push(e);
@@ -942,18 +1071,19 @@ function handleDamageTargetByFactor(game, user, target, skill) {
 }
 
 
-function handleHealTargetByPercent(game, user, target, skill) {
-  const damage = ((target.health * skill.data.healingPercent) | 0) || 1;
-  const e = healTarget(game, target, damage);
-  game.events.push(e);
+function handleHealTargetByPercent(game: GameState, _user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  for (const character of target) {
+    const percent = skill.data.healingPercent || 0;
+    const damage = ((character.health * percent) | 0) || 1;
+    const e = healTarget(game, character, damage);
+    game.events.push(e);
+  }
 }
 
 
-function handleHealTargetByFactor(game, user, target, skill) {
-  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  if (target.length == null) {
-    target = [target];
-  }
+function handleHealTargetByFactor(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  const factor = skill.data.powerFactor || 1;
+  const damage = ((user.power * factor) | 0) || 1;
   for (const character of target) {
     const e = healTarget(game, character, damage);
     game.events.push(e);
@@ -961,11 +1091,9 @@ function handleHealTargetByFactor(game, user, target, skill) {
 }
 
 
-function handleHealTargetOverTime(game, user, target, skill) {
-  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  if (target.length == null) {
-    target = [target];
-  }
+function handleHealTargetOverTime(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  const factor = skill.data.powerFactor || 1;
+  const damage = ((user.power * factor) | 0) || 1;
   for (const character of target) {
     const e = healTargetOverTime(game, character, damage);
     game.events.push(e);
@@ -973,12 +1101,10 @@ function handleHealTargetOverTime(game, user, target, skill) {
 }
 
 
-function handleConsumeHealOverTime(game, user, target, skill) {
-  if (target.length == null) {
-    target = [target];
-  }
+function handleConsumeHealOverTime(game: GameState, _user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
   for (const character of target) {
-    const damage = ((character.effects.healing * skill.data.factor) | 0) || 1;
+    const factor = skill.data.factor || 1;
+    const damage = ((character.effects.healing * factor) | 0) || 1;
     if (damage > 0) {
       character.effects.healing = 0;
       const e = healTarget(game, character, damage);
@@ -988,11 +1114,8 @@ function handleConsumeHealOverTime(game, user, target, skill) {
 }
 
 
-function handlePowerBoostTarget(game, user, target, skill) {
-  const value = skill.data.value;
-  if (target.length == null) {
-    target = [target];
-  }
+function handlePowerBoostTarget(game: GameState, _user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  const value = skill.data.value || 0;
   for (const character of target) {
     const e = boostTargetPower(game, character, value);
     game.events.push(e);
@@ -1000,11 +1123,9 @@ function handlePowerBoostTarget(game, user, target, skill) {
 }
 
 
-function handleShieldTarget(game, user, target, skill) {
-  const damage = ((user.power * skill.data.powerFactor) | 0) || 1;
-  if (target.length == null) {
-    target = [target];
-  }
+function handleShieldTarget(game: GameState, user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  const factor = skill.data.powerFactor || 1;
+  const damage = ((user.power * factor) | 0) || 1;
   for (const character of target) {
     const e = shieldTarget(game, character, damage);
     game.events.push(e);
@@ -1012,29 +1133,32 @@ function handleShieldTarget(game, user, target, skill) {
 }
 
 
-function handlePoisonTarget(game, user, target, skill) {
+function handlePoisonTarget(game: GameState, user: CharacterInstance, target: CharacterInstance[], _skill: SkillInstance): void {
   const damage = ((user.power * 0.5) | 0) || 1;
-  const e = poisonTarget(game, target, damage);
-  game.events.push(e);
-}
-
-
-function handleStunTarget(game, user, target, skill) {
-  const e = stunTarget(game, target, skill.data.duration);
-  game.events.push(e);
-}
-
-
-function handleMakeTargetInvulnerable(game, user, target, skill) {
-  const e = makeTargetInvulnerable(game, target, skill.data.duration);
-  game.events.push(e);
-}
-
-
-function handleTargetArmorModifier(game, user, target, skill) {
-  if (target.length == null) {
-    target = [target];
+  for (const character of target) {
+    const e = poisonTarget(game, character, damage);
+    game.events.push(e);
   }
+}
+
+
+function handleStunTarget(game: GameState, _user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  for (const character of target) {
+    const e = stunTarget(game, character, skill.data.duration);
+    game.events.push(e);
+  }
+}
+
+
+function handleMakeTargetInvulnerable(game: GameState, _user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
+  for (const character of target) {
+    const e = makeTargetInvulnerable(game, character, skill.data.duration);
+    game.events.push(e);
+  }
+}
+
+
+function handleTargetArmorModifier(game: GameState, _user: CharacterInstance, target: CharacterInstance[], skill: SkillInstance): void {
   for (const character of target) {
     const e = applyTargetArmorModifier(game, character, skill.data.duration);
     game.events.push(e);
@@ -1042,7 +1166,7 @@ function handleTargetArmorModifier(game, user, target, skill) {
 }
 
 
-function userAttackTarget(game, user, target) {
+function userAttackTarget(game: GameState, user: CharacterInstance, target: CharacterInstance): PlayerActionBattleEvent {
   const action = dealDamageToTarget(game, target, user.power);
   const reaction = dealDamageToTarget(game, user, target.power);
   return {
@@ -1053,7 +1177,7 @@ function userAttackTarget(game, user, target) {
 }
 
 
-function dealDamageToTarget(game, target, damage, type) {
+function dealDamageToTarget(game: GameState, target: CharacterInstance, damage: number, type: string = "damage"): DamageBattleEvent {
   const hp = target.currentHealth;
   if (target.effects.invulnerable) {
     damage = 0;
@@ -1070,7 +1194,7 @@ function dealDamageToTarget(game, target, damage, type) {
       target.effects.shield = 0;
       target.currentHealth -= damage;
       if (target.currentHealth <= 0 && target.playerId != null) {
-        killPlayerCharacter(game, target);
+        killPlayerCharacter(game, target as PlayerCharacterInstance);
       }
     }
   }
@@ -1080,12 +1204,12 @@ function dealDamageToTarget(game, target, damage, type) {
     value: damage,
     startingHealth: hp,
     finalHealth: target.currentHealth,
-    finalShield: target.effects.shield
+    finalShield: target.effects.shield,
   };
 }
 
 
-function healTarget(game, target, damage) {
+function healTarget(_game: GameState, target: CharacterInstance, damage: number): HealingBattleEvent {
   const hp = target.currentHealth;
   if (target.effects.healingModifier > 0) {
     damage = (damage * 2 / 3) | 0;
@@ -1108,7 +1232,7 @@ function healTarget(game, target, damage) {
 }
 
 
-function boostTargetPower(game, target, value) {
+function boostTargetPower(_game: GameState, target: CharacterInstance, value: number): PowerChangedBattleEvent {
   const old = target.power;
   target.power += value;
   return {
@@ -1121,7 +1245,7 @@ function boostTargetPower(game, target, value) {
 }
 
 
-function shieldTarget(game, target, damage) {
+function shieldTarget(_game: GameState, target: CharacterInstance, damage: number): ModifierChangedBattleEvent {
   target.effects.shield += damage;
   return {
     type: "shield",
@@ -1131,7 +1255,7 @@ function shieldTarget(game, target, damage) {
 }
 
 
-function poisonTarget(game, target, damage) {
+function poisonTarget(_game: GameState, target: CharacterInstance, damage: number): ModifierChangedBattleEvent {
   target.effects.poison = damage;
   return {
     type: "poison",
@@ -1141,7 +1265,7 @@ function poisonTarget(game, target, damage) {
 }
 
 
-function healTargetOverTime(game, target, damage) {
+function healTargetOverTime(_game: GameState, target: CharacterInstance, damage: number): ModifierChangedBattleEvent {
   target.effects.healing = damage;
   return {
     type: "healOverTime",
@@ -1151,7 +1275,7 @@ function healTargetOverTime(game, target, damage) {
 }
 
 
-function stunTarget(game, target, duration) {
+function stunTarget(_game: GameState, target: CharacterInstance, duration: number = 1): ModifierChangedBattleEvent {
   target.effects.stunned = duration;
   return {
     type: "stun",
@@ -1161,17 +1285,17 @@ function stunTarget(game, target, duration) {
 }
 
 
-function applyTargetArmorModifier(game, target, duration) {
+function applyTargetArmorModifier(_game: GameState, target: CharacterInstance, duration: number = 1): ModifierChangedBattleEvent {
   target.effects.armorModifier = duration;
   return {
     type: "armor",
     target: target.id,
-    duration: duration
+    value: duration
   };
 }
 
 
-function makeTargetInvulnerable(game, target, duration) {
+function makeTargetInvulnerable(_game: GameState, target: CharacterInstance, duration: number = 1): ModifierChangedBattleEvent {
   target.effects.invulnerable = duration;
   return {
     type: "invulnerable",
@@ -1181,7 +1305,7 @@ function makeTargetInvulnerable(game, target, duration) {
 }
 
 
-function updateThreatLevel(game, index, value) {
+function updateThreatLevel(game: GameState, index: number, value: number): void {
   const quarter = (value / 4) | 0;
   let highest = game.players[game.enemyTarget].threat;
   for (const player of game.players) {
@@ -1215,7 +1339,7 @@ function updateThreatLevel(game, index, value) {
 // }
 
 
-function doEnemyReaction(game, player, usedSkill) {
+function doEnemyReaction(game: GameState, _player: PlayerCharacterInstance, _usedSkill: SkillInstance): void {
   const enemy = game.enemy;
 
   if (enemy.effects.stunned || enemy.currentHealth <= 0) { return; }
@@ -1250,7 +1374,7 @@ function doEnemyReaction(game, player, usedSkill) {
 }
 
 
-function doEndOfTurnEffects(game) {
+function doEndOfTurnEffects(game: GameState): void {
   doEndOfTurnEffectsForCharacter(game, game.enemy);
   for (const player of game.players) {
     doEndOfTurnEffectsForCharacter(game, player);
@@ -1258,7 +1382,7 @@ function doEndOfTurnEffects(game) {
 }
 
 
-function doEndOfTurnEffectsForCharacter(game, character) {
+function doEndOfTurnEffectsForCharacter(game: GameState, character: CharacterInstance): void {
   const effects = character.effects;
   // shield: damage
   // poison: damage
@@ -1305,9 +1429,9 @@ function doEndOfTurnEffectsForCharacter(game, character) {
 }
 
 
-function enterBattleState(game) {
+function enterBattleState(game: GameState): void {
   game.state = STATE_BATTLE;
-  game.enemy = newEnemyCharacter();
+  // game.enemy = newEnemyCharacter();
   game.currentTurn = 0;
   game.events = [];
   game.enemyTarget = 0;
@@ -1323,9 +1447,9 @@ function enterBattleState(game) {
 }
 
 
-function advanceTurns(game) {
+function advanceTurns(game: GameState): void {
   game.turns++;
-  const t = game.currentTurn;
+  const t = game.currentTurn || 0;
   const n = game.players.length;
   for (let i = 1; i <= n; ++i) {
     const k = (t + i) % n;
@@ -1337,7 +1461,7 @@ function advanceTurns(game) {
 }
 
 
-function killPlayerCharacter(game, player) {
+function killPlayerCharacter(game: GameState, player: PlayerCharacterInstance): void {
   player.dead = true;
   player.currentHealth = 0;
   player.effects = newCharacterEffectsMap();
@@ -1346,7 +1470,7 @@ function killPlayerCharacter(game, player) {
 }
 
 
-function isGameOver(game) {
+function isGameOver(game: GameState): boolean {
   if (game.enemy.currentHealth <= 0) {
     return true;
   }
@@ -1358,23 +1482,43 @@ function isGameOver(game) {
   return true;
 }
 
-function gameOverOptionsLost(game, delayPopUp) {
+
+function gameOverOptionsLost(game: GameState, delayPopUp: boolean): GameOverOptions {
   return gameOverOptions(game, "LOST", delayPopUp);
 }
 
-function gameOverOptionsWon(game, delayPopUp) {
+
+function gameOverOptionsWon(game: GameState, delayPopUp: boolean): GameOverOptions {
   return gameOverOptions(game, "WON", delayPopUp);
 }
 
-function gameOverOptions(game, result, delayPopUp) {
-  let players = {};
+
+function gameOverOptions(game: GameState, result: "WON" | "LOST", delayPopUp: boolean): GameOverOptions {
+  const players: {[playerId: string]: "WON" | "LOST"} = {};
   for (const player of game.players) {
     players[player.playerId] = result;
   }
   return {
     players: players,
-    delayPopUp: (delayPopUp || false)
+    delayPopUp: (delayPopUp || false),
   };
+}
+
+
+// -----------------------------------------------------------------------------
+// Game State
+// -----------------------------------------------------------------------------
+
+
+export interface GameState {
+  state: InternalGameState;
+  enemy: EnemyCharacterInstance;
+  players: PlayerCharacterInstance[];
+  currentTurn: number | null;
+  events: BattleEvent[];
+  enemyTarget: number;
+  availableHeroes: CharacterClassData[];
+  turns: number;
 }
 
 
@@ -1382,15 +1526,27 @@ function gameOverOptions(game, result, delayPopUp) {
 // Rune Setup
 // -----------------------------------------------------------------------------
 
+
+declare global {
+  const Rune: RuneClient<GameState, GameActions>;
+}
+
+
+type GameActions = {
+  useSkill: (params: UseSkillActionPayload) => void;
+}
+
+
+
 Rune.initLogic({
   minPlayers: 1,
   maxPlayers: 4,
 
-  setup(players) {
+  setup(allPlayerIds: string[]) {
     // players: array of string IDs
-    const game = {
+    const game: GameState = {
       state: STATE_SETUP,
-      enemy: null,
+      enemy: newEnemyCharacter(),
       players: [],
       currentTurn: null,
       events: [],
@@ -1409,7 +1565,7 @@ Rune.initLogic({
       classDataShaman()
     ]);
 
-    for (const playerId of players) {
+    for (const playerId of allPlayerIds) {
       const player = newPlayerCharacter(playerId, game.players.length);
       const classData = game.availableHeroes.pop();
       Object.assign(player, classData);
@@ -1423,7 +1579,8 @@ Rune.initLogic({
   },
 
   events: {
-    playerJoined(playerId, { game }) {
+    playerJoined(playerId: Maybe<string>, { game }): void {
+      if (!playerId) { return; }
       const player = newPlayerCharacter(playerId, game.players.length);
       const classData = game.availableHeroes.pop();
       Object.assign(player, classData);
@@ -1432,7 +1589,7 @@ Rune.initLogic({
       grantEnemyBoost(game.enemy);
     },
 
-    playerLeft(playerId, { game }) {
+    playerLeft(playerId: Maybe<string>, { game }): void {
       for (let i = game.players.length - 1; i >= 0; i--) {
         const player = game.players[i];
         if (player.playerId != playerId) { continue; }
@@ -1492,21 +1649,26 @@ Rune.initLogic({
     //   enterBattleState(game);
     // },
 
-    useSkill(payload, { game, playerId }) {
+    useSkill(payload: UseSkillActionPayload, { game, playerId }): void {
       if (game.state !== STATE_BATTLE) {
-        throw Rune.invalidAction();
+        // throw Rune.invalidAction();
+        return;
       }
 
       // Check if it's the player's turn
       const player = getPlayer(game, playerId);
       if (player == null || game.currentTurn !== player.id) {
-        throw Rune.invalidAction();
+        // throw Rune.invalidAction();
+        return;
       }
+
       // Check if the selected skill can be used
       const skill = player.skills[payload.skill];
       if (skill == null || skill.wait > 0) {
-        throw Rune.invalidAction();
+        // throw Rune.invalidAction();
+        return;
       }
+
       processPlayerSkill(game, player, skill, payload);
     }
   },
