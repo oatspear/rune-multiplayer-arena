@@ -134,6 +134,7 @@ const app = createApp({
     controlledCharacter() {
       if (this.playerId == null) { return null; }
       const character = this.characters[this.currentTurn];
+      if (character == null) { return null; }
       return this.playerId === character.playerId ? character : null;
     },
 
