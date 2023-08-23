@@ -30,6 +30,7 @@ function shuffle(array) {
 
 function constStateSetup() { return 0; }
 function constStateBattle() { return 1; }
+function constStateDoneBattle() { return 2; }
 
 function targetModeSelf() { return 0; }
 function targetModeAlly() { return 1; }
@@ -404,10 +405,8 @@ function getClassById(id) {
 
     case "druid":
       return classDataDruid();
-
-    default:
-      throw Rune.invalidAction();
   }
+  return null;
 }
 
 
@@ -718,6 +717,7 @@ function processPlayerSkill(game, player, skill, args) {
 
     // Determine if game has ended
     if (isGameOver(game)) {
+      game.state = constStateDoneBattle();
       if (game.enemy.currentHealth <= 0) {
         Rune.gameOver(gameOverOptionsWon(game, false));
       } else {
@@ -735,6 +735,7 @@ function processPlayerSkill(game, player, skill, args) {
 
   // Determine if game has ended
   if (isGameOver(game)) {
+    game.state = constStateDoneBattle();
     if (game.enemy.currentHealth <= 0) {
       Rune.gameOver(gameOverOptionsWon(game, false));
     } else {
@@ -753,6 +754,9 @@ function resolveSkill(game, user, skill, args) {
 
   // +1 to accomodate for tick at the end of the turn
   skill.wait = skill.cooldown + 1;
+
+  // prevent null targets
+  if (target == null || target.length === 0) { return; }
 
   switch (skill.data.mechanic) {
     case constHealTargetPercent():
@@ -803,8 +807,8 @@ function resolveSkill(game, user, skill, args) {
     case constConsumeHealOverTime():
       return handleConsumeHealOverTime(game, user, target, skill);
 
-    default:
-      throw Rune.invalidAction();
+    // default:
+    //   throw Rune.invalidAction();
   }
 }
 
@@ -815,6 +819,7 @@ function getPlayer(game, playerId) {
       return player;
     }
   }
+  return null;
 }
 
 
@@ -825,14 +830,16 @@ function getTarget(game, user, targetMode, targetIndex) {
   if (targetMode === targetModeAlly()) {
     const character = user.playerId != null ? game.players[targetIndex] : user;
     if (character.currentHealth <= 0) {
-      throw Rune.invalidAction();
+      // throw Rune.invalidAction();
+      return null;
     }
     return character;
   }
   if (targetMode === targetModeEnemy()) {
     const character = user.playerId != null ? game.enemy : game.players[targetIndex];
     if (character.currentHealth <= 0) {
-      throw Rune.invalidAction();
+      // throw Rune.invalidAction();
+      return null;
     }
     return character;
   }
@@ -1214,6 +1221,7 @@ function doEnemyReaction(game, player, usedSkill) {
 
   // Determine if game has ended
   if (isGameOver(game)) {
+    game.state = constStateDoneBattle();
     if (game.enemy.currentHealth <= 0) {
       Rune.gameOver(gameOverOptionsWon(game, false));
     } else {
@@ -1419,6 +1427,7 @@ Rune.initLogic({
 
         // Determine if game has ended
         if (isGameOver(game)) {
+          game.state = constStateDoneBattle();
           Rune.gameOver(gameOverOptionsLost(game, false));
         }
 
@@ -1467,19 +1476,24 @@ Rune.initLogic({
 
     useSkill(payload, { game, playerId }) {
       if (game.state !== constStateBattle()) {
-        throw Rune.invalidAction();
+        // throw Rune.invalidAction();
+        return;
       }
 
       // Check if it's the player's turn
       const player = getPlayer(game, playerId);
       if (player == null || game.currentTurn !== player.id) {
-        throw Rune.invalidAction();
+        // throw Rune.invalidAction();
+        return;
       }
+
       // Check if the selected skill can be used
       const skill = player.skills[payload.skill];
       if (skill == null || skill.wait > 0) {
-        throw Rune.invalidAction();
+        // throw Rune.invalidAction();
+        return;
       }
+
       processPlayerSkill(game, player, skill, payload);
     }
   },
