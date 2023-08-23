@@ -1396,6 +1396,7 @@ Rune.initLogic({
 
   events: {
     playerJoined(playerId, { game }) {
+      if (playerId == null) { return; }
       const player = newPlayerCharacter(playerId, game.players.length);
       const classData = game.availableHeroes.pop();
       Object.assign(player, classData);
